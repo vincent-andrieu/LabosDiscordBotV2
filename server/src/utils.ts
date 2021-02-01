@@ -1,0 +1,1 @@
+export const EXIT_ERROR = 84;
