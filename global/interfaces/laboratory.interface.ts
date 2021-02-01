@@ -1,10 +1,8 @@
-import { CModel, IModel } from "./database.interface";
 import { CStock, IStock } from "./stock.interface";
-import { IServer, CServer } from "./server.interface";
+import { CServerModel, IServerModel } from "./server.interface";
 import { EDrugsList } from "./drug-stuff.interface";
 
-export interface ILaboratory extends IModel {
-    server: IServer;
+export interface ILaboratory extends IServerModel {
     name: string;
     drug: EDrugsList;
     quantity: number;
@@ -12,8 +10,7 @@ export interface ILaboratory extends IModel {
     screen?: string;
 }
 
-export class CLaboratory extends CModel {
-    server: CServer;
+export class CLaboratory extends CServerModel implements ILaboratory {
     name: string;
     drug: EDrugsList;
     quantity: number;
@@ -23,7 +20,6 @@ export class CLaboratory extends CModel {
     constructor(labo: ILaboratory) {
         super(labo);
 
-        this.server = new CServer(labo.server);
         this.name = labo.name || "";
         this.drug = labo.drug;
         this.quantity = labo.quantity;

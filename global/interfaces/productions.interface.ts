@@ -1,17 +1,14 @@
 import { CLaboratory, ILaboratory } from "./laboratory.interface";
-import { CModel, IModel } from "./database.interface";
-import { CServer, IServer } from "./server.interface";
+import { CServerModel, IServerModel } from "./server.interface";
 
-export interface IProductions extends IModel {
-    server: IServer;
+export interface IProductions extends IServerModel {
     labo: ILaboratory;
     quantity: number;
     finishDate: Date;
     description?: string;
 }
 
-export class CProductions extends CModel {
-    server: CServer;
+export class CProductions extends CServerModel implements IProductions {
     labo: CLaboratory;
     quantity: number;
     finishDate: Date;
@@ -20,7 +17,6 @@ export class CProductions extends CModel {
     constructor(prod: IProductions) {
         super(prod);
 
-        this.server = new CServer(prod.server);
         this.labo = new CLaboratory(prod.labo);
         this.quantity = prod.quantity;
         this.finishDate = prod.finishDate;

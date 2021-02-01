@@ -1,17 +1,15 @@
 import { IModel, CModel } from "./database.interface";
 import { EDrugsList, EStuffList } from "./drug-stuff.interface";
-import { CServer, IServer } from "./server.interface";
+import { CServerModel, IServerModel } from "./server.interface";
 
-export interface IStock extends IModel {
-    server: IServer;
+export interface IStock extends IServerModel {
     name: string;
     drug: EDrugsList | EStuffList;
     quantity: number;
     screen?: string;
 }
 
-export class CStock extends CModel {
-    server: CServer;
+export class CStock extends CServerModel implements IStock {
     name: string;
     drug: EDrugsList | EStuffList;
     quantity: number;
@@ -20,7 +18,6 @@ export class CStock extends CModel {
     constructor(stock: IStock) {
         super(stock);
 
-        this.server = new CServer(stock.server);
         this.name = stock.name;
         this.drug = stock.drug;
         this.quantity = stock.quantity;
