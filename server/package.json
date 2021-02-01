@@ -2,10 +2,10 @@
     "name": "labosdiscordbotv2-server",
     "version": "1.0.0",
     "description": "",
-    "main": "./build/main.js",
+    "main": "./build/server/src/main.js",
     "types": "build",
     "scripts": {
-        "start": "tsc -p . && node ./build/main.js",
+        "start": "tsc -p . && node ./build/server/src/main.js",
         "build": "rm -rf ./build/ && tsc -p .",
         "rebuild": "npm i && npm run build",
         "clean": "rm -rf node_modules/ ; rm -rf ./build/",
@@ -15,12 +15,17 @@
     "private": true,
     "author": "gassastsina",
     "license": "ISC",
+    "_moduleAliases": {
+        "@global": "build/global",
+        "@schemas": "build/server/src/schemas"
+    },
     "dependencies": {
         "@types/node": "^14.14.22",
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",
         "discord.js": "^12.4.1",
         "express": "^4.17.1",
+        "module-alias": "^2.2.2",
         "mongoose": "^5.11.14",
         "socket.io": "^2.4.1"
     },
