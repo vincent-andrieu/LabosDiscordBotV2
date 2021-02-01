@@ -19,6 +19,10 @@ jobs:
       - name: Install eslint
         run: sudo npm i -g eslint
 
+      #Build
+      - name: Build root node modules
+        run: npm i
+
       # Run
       - name: Run lint
         run: npm run lint
