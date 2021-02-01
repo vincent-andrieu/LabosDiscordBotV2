@@ -9,7 +9,8 @@
         "build": "rm -rf ./build/ && tsc -p .",
         "rebuild": "npm i && npm run build",
         "clean": "rm -rf node_modules/ ; rm -rf ./build/",
-        "auto": "npx nodemon -x npm run start -w src/ -e .ts"
+        "auto": "npx nodemon -x npm run start -w src/ -e .ts",
+        "lint": "eslint src/ --fix ; exit 0"
     },
     "private": true,
     "author": "gassastsina",
