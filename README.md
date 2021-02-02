@@ -8,6 +8,7 @@
 
 ## Must
 - Mettre en paramètre des fonctions ou appels server les objects entier et pas seulement des valeurs (pour facilité les ajouts par la suite)
+- Utiliser des alias pour les paths des imports des fichiers globaux
 
 ## Should
 - Traductions
