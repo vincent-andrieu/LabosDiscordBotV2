@@ -1,4 +1,3 @@
-import { IModel, CModel } from "./database.interface";
 import { EDrugsList, EStuffList } from "./drug-stuff.interface";
 import { CServerModel, IServerModel } from "./server.interface";
 

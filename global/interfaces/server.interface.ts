@@ -1,22 +1,45 @@
+import { Guild, TextChannel } from "discord.js";
+import DiscordBot from "init/bot";
+
 import { IModel, CModel } from "./database.interface";
+import { CLaboratory, ILaboratory } from "./laboratory.interface";
 
 export interface IServer extends IModel {
-    name: string;
-    botName: string;
-    activity: string;
+    url?: string;
+    //activity: string;
+    defaultLabo?: ILaboratory | string;
+    defaultChannel: TextChannel | undefined | string;
+    reminder?: number;
+    roleTag?: string;
 }
 
 export class CServer extends CModel implements IServer {
-    name: string;
-    botName: string;
-    activity: string;
+    guild: Guild | undefined;
+    url?: string;
+    //activity: string;
+    defaultLabo?: CLaboratory;
+    defaultChannel: TextChannel | undefined;
+    reminder?: number;
+    roleTag?: string;
 
     constructor(server: IServer) {
         super(server);
 
-        this.name = server.name;
-        this.botName = server.botName;
-        this.activity = server.activity;
+        if (server._id) {
+            this.guild = DiscordBot.getServerFromId(server._id.toString());
+        }
+        this.url = server.url;
+        //this.activity = server.activity;
+        if (typeof server.defaultLabo === 'object') {
+            this.defaultLabo = new CLaboratory(server.defaultLabo);
+        }
+        if (typeof server.defaultChannel === 'string') {
+            this.defaultChannel = DiscordBot.getChannelFromId(server.defaultChannel);
+        } else {
+            this.defaultChannel = server.defaultChannel;
+        }
+        this.reminder = server.reminder;
+        this.roleTag = server.roleTag;
     }
 }
 

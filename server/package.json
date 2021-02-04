@@ -26,6 +26,7 @@
         "discord.js": "^12.4.1",
         "express": "^4.17.1",
         "module-alias": "^2.2.2",
+        "moment": "^2.29.1",
         "mongoose": "^5.11.14",
         "socket.io": "^2.4.1"
     },
