@@ -2,7 +2,7 @@ import mongoose = require('mongoose');
 import moment from 'moment';
 
 import { GlobalConfig } from '@global/config';
-import { CProductions, IProdFinish, IProductions } from '@global/interfaces/productions.interface';
+import { CProductions, IProdFinish, IProductions } from '@global/interfaces/production.interface';
 import { CServer } from '@global/interfaces/server.interface';
 import { CLaboratory } from '@global/interfaces/laboratory.interface';
 import { ObjectId } from '@global/interfaces/database.interface';
