@@ -208,13 +208,34 @@ export class ProductionSchema {
         });
     }
 
-    public delete(prod: CProductions): Promise<void> {
+    public deleteById(prod: CProductions, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             this._model.deleteOne({ server: prod.server._id, _id: prod._id })
                 .then((res) => {
                     if (res.deletedCount <= 0) {
-                        return reject("La production du laboratoire" + prod.labo.name + " n'existe pas");
+                        return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
+                    }
+                    resolve();
+                })
+                .catch((err) => reject(err));
+
+        });
+    }
+
+    /**
+     * Delete all productions of a laboratory
+     * @param  {CProductions|CLaboratory} laboProd
+     * @param  {string} reason?
+     * @returns Promise
+     */
+    public deleteByLabo(laboProd: CProductions | CLaboratory, reason?: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+
+            this._model.deleteMany({ server: laboProd.server._id, labo: (laboProd as CProductions).labo?._id || laboProd._id })
+                .then((res) => {
+                    if (res.deletedCount <= 0) {
+                        return reject("Aucune production n'est en cours dans le laboratoire " + (laboProd as CProductions).labo?.name || (laboProd as CLaboratory).name);
                     }
                     resolve();
                 })
@@ -368,7 +389,7 @@ export class ProductionSchema {
 
                         new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity).then(() =>
 
-                            this.delete(new CProductions(prodFinish))
+                            this.deleteById(new CProductions(prodFinish))
                                 .then(() => {
                                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée")
                                         .setDescription("**" + prodFinish.stock.name + "** : **" + prodFinish.stock.quantity.toString() + " kg** de " + prodFinish.stock.drug + ".");

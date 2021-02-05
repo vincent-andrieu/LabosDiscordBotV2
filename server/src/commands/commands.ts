@@ -12,12 +12,13 @@ import LaboratoryAddLabo from "./laboratory/addLabo";
 import LaboratoryDelLabo from "./laboratory/delLabo";
 import LaboratoryInfoLabo from "./laboratory/infoLabo";
 import LaboratoryAddLaboStock from "./laboratory/addLaboStock";
+import LaboratoryDelLaboStock from "./laboratory/delLaboStock";
+import ProductionAddProd from "./production/addProd";
+import ProductionDelProd from "./production/delProd";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
-import LaboratoryDelLaboStock from "./laboratory/delLaboStock";
-import ProductionAddProd from "./production/addProd";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -28,6 +29,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new LaboratoryDelLaboStock("Supprime un entrepôt d'un laboratoire", "**Nom du laboratoire**, **Nom de l'entrepôt**"),
 
     new ProductionAddProd("Ajoute une production", "**Quantité**, Laboratoire, Description"),
+    new ProductionDelProd("Supprimer une production", "Laboratoire, Raison"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
