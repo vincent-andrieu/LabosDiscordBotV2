@@ -37,6 +37,11 @@ export enum ECommand {
     LABO_ADD_STOCK = 'addLaboStock',
     LABO_DEL_STOCK = 'delLaboStock',
 
+    PROD_ADD = 'addProd',
+    PROD_DEL = 'delProd',
+    PROD_SET = 'setProd',
+    PROD_INFO = 'infoProd',
+
     STOCK_ADD_LOC = 'addStockLoc',
     STOCK_DEL_LOC = 'delStockLoc',
     STOCK_ADD = 'addStock',
