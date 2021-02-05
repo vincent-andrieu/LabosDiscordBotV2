@@ -11,6 +11,7 @@ import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
 import LaboratoryAddLabo from "./laboratory/addLabo";
 import LaboratoryDelLabo from "./laboratory/delLabo";
 import LaboratoryInfoLabo from "./laboratory/infoLabo";
+import LaboratoryAddLaboStock from "./laboratory/addLaboStock";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetReminder from "./server/setReminder";
@@ -19,8 +20,9 @@ import ServerSetRoleTag from "./server/setRoleTag";
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
     new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Lien"),
-    new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**, Raison"),
+    new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**"),
     new LaboratoryInfoLabo("Affiche la liste des laboratoire", "Nom"),
+    new LaboratoryAddLaboStock("Ajoute un entrepôt à un laboratoire", "**Nom du laboratoire**, **Nom de l'entrepôt**"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
