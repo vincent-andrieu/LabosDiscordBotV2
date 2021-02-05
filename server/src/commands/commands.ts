@@ -10,6 +10,7 @@ import DiscordBot, { EEmbedMsgColors } from "init/bot";
 import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
 import LaboratoryAddLabo from "./laboratory/addLabo";
 import LaboratoryDelLabo from "./laboratory/delLabo";
+import LaboratoryInfoLabo from "./laboratory/infoLabo";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetReminder from "./server/setReminder";
@@ -19,6 +20,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
     new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Lien"),
     new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**, Raison"),
+    new LaboratoryInfoLabo("Affiche la liste des laboratoire", "Nom"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),

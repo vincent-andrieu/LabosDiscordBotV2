@@ -1,3 +1,5 @@
+import { MessageEmbed } from "discord.js";
+
 import { CStock, IStock } from "./stock.interface";
 import { CServerModel, IServerModel } from "./server.interface";
 import { EDrugsList } from "./drug-stuff.interface";
@@ -28,5 +30,21 @@ export class CLaboratory extends CServerModel implements ILaboratory {
             labo.stocks.forEach((stock, index) => this.stocks[index] = new CStock(stock));
         }
         this.screen = labo.screen || "";
+    }
+
+    public getInfo(embedMessage?: MessageEmbed): string {
+        let stocksMsg = "";
+
+        this.stocks.forEach((stock) => stocksMsg = stocksMsg.concat("**", stock.name, "**, "));
+        stocksMsg = stocksMsg.substring(0, stocksMsg.length - 2);
+
+        if (embedMessage) {
+            embedMessage.addFields(
+                { name: this.name, value: "**" + this.quantity.toString() + " kg** de **" + this.drug + "**", inline: true },
+                { name: stocksMsg ? "Entrepôts" : "\u200B", value: stocksMsg || "\u200B", inline: true },
+                { name: "\u200B", value: "\u200B", inline: true }
+            );
+        }
+        return this.name.concat("**", this.quantity.toString(), " kg** de **", this.drug, "**.", stocksMsg ? " Entrepôts" : "\t", stocksMsg || "\t", "\n");
     }
 }
