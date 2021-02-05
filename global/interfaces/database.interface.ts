@@ -7,7 +7,7 @@ export interface IModel {
     _id?: ObjectId;
 }
 
-export class CModel implements IModel {
+export abstract class CModel implements IModel {
     _id?: ObjectId;
 
     constructor(model: IModel) {

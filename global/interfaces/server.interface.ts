@@ -47,7 +47,7 @@ export interface IServerModel extends IModel {
     server: IServer;
 }
 
-export class CServerModel extends CModel implements IServerModel {
+export abstract class CServerModel extends CModel implements IServerModel {
     server: CServer;
 
     constructor(server: IServerModel) {
