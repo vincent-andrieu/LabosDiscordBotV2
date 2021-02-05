@@ -250,6 +250,23 @@ export class LaboratorySchema {
         });
     }
 
+    public addLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+
+            Promise.all([
+                this.findOneByName(server, laboName),
+                new StockSchema().findOneByName(server, stockName)
+            ]).then((result: [CLaboratory, CStock]) => {
+
+                this.addLaboStock(result[0], result[1])
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+
+            }).catch((err) => reject(err));
+
+        });
+    }
+
     /**
      * Remove a stock from a laboratory. Do NOT check if labo & stock exist.
      * @param  {CLaboratory} labo
