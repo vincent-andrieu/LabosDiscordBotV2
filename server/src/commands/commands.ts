@@ -7,34 +7,21 @@ import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
 import DiscordBot, { EEmbedMsgColors } from "init/bot";
 
-import SetDefaultChannel from "./server/setDefaultChannel";
-import SetUrl from "./server/setUrl";
-import SetReminder from "./server/setReminder";
-import SetRoleTag from "./server/setRoleTag";
-import SetDefaultLabo from "./laboratory/setDefaultLabo";
-
-class LaboratoryCmds {
-    public static SetDefaultLabo = new SetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**");
-}
-
-class ProductionCmds {}
-
-class StockCmds {}
-
-class ServerCmds {
-    public static SetDefaultChannel = new SetDefaultChannel("Modifier le channel par défaut");
-    public static SetUrl = new SetUrl("Modifier l'URL du site", "**URL**");
-    public static SetReminder = new SetReminder("Modifier le rappel d'une production", "**Minutes**");
-    public static SetRoleTag = new SetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**");
-}
+import ServerSetDefaultChannel from "./server/setDefaultChannel";
+import ServerSetUrl from "./server/setUrl";
+import ServerSetReminder from "./server/setReminder";
+import ServerSetRoleTag from "./server/setRoleTag";
+import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
+import LaboratoryAddLabo from "./laboratory/addLabo";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
-    LaboratoryCmds.SetDefaultLabo,
+    new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
+    new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Lien"),
 
-    ServerCmds.SetDefaultChannel,
-    ServerCmds.SetUrl,
-    ServerCmds.SetReminder,
-    ServerCmds.SetRoleTag
+    new ServerSetDefaultChannel("Modifier le channel par défaut"),
+    new ServerSetUrl("Modifier l'URL du site", "**URL**"),
+    new ServerSetReminder("Modifier le rappel d'une production", "**Minutes**"),
+    new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**")
 ];
 
 export enum ECommand {

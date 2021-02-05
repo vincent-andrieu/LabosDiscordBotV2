@@ -2,7 +2,7 @@ import { CServer } from "@global/interfaces/server.interface";
 import { ServerSchema } from "@schemas/servers.schema";
 import { CCommand, ECommand } from "@commands/commands";
 
-export default class SetReminder extends CCommand<ServerSchema> {
+export default class ServerSetReminder extends CCommand<ServerSchema> {
 
     constructor(helpDesc = "", helpParams = "") {
         super(new ServerSchema(), ECommand.SERVER_SET_REMINDER, helpDesc, helpParams);

@@ -2,7 +2,7 @@ import { CServer } from "@global/interfaces/server.interface";
 import { CCommand, ECommand } from "@commands/commands";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 
-export default class SetDefaultLabo extends CCommand<LaboratorySchema> {
+export default class LaboratorySetDefaultLabo extends CCommand<LaboratorySchema> {
 
     constructor(helpDesc = "", helpParams = "") {
         super(new LaboratorySchema(), ECommand.LABO_SET_DEFAULT, helpDesc, helpParams);
