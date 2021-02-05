@@ -7,16 +7,18 @@ import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
 import DiscordBot, { EEmbedMsgColors } from "init/bot";
 
+import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
+import LaboratoryAddLabo from "./laboratory/addLabo";
+import LaboratoryDelLabo from "./laboratory/delLabo";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
-import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
-import LaboratoryAddLabo from "./laboratory/addLabo";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
     new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Lien"),
+    new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**, Raison"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
