@@ -29,7 +29,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new LaboratoryDelLaboStock("Supprime un entrepôt d'un laboratoire", "**Nom du laboratoire**, **Nom de l'entrepôt**"),
 
     new ProductionAddProd("Ajoute une production", "**Quantité**, Laboratoire, Description"),
-    new ProductionDelProd("Supprimer une production", "Laboratoire, Raison"),
+    new ProductionDelProd("Supprime toute les productions d'un laboratoire", "Laboratoire, Raison"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
