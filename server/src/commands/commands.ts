@@ -19,6 +19,7 @@ import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
+import ProductionInfoProd from "./production/infoProd";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -30,6 +31,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
 
     new ProductionAddProd("Ajoute une production", "**Quantité**, Laboratoire, Description"),
     new ProductionDelProd("Supprime toute les productions d'un laboratoire", "Laboratoire, Raison"),
+    new ProductionInfoProd("Affiche la liste des productions en cours", "Nom du laboratoire"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
@@ -47,7 +49,6 @@ export enum ECommand {
 
     PROD_ADD = 'addProd',
     PROD_DEL = 'delProd',
-    PROD_SET = 'setProd',
     PROD_INFO = 'infoProd',
 
     STOCK_ADD_LOC = 'addStockLoc',
