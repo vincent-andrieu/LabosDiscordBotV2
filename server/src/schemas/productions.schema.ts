@@ -32,7 +32,7 @@ function autoPopulate(this: any, next: any) {
 
 export class ProductionSchema {
     private _model = mongoose.model('laboratories', prodSchema);
-    private _finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
+    private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
 
     public add(prod: CProductions): Promise<Promise<void>> {
         return new Promise<Promise<void>>((resolve, reject) => {
@@ -107,7 +107,7 @@ export class ProductionSchema {
                             prod.server.defaultChannel?.send(prod.server.roleTag);
                         }
                         prodMsg.react(GlobalConfig.productions.getProdEmoji).then((messageReaction) =>
-                            this._finishProdReactions.push({ msgId: messageReaction.message.id, prod: readyProd })
+                            ProductionSchema.finishProdReactions.push({ msgId: messageReaction.message.id, prod: readyProd })
                         )
                             .catch((err) => reject(err))
                             .finally(() => resolve());
@@ -257,18 +257,18 @@ export class ProductionSchema {
 
     private getFinishProd(prodId: string | CProductions): CProductions | undefined {
         if (typeof prodId === 'string') {
-            const prodIndex = this._finishProdReactions.findIndex((prodElem) => prodElem.msgId === prodId);
+            const prodIndex = ProductionSchema.finishProdReactions.findIndex((prodElem) => prodElem.msgId === prodId);
 
             if (prodIndex < 0) {
                 return undefined;
             }
-            this._finishProdReactions.splice(prodIndex, 1);
-            return this._finishProdReactions[prodIndex].prod;
+            ProductionSchema.finishProdReactions.splice(prodIndex, 1);
+            return ProductionSchema.finishProdReactions[prodIndex].prod;
         } else {
-            const prodIndex = this._finishProdReactions.findIndex((prodElem) => prodElem.prod._id === prodId._id);
+            const prodIndex = ProductionSchema.finishProdReactions.findIndex((prodElem) => prodElem.prod._id === prodId._id);
 
             if (prodIndex >= 0) {
-                this._finishProdReactions.splice(prodIndex, 1);
+                ProductionSchema.finishProdReactions.splice(prodIndex, 1);
             }
             return prodId;
         }
