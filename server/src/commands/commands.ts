@@ -10,6 +10,7 @@ import DiscordBot, { EEmbedMsgColors } from "init/bot";
 import SetDefaultChannel from "./server/setDefaultChannel";
 import SetUrl from "./server/setUrl";
 import SetReminder from "./server/setReminder";
+import SetRoleTag from "./server/setRoleTag";
 
 class LaboratoryCmds {}
 
@@ -21,6 +22,7 @@ class ServerCmds {
     public static SetDefaultChannel = new SetDefaultChannel("Modifier le channel par défaut");
     public static SetUrl = new SetUrl("Modifier l'URL du site", "**URL**");
     public static SetReminder = new SetReminder("Modifier le rappel d'une production", "**Minutes**");
+    public static SetRoleTag = new SetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**");
 }
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
