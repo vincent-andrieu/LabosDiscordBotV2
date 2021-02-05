@@ -23,7 +23,7 @@ export default class SetReminder extends CCommand<ServerSchema> {
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setReminder(server, reminder)
-                .then((result) => resolve(result))
+                .then(() => resolve())
                 .catch((err) => reject(err));
         });
     }

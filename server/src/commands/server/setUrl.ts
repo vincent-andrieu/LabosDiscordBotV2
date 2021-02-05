@@ -23,7 +23,7 @@ export default class SetUrl extends CCommand<ServerSchema> {
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setUrl(server, url)
-                .then((result) => resolve(result))
+                .then(() => resolve())
                 .catch((err) => reject(err));
         });
     }

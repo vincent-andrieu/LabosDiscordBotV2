@@ -23,7 +23,7 @@ export default class SetRoleTag extends CCommand<ServerSchema> {
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setRoleTag(server, roleTag)
-                .then((result) => resolve(result))
+                .then(() => resolve())
                 .catch((err) => reject(err));
         });
     }
