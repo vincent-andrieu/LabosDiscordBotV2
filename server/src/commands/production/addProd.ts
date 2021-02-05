@@ -8,7 +8,7 @@ import { CLaboratory } from "@global/interfaces/laboratory.interface";
 export default class ProductionAddProd extends CCommand<ProductionSchema> {
 
     constructor(helpDesc = "", helpParams = "") {
-        super(new ProductionSchema(), ECommand.LABO_ADD, helpDesc, helpParams);
+        super(new ProductionSchema(), ECommand.PROD_ADD, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, labo: CLaboratory): CProductions | undefined {
