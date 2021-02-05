@@ -5,8 +5,8 @@ import { EDrugsList } from "./drug-stuff.interface";
 export interface ILaboratory extends IServerModel {
     name: string;
     drug: EDrugsList;
-    quantity: number;
-    stocks: Array<IStock>;
+    quantity?: number;
+    stocks?: Array<IStock>;
     screen?: string;
 }
 
@@ -22,11 +22,11 @@ export class CLaboratory extends CServerModel implements ILaboratory {
 
         this.name = labo.name || "";
         this.drug = labo.drug;
-        this.quantity = labo.quantity;
+        this.quantity = labo.quantity || 0;
         this.stocks = [];
         if (labo.stocks) {
             labo.stocks.forEach((stock, index) => this.stocks[index] = new CStock(stock));
         }
-        this.screen = labo.screen;
+        this.screen = labo.screen || "";
     }
 }
