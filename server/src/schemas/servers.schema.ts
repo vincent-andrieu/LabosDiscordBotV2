@@ -73,27 +73,6 @@ export class ServerSchema {
         });
     }
 
-    /**
-     * Set default labo without checking if it exist
-     * @param  {CLaboratory} labo
-     * @returns Promise
-     */
-    public forceSetDefaultLabo(labo: CLaboratory): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
-            if (!labo.server._id) {
-                return reject("No server id");
-            }
-
-            this.getById(labo.server._id).then((server: CServer) => {
-                server.defaultLabo = labo._id as unknown as CLaboratory;
-                this.edit(server)
-                    .then((result) => resolve(result))
-                    .catch((err) => reject(err));
-            });
-
-        });
-    }
-
     public getById(id: ObjectId): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             this._model.findById(id)
@@ -126,6 +105,32 @@ export class ServerSchema {
                 .catch((err) => reject(err));
 
         });
+    }
+
+    /**
+     * Set default labo without checking if it exist
+     * @param  {CLaboratory} labo
+     * @returns Promise
+     */
+    public forceSetDefaultLabo(labo: CLaboratory): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            if (!labo.server._id) {
+                return reject("No server id");
+            }
+
+            this.getById(labo.server._id).then((server: CServer) => {
+                server.defaultLabo = labo._id as unknown as CLaboratory;
+                this.edit(server)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err));
+            });
+
+        });
+    }
+
+    public setDefaultChannel(server: CServer, textChannel: TextChannel): Promise<void> {
+        server.defaultChannel = textChannel;
+        return this.edit(server);
     }
 
     public setUrl(server: CServer, url: string): Promise<void> {
