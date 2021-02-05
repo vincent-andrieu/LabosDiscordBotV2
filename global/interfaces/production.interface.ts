@@ -5,14 +5,14 @@ import { IStock } from "./stock.interface";
 export interface IProductions extends IServerModel {
     labo: ILaboratory;
     quantity: number;
-    finishDate: Date;
+    finishDate?: Date;
     description?: string;
 }
 
 export class CProductions extends CServerModel implements IProductions {
     labo: CLaboratory;
     quantity: number;
-    finishDate: Date;
+    finishDate?: Date;
     description?: string;
 
     constructor(prod: IProductions) {
