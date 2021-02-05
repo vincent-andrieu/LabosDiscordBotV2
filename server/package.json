@@ -17,7 +17,8 @@
     "license": "ISC",
     "_moduleAliases": {
         "@global": "build/global",
-        "@schemas": "build/server/src/schemas"
+        "@schemas": "build/server/src/schemas",
+        "@commands": "build/server/src/commands"
     },
     "dependencies": {
         "@types/node": "^14.14.22",
