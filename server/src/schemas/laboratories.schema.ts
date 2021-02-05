@@ -25,7 +25,7 @@ const laboSchema = new mongoose.Schema({
     .pre('find', autoPopulate);
 
 laboSchema.virtual('quantity').get(function(this: ILaboratory) {
-    const drugStock = this.stocks.find((stock) => stock.drug === this.drug);
+    const drugStock = this.stocks?.find((stock) => stock.drug === this.drug);
     return drugStock?.quantity || 0;
 });
 
