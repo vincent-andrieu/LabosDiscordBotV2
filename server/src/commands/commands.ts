@@ -11,8 +11,11 @@ import SetDefaultChannel from "./server/setDefaultChannel";
 import SetUrl from "./server/setUrl";
 import SetReminder from "./server/setReminder";
 import SetRoleTag from "./server/setRoleTag";
+import SetDefaultLabo from "./laboratory/setDefaultLabo";
 
-class LaboratoryCmds {}
+class LaboratoryCmds {
+    public static SetDefaultLabo = new SetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**");
+}
 
 class ProductionCmds {}
 
@@ -26,7 +29,12 @@ class ServerCmds {
 }
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
-    ServerCmds.SetDefaultChannel
+    LaboratoryCmds.SetDefaultLabo,
+
+    ServerCmds.SetDefaultChannel,
+    ServerCmds.SetUrl,
+    ServerCmds.SetReminder,
+    ServerCmds.SetRoleTag
 ];
 
 export enum ECommand {
