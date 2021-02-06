@@ -59,7 +59,7 @@ export default class DiscordBot {
         return embedMessage;
     }
 
-    public static putError(server: CServer, msg: string): Promise<Message> | undefined {
-        return server.defaultChannel?.send("```diff\nErreur : " + msg + "\n```");
+    public static putError(channel: TextChannel, msg: string): Promise<Message> {
+        return channel.send("```diff\nErreur : " + msg + "\n```");
     }
 }
