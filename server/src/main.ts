@@ -4,14 +4,14 @@ import 'module-alias/register';
 
 import { EXIT_ERROR } from "@global/utils";
 import { ObjectId } from "@global/interfaces/database.interface";
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { ServerSchema } from "@schemas/servers.schema";
-import DiscordBot from "./init/bot";
-import DataBase from "./init/database";
-import { GlobalConfig } from "@global/config";
 import { CommandsList } from "@commands/commands";
 import { help } from "@commands/help/help";
+import DiscordBot from "./init/bot";
+import DataBase from "./init/database";
+import { serverConfig } from "./server.config";
 
 const discordBot = new DiscordBot();
 const database = new DataBase();
@@ -33,7 +33,7 @@ console.info("PID : " + pid);
 function startBot(client: Client) {
 
     client.on('message', (message: Message) => {
-        if (message.author.id === client.user?.id || !message.content.startsWith(GlobalConfig.commands.prefix)) {
+        if (message.author.id === client.user?.id || !message.content.startsWith(serverConfig.commands.prefix)) {
             return;
         }
         const serverId = message.guild?.id;

@@ -46,6 +46,9 @@
             "@global/*": [
                 "../../global/*"
             ],
+            "@interfaces/*": [
+                "interfaces/*"
+            ],
             "@schemas/*": [
                 "schemas/*"
             ],

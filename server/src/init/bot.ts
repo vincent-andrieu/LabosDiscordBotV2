@@ -1,7 +1,7 @@
 import { Client, Guild, Message, MessageEmbed, TextChannel } from "discord.js";
 import { readFileSync } from "fs";
 
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
 
 export enum EEmbedMsgColors {
     ADD = '#00ff00',

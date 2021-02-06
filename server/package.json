@@ -17,6 +17,7 @@
     "license": "ISC",
     "_moduleAliases": {
         "@global": "build/global",
+        "@interfaces": "build/server/src/interfaces",
         "@schemas": "build/server/src/schemas",
         "@commands": "build/server/src/commands"
     },

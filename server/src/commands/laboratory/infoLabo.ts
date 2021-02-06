@@ -1,8 +1,8 @@
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
-import { CCommand, ECommand } from "@commands/commands";
-import { CLaboratory } from "@global/interfaces/laboratory.interface";
-import DiscordBot, { EEmbedMsgColors } from "init/bot";
+import { CCommand, ECommand } from "@interfaces/command.class";
+import { CLaboratory } from "@interfaces/laboratory.class";
+import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
 export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
 

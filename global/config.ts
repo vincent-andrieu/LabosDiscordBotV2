@@ -1,9 +1,6 @@
 import { EDrugsList, EStuffList } from "./interfaces/drug-stuff.interface";
 
 export const GlobalConfig = {
-    commands: {
-        prefix: "!"
-    },
     productions: {
         getProdEmoji: '✅',
         timeoutMinutes: 60,

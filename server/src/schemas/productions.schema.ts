@@ -2,14 +2,15 @@ import mongoose = require('mongoose');
 import moment from 'moment';
 
 import { GlobalConfig } from '@global/config';
-import { CProductions, IProdFinish, IProductions } from '@global/interfaces/production.interface';
-import { CServer } from '@global/interfaces/server.interface';
-import { CLaboratory } from '@global/interfaces/laboratory.interface';
 import { ObjectId } from '@global/interfaces/database.interface';
+import { IProdFinish, IProductions } from '@global/interfaces/production.interface';
+import { CServer } from '@interfaces/server.class';
+import { CLaboratory } from '@interfaces/laboratory.class';
+import { CProductions } from "@interfaces/production.class";
+import { CStock } from '@interfaces/stock.class';
 import { LaboratorySchema } from './laboratories.schema';
-import DiscordBot, { EEmbedMsgColors } from 'init/bot';
+import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import { StockSchema } from './stocks.schema';
-import { CStock } from '@global/interfaces/stock.interface';
 
 const prodSchema = new mongoose.Schema({
     server: { type: ObjectId, ref: 'servers' },
@@ -31,7 +32,7 @@ function autoPopulate(this: any, next: any) {
 }
 
 export class ProductionSchema {
-    private _model = mongoose.model('laboratories', prodSchema);
+    private _model = mongoose.model('productions', prodSchema);
     private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
 
     public add(prod: CProductions): Promise<Promise<void>> {

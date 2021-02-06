@@ -1,9 +1,10 @@
 import mongoose = require('mongoose');
 
 import { ObjectId } from "@global/interfaces/database.interface";
-import { CLaboratory, ILaboratory } from "@global/interfaces/laboratory.interface";
-import { CServer } from '@global/interfaces/server.interface';
-import { CStock } from '@global/interfaces/stock.interface';
+import { ILaboratory } from "@global/interfaces/laboratory.interface";
+import { CServer } from '@interfaces/server.class';
+import { CLaboratory } from "@interfaces/laboratory.class";
+import { CStock } from '@interfaces/stock.class';
 import { GlobalConfig } from '@global/config';
 import { getDrugError, isADrug } from '@global/utils';
 import { ServerSchema } from './servers.schema';

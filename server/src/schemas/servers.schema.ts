@@ -1,9 +1,10 @@
 import mongoose = require('mongoose');
-import { Channel, Guild, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 
 import { ObjectId } from "@global/interfaces/database.interface";
-import { CServer, IServer } from '@global/interfaces/server.interface';
-import { CLaboratory } from '@global/interfaces/laboratory.interface';
+import { IServer } from '@global/interfaces/server.interface';
+import { CServer } from "@interfaces/server.class";
+import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
 
 const serverSchema = new mongoose.Schema({
@@ -27,7 +28,7 @@ function autoPopulate(this: any, next: any) {
 }
 
 export class ServerSchema {
-    private _model = mongoose.model('laboratories', serverSchema);
+    private _model = mongoose.model('servers', serverSchema);
 
     /**
      * Auto convert defaultLabo & defaultChannel to their id

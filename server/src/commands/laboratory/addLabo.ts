@@ -1,8 +1,8 @@
-import { CServer } from "@global/interfaces/server.interface";
-import { CLaboratory } from "@global/interfaces/laboratory.interface";
+import { CServer } from "@interfaces/server.class";
+import { CLaboratory } from "@interfaces/laboratory.class";
 import { EDrugsList } from "@global/interfaces/drug-stuff.interface";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
-import { CCommand, ECommand } from "@commands/commands";
+import { CCommand, ECommand } from "@interfaces/command.class";
 
 export default class LaboratoryAddLabo extends CCommand<LaboratorySchema> {
 

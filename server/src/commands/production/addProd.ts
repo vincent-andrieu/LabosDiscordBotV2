@@ -1,9 +1,9 @@
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
+import { CLaboratory } from "@interfaces/laboratory.class";
+import { CProductions } from "@interfaces/production.class";
 import { ProductionSchema } from "@schemas/productions.schema";
-import { CCommand, ECommand } from "@commands/commands";
-import { CProductions } from "@global/interfaces/production.interface";
+import { CCommand, ECommand } from "@interfaces/command.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
-import { CLaboratory } from "@global/interfaces/laboratory.interface";
 
 export default class ProductionAddProd extends CCommand<ProductionSchema> {
 

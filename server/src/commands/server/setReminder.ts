@@ -1,6 +1,6 @@
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
+import { CCommand, ECommand } from "@interfaces/command.class";
 import { ServerSchema } from "@schemas/servers.schema";
-import { CCommand, ECommand } from "@commands/commands";
 
 export default class ServerSetReminder extends CCommand<ServerSchema> {
 

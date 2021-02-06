@@ -1,8 +1,8 @@
-import { CServer } from "@global/interfaces/server.interface";
-import { CProductions } from "@global/interfaces/production.interface";
+import { CServer } from "@interfaces/server.class";
+import { CProductions } from "@interfaces/production.class";
 import { ProductionSchema } from "@schemas/productions.schema";
-import { CCommand, ECommand } from "@commands/commands";
-import DiscordBot, { EEmbedMsgColors } from "init/bot";
+import { CCommand, ECommand } from "@interfaces/command.class";
+import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
 export default class ProductionInfoProd extends CCommand<ProductionSchema> {
 

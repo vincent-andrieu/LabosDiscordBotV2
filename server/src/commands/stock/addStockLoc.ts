@@ -1,9 +1,9 @@
-import { CServer } from "@global/interfaces/server.interface";
-import { CStock } from "@global/interfaces/stock.interface";
+import { CServer } from "@interfaces/server.class";
+import { CStock } from "@interfaces/stock.class";
 import { EDrugsList, EStuffList } from "@global/interfaces/drug-stuff.interface";
 import { isADrugOrStuff } from "@global/utils";
 import { StockSchema } from "@schemas/stocks.schema";
-import { CCommand, ECommand } from "@commands/commands";
+import { CCommand, ECommand } from "@interfaces/command.class";
 
 export default class StockAddStockLoc extends CCommand<StockSchema> {
 

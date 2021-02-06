@@ -1,11 +1,12 @@
 import mongoose = require('mongoose');
 
-import { CStock, IStock } from '@global/interfaces/stock.interface';
-import { CServer } from '@global/interfaces/server.interface';
+import { IStock } from '@global/interfaces/stock.interface';
+import { CServer } from '@interfaces/server.class';
+import { CLaboratory } from '@interfaces/laboratory.class';
+import { CStock } from "@interfaces/stock.class";
 import { getDrugError, isADrugOrStuff } from '@global/utils';
 import { ObjectId } from '@global/interfaces/database.interface';
 import { GlobalConfig } from '@global/config';
-import { CLaboratory } from '@global/interfaces/laboratory.interface';
 
 const stockSchema = new mongoose.Schema({
     server: { type: ObjectId, ref: 'servers' },
@@ -26,7 +27,7 @@ function autoPopulate(this: any, next: any) {
 }
 
 export class StockSchema {
-    private _model = mongoose.model('laboratories', stockSchema);
+    private _model = mongoose.model('stocks', stockSchema);
 
     public add(stock: CStock): Promise<void> {
         return new Promise<void>((resolve, reject) => {

@@ -1,8 +1,8 @@
-import { CServer } from "@global/interfaces/server.interface";
+import { CServer } from "@interfaces/server.class";
+import { CStock } from "@interfaces/stock.class";
 import { StockSchema } from "@schemas/stocks.schema";
-import { CCommand, ECommand } from "@commands/commands";
-import DiscordBot, { EEmbedMsgColors } from "init/bot";
-import { CStock } from "@global/interfaces/stock.interface";
+import { CCommand, ECommand } from "@interfaces/command.class";
+import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
 export default class StockInfoStock extends CCommand<StockSchema> {
 
