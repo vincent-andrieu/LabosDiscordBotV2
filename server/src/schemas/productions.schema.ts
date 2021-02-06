@@ -387,12 +387,12 @@ export class ProductionSchema {
                     if (result && result[0]._id && result[0].server && result[0].quantity && result[0].labo && result[0].stock) {
                         const prodFinish = result[0];
 
-                        new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity).then(() =>
+                        new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity || 0).then(() =>
 
                             this.deleteById(new CProductions(prodFinish))
                                 .then(() => {
                                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée")
-                                        .setDescription("**" + prodFinish.stock.name + "** : **" + prodFinish.stock.quantity.toString() + " kg** de " + prodFinish.stock.drug + ".");
+                                        .setDescription("**" + prodFinish.stock.name + "** : **" + (prodFinish.stock.quantity || 0).toString() + " kg** de " + prodFinish.stock.drug + ".");
                                     if (prodFinish.stock.screen) {
                                         embedMessage.setThumbnail(prodFinish.stock.screen);
                                     }
