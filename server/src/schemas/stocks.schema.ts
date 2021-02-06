@@ -171,6 +171,18 @@ export class StockSchema {
         });
     }
 
+    public addStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+        return new Promise<void>((resolve, reject) =>
+            this.findOneByName(server, name, true)
+                .then((stock: CStock) =>
+                    this.addStockQty(stock, quantity)
+                        .then(() => resolve())
+                        .catch((err) => reject(err))
+                )
+                .catch((err) => reject(err))
+        );
+    }
+
     public removeStockQty(stock: CStock, quantity: number): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
@@ -182,6 +194,18 @@ export class StockSchema {
         });
     }
 
+    public removeStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+        return new Promise<void>((resolve, reject) =>
+            this.findOneByName(server, name, true)
+                .then((stock: CStock) =>
+                    this.removeStockQty(stock, quantity)
+                        .then(() => resolve())
+                        .catch((err) => reject(err))
+                )
+                .catch((err) => reject(err))
+        );
+    }
+
     public setStockQty(stock: CStock, quantity: number): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
@@ -190,6 +214,18 @@ export class StockSchema {
                 .catch((err) => reject(err));
 
         });
+    }
+
+    public setStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+        return new Promise<void>((resolve, reject) =>
+            this.findOneByName(server, name, true)
+                .then((stock: CStock) =>
+                    this.setStockQty(stock, quantity)
+                        .then(() => resolve())
+                        .catch((err) => reject(err))
+                )
+                .catch((err) => reject(err))
+        );
     }
 
     public removeProdStock(labo: CLaboratory, prodQty: number): Promise<Array<void>> {
