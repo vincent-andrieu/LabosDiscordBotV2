@@ -1,3 +1,5 @@
+import { MessageEmbed } from "discord.js";
+
 import { EDrugsList, EStuffList } from "./drug-stuff.interface";
 import { CServerModel, IServerModel } from "./server.interface";
 
@@ -21,5 +23,12 @@ export class CStock extends CServerModel implements IStock {
         this.drug = stock.drug;
         this.quantity = stock.quantity || 0;
         this.screen = stock.screen;
+    }
+
+    public getInfo(embedMessage?: MessageEmbed): string {
+        if (embedMessage) {
+            embedMessage.addField(this.name, "**" + this.quantity.toString() + " kg** de " + this.drug, true);
+        }
+        return this.name.concat(" (**" + this.quantity.toString() + " kg** de " + this.drug + ")\n");
     }
 }

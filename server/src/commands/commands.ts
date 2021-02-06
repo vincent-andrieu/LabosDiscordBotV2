@@ -25,6 +25,7 @@ import StockDelStockLoc from "./stock/delStockLoc";
 import StockAddStock from "./stock/addStock";
 import StockDelStock from "./stock/delStock";
 import StockSetStock from "./stock/setStock";
+import StockInfoStock from "./stock/infoStock";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -43,6 +44,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new StockAddStock("Ajoute de la marchandise dans un entrepôt", "**Nom**, **Quantité**"),
     new StockDelStock("Supprime de la marchandise dans un entrepôt", "**Nom**, **Quantité**"),
     new StockSetStock("Modifie la marchandise d'un entrepôt", "**Nom**, **Quantité**"),
+    new StockInfoStock("Affiche la liste des entrepôts", "Nom"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
