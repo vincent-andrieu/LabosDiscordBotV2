@@ -24,6 +24,7 @@ import ServerSetRoleTag from "./server/setRoleTag";
 import StockDelStockLoc from "./stock/delStockLoc";
 import StockAddStock from "./stock/addStock";
 import StockDelStock from "./stock/delStock";
+import StockSetStock from "./stock/setStock";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -40,7 +41,8 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new StockAddStockLoc("Ajoute un entrepôt", "**Nom**, **Drogue**, Lien"),
     new StockDelStockLoc("Supprime un entrepôt", "**Nom**"),
     new StockAddStock("Ajoute de la marchandise dans un entrepôt", "**Nom**, **Quantité**"),
-    new StockDelStock("Supprime de la marchandise dans un entrepôt", "**Nom**, **Quantité**, Raison"),
+    new StockDelStock("Supprime de la marchandise dans un entrepôt", "**Nom**, **Quantité**"),
+    new StockSetStock("Modifie la marchandise d'un entrepôt", "**Nom**, **Quantité**"),
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
