@@ -8,7 +8,7 @@ import { CCommand, ECommand } from "@commands/commands";
 export default class StockAddStockLoc extends CCommand<StockSchema> {
 
     constructor(helpDesc = "", helpParams = "") {
-        super(new StockSchema(), ECommand.STOCK_ADD, helpDesc, helpParams);
+        super(new StockSchema(), ECommand.STOCK_ADD_LOC, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, server: CServer): CStock | undefined {
