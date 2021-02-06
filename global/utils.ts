@@ -2,16 +2,16 @@ import { EDrugsList, EStuffList, EVDrugsList, EVStuffList } from "./interfaces/d
 
 export const EXIT_ERROR = 84;
 
-export function isADrug(drug: EDrugsList): boolean {
+export function isADrug(drug: string): boolean {
     return Object.values(EVDrugsList).includes(drug);
 }
 
-export function isAStuff(stuff: EStuffList): boolean {
+export function isAStuff(stuff: string): boolean {
     return Object.values(EVStuffList).includes(stuff);
 }
 
-export function isADrugOrStuff(drug: EDrugsList | EStuffList): boolean {
-    return isADrug(drug as EDrugsList) || isAStuff(drug as EStuffList);
+export function isADrugOrStuff(drug: string): boolean {
+    return isADrug(drug) || isAStuff(drug);
 }
 
 export function getDrugError(option: { drug?: boolean; stuff?: boolean }, drug?: string): string {
