@@ -8,7 +8,7 @@ import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
 
 const serverSchema = new mongoose.Schema({
-    name: { type: String, required: true },
+    _id: { type: String, required: true },
     url: { type: String, required: false },
     //activity: { type: String, required: true },
     defaultLabo: { type: ObjectId, ref: 'laboratories', required: false },
@@ -74,7 +74,7 @@ export class ServerSchema {
         });
     }
 
-    public getById(id: ObjectId): Promise<CServer> {
+    public getById(id: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             this._model.findById(id)
                 .then((result: IServer | undefined) => {
@@ -94,7 +94,7 @@ export class ServerSchema {
                 .then((server: IServer | undefined) => {
                     if (!server) {
                         this.add(new CServer({
-                            _id: new ObjectId(textChannel.guild.id),
+                            _id: textChannel.guild.id,
                             defaultChannel: textChannel
                         }))
                             .then((createdServer: CServer) => resolve(createdServer))
@@ -119,7 +119,7 @@ export class ServerSchema {
                 return reject("No server id");
             }
 
-            this.getById(labo.server._id).then((server: CServer) => {
+            this.getById(labo.server._id.toString()).then((server: CServer) => {
                 server.defaultLabo = labo._id as unknown as CLaboratory;
                 this.edit(server)
                     .then((result) => resolve(result))

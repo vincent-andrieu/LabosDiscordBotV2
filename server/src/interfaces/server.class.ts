@@ -5,7 +5,8 @@ import { IServer, IServerModel } from "@global/interfaces/server.interface";
 import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import DiscordBot from "../init/bot";
 
-export class CServer extends CModel implements IServer {
+export class CServer implements IServer {
+    _id: string;
     guild: Guild | undefined;
     url?: string;
     //activity: string;
@@ -15,8 +16,7 @@ export class CServer extends CModel implements IServer {
     roleTag?: string;
 
     constructor(server: IServer) {
-        super(server);
-
+        this._id = server._id;
         if (server._id) {
             this.guild = DiscordBot.getServerFromId(server._id.toString());
         }

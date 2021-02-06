@@ -36,13 +36,9 @@ function startBot(client: Client) {
         if (message.author.id === client.user?.id || !message.content.startsWith(serverConfig.commands.prefix)) {
             return;
         }
-        const serverId = message.guild?.id;
-        if (!serverId) {
-            message.reply("Undefined server").catch((err) => console.error(err));
-        }
 
         const msgElems: Array<string> = message.content.substr(1).split(" ");
-        new ServerSchema().getById(new ObjectId(serverId as string))
+        new ServerSchema().createOrGet(message.channel as TextChannel)
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
                     return help(server);
@@ -72,7 +68,7 @@ function startBot(client: Client) {
                 const serverId: string | undefined = messageReaction.message.guild?.id;
 
                 if (serverId) {
-                    new ServerSchema().getById(new ObjectId(serverId)).then((server: CServer) => {
+                    new ServerSchema().getById(serverId).then((server: CServer) => {
                         DiscordBot.putError(server.defaultChannel || messageReaction.message.channel as TextChannel, err).catch(() => console.error(err));
                     }).catch(() => console.error(err));
                 } else {
