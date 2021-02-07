@@ -37,7 +37,7 @@ export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
                     .then(() => resolve())
                     .catch((err) => reject(err));
             }
-            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (labos.length === 1 ? "le" : "les " + labos.length) + " laboratoire" + (labos.length === 1 ? "" : "s"));
+            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (labos.length === 1 ? "le" : "les " + labos.length) + " laboratoire" + (labos.length === 1 ? " " + labos[0].name : "s"));
             if (labos.length === 1 && labos[0].screen) {
                 embedMessage.setImage(labos[0].screen);
             }
