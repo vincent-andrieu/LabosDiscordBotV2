@@ -31,7 +31,16 @@ export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
 
     private sendLabosInfos(server: CServer, labos: Array<CLaboratory>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            if (labos.length == 0) {
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucun laboratoire n'a été créé");
+                return server.defaultChannel?.send(embedMessage)
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+            }
             const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (labos.length === 1 ? "le" : "les " + labos.length) + " laboratoire" + (labos.length === 1 ? "" : "s"));
+            if (labos.length === 1 && labos[0].screen) {
+                embedMessage.setImage(labos[0].screen);
+            }
             let infoMsg = "";
 
             labos.forEach((labo: CLaboratory) => infoMsg += labo.getInfo(embedMessage));

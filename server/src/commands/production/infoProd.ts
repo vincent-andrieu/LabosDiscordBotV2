@@ -31,6 +31,12 @@ export default class ProductionInfoProd extends CCommand<ProductionSchema> {
 
     private sendProdsInfos(server: CServer, prods: Array<CProductions>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            if (prods.length === 0) {
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucune production n'est en cours");
+                return server.defaultChannel?.send(embedMessage)
+                    .then(() => resolve())
+                    .catch((err) => reject(err));
+            }
             const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (prods.length === 1 ? "la" : "les " + prods.length) + " production" + (prods.length === 1 ? "" : "s") + " en cours");
             let infoMsg = "";
 
