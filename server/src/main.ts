@@ -40,10 +40,13 @@ function startBot(client: Client) {
         new ServerSchema().createOrGet(message.channel as TextChannel)
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
+                    message.delete();
                     return help(server);
                 }
                 const cmdFunc = CommandsList.find((cmd) => cmd.name === msgElems[0]);
                 if (cmdFunc) {
+                    message.delete();
+                    msgElems.splice(0, 1);
                     cmdFunc.doAction(server, msgElems, message.channel as TextChannel).catch((err) => {
                         if (typeof err === 'string') {
                             DiscordBot.putError(server.defaultChannel || message.channel as TextChannel, err)
