@@ -9,7 +9,7 @@ import { ServerSchema } from "@schemas/servers.schema";
 import { CommandsList } from "@commands/commands";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
-export function help(server: CServer, command?: CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>): Promise<Message> | undefined {
+export function help(server: CServer, command?: CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>): Promise<Message | undefined> | undefined {
     if (command) {
         return command.sendHelp(server);
     }

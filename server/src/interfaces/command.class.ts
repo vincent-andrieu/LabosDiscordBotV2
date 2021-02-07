@@ -52,10 +52,13 @@ export abstract class CCommand<T> {
         return this._help.description.concat(" *(", this._help.params, ")*");
     }
 
-    public sendHelp(server: CServer): Promise<Message> | undefined {
+    public sendHelp(server: CServer): Promise<Message | undefined> | undefined {
         const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP);
+        const strMsg = this.getHelp(embedMessage);
 
-        return server.defaultChannel?.send(this.getHelp(embedMessage));
+        return server.defaultChannel?.send(embedMessage).catch(() =>
+            server.defaultChannel?.send(strMsg)
+        );
     }
 
 }
