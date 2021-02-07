@@ -9,22 +9,25 @@ export default class LaboratoryDelLabo extends CCommand<LaboratorySchema> {
         super(new LaboratorySchema(), ECommand.LABO_DEL, helpDesc, helpParams);
     }
 
-    private getParamsTemplate(params: Array<string>): string | undefined {
+    private getParamsTemplate(params: Array<string>): { laboName: string, reason?: string } | undefined {
         if (params.length < 1) {
             return undefined;
         }
-        return params[0];
+        return {
+            laboName: params[0],
+            reason: params[1]
+        };
     }
 
     public doAction(server: CServer, params: Array<string>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const name: string | undefined = this.getParamsTemplate(params);
+            const values: { laboName: string, reason?: string } | undefined = this.getParamsTemplate(params);
 
-            if (!name) {
+            if (!values) {
                 help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
-            this._schema.deleteByName(server, name)
+            this._schema.deleteByName(server, values.laboName, values.reason)
                 .then(() => resolve())
                 .catch((err) => reject(err));
         });

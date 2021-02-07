@@ -216,6 +216,16 @@ export class ProductionSchema {
                     if (res.deletedCount <= 0) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "La production du laboratoire **" + prod.labo.name + "** a été supprimée");
+                    if (prod.labo.screen) {
+                        embedMessage.setImage(prod.labo.screen);
+                    }
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    prod.server.defaultChannel?.send(embedMessage);
+
                     resolve();
                 })
                 .catch((err) => reject(err));
@@ -234,9 +244,24 @@ export class ProductionSchema {
 
             this._model.deleteMany({ server: laboProd.server._id, labo: (laboProd as CProductions).labo?._id || laboProd._id })
                 .then((res) => {
+                    const laboProdName = ((laboProd as CLaboratory).name || (laboProd as CProductions).labo.name);
                     if (res.deletedCount <= 0) {
-                        return reject("Aucune production n'est en cours dans le laboratoire " + (laboProd as CProductions).labo?.name || (laboProd as CLaboratory).name);
+                        return reject("Aucune production n'est en cours dans le laboratoire " + laboProdName);
                     }
+
+                    const embedMsgTitle = res.deletedCount > 1
+                        ? res.deletedCount.toString() + " productions ont été supprimées du laboratoire **" + laboProdName
+                        : "La production du laboratoire " + laboProdName + " a été supprimée";
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(laboProd.server, EEmbedMsgColors.DEL, embedMsgTitle);
+                    const laboProdScreen = (laboProd as CLaboratory).screen || (laboProd as CProductions).labo.screen;
+                    if (laboProdScreen) {
+                        embedMessage.setImage(laboProdScreen);
+                    }
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    laboProd.server.defaultChannel?.send(embedMessage);
+
                     resolve();
                 })
                 .catch((err) => reject(err));
