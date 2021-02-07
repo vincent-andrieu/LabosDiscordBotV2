@@ -9,26 +9,27 @@ export default class StockSetStock extends CCommand<StockSchema> {
         super(new StockSchema(), ECommand.STOCK_SET, helpDesc, helpParams);
     }
 
-    private getParamsTemplate(params: Array<string>): { name: string, quantity: number } | undefined {
+    private getParamsTemplate(params: Array<string>): { name: string, quantity: number, reason?: string } | undefined {
         const nbrQty = Number(params[1]);
-        if (params.length < 1 || !nbrQty) {
+        if (params.length < 2 || !nbrQty) {
             return undefined;
         }
         return {
             name: params[0],
-            quantity: nbrQty
+            quantity: nbrQty,
+            reason: params[2]
         };
     }
 
     public doAction(server: CServer, params: Array<string>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const paramsValues: { name: string, quantity: number } | undefined = this.getParamsTemplate(params);
+            const paramsValues: { name: string, quantity: number, reason?: string } | undefined = this.getParamsTemplate(params);
 
             if (!paramsValues) {
                 help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
-            this._schema.setStockQtyByName(server, paramsValues.name, paramsValues.quantity)
+            this._schema.setStockQtyByName(server, paramsValues.name, paramsValues.quantity, paramsValues.reason)
                 .then(() => resolve())
                 .catch((err) => reject(err));
         });
