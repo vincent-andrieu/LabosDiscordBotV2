@@ -258,7 +258,16 @@ export class LaboratorySchema {
                     }
 
                     this._model.findByIdAndUpdate(crtLabo._id, { $push: { stocks: crtStock._id } })
-                        .then(() => resolve())
+                        .then(() => {
+                            const embedMessage = DiscordBot.getDefaultEmbedMsg(crtLabo.server, EEmbedMsgColors.ADD, "Entrepôt ajouté au laboratoire **" + crtLabo.name + "**")
+                                .setDescription("**" + crtStock.name + "** : " + crtStock.quantity.toString() + " kg de " + crtStock.drug);
+                            if (crtLabo.screen) {
+                                embedMessage.setThumbnail(crtLabo.screen);
+                            }
+                            crtLabo.server.defaultChannel?.send(embedMessage);
+
+                            resolve();
+                        })
                         .catch((err) => reject(err));
 
                 }).catch((err) => reject(err));
@@ -294,7 +303,16 @@ export class LaboratorySchema {
         return new Promise<void>((resolve, reject) => {
 
             this._model.findByIdAndUpdate(labo._id, { $pull: { stocks: stock._id } })
-                .then(() => resolve())
+                .then(() => {
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Entrepôt supprimé du laboratoire **" + labo.name + "**")
+                        .setDescription("**" + stock.name + "** : " + stock.quantity.toString() + " kg de " + stock.drug);
+                    if (labo.screen) {
+                        embedMessage.setThumbnail(labo.screen);
+                    }
+                    labo.server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
                 .catch((err) => reject(err));
 
         });
