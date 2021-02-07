@@ -43,7 +43,7 @@ function startBot(client: Client) {
                     message.delete();
                     return help(server);
                 }
-                const cmdFunc = CommandsList.find((cmd) => cmd.name === msgElems[0]);
+                const cmdFunc = CommandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
                 if (cmdFunc) {
                     message.delete();
                     msgElems.splice(0, 1);

@@ -10,7 +10,8 @@ export default class DataBase {
             mongoose.connect(uris, {
                 useNewUrlParser: true,
                 useCreateIndex: true,
-                useUnifiedTopology: true
+                useUnifiedTopology: true,
+                useFindAndModify: false
             }, (error) => {
                 if (error) {
                     reject(error);
