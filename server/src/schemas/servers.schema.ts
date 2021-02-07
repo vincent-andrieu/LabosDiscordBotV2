@@ -201,6 +201,7 @@ export class ServerSchema {
             server.reminder = reminder;
             this.edit(server)
                 .then(() => {
+                    server = new CServer(server);
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Changement du rappel");
                     const guildIcon = server.defaultChannel?.guild?.iconURL();
