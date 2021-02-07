@@ -11,7 +11,7 @@ import { ServerSchema } from './servers.schema';
 import { StockSchema } from './stocks.schema';
 
 const laboSchema = new mongoose.Schema({
-    server: { type: ObjectId, ref: 'servers', required: true },
+    server: { type: String, ref: 'servers', required: true },
     name: { type: String, required: true },
     drug: { type: String, required: true },
     stocks: [

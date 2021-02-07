@@ -1,15 +1,14 @@
 import mongoose = require('mongoose');
 
+import { GlobalConfig } from '@global/config';
+import { getDrugError, isADrugOrStuff } from '@global/utils';
 import { IStock } from '@global/interfaces/stock.interface';
 import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from "@interfaces/stock.class";
-import { getDrugError, isADrugOrStuff } from '@global/utils';
-import { ObjectId } from '@global/interfaces/database.interface';
-import { GlobalConfig } from '@global/config';
 
 const stockSchema = new mongoose.Schema({
-    server: { type: ObjectId, ref: 'servers' },
+    server: { type: String, ref: 'servers' },
     name: { type: String, required: true },
     drug: { type: String, required: true },
     quantity: { type: Number, required: false, default: 0 },

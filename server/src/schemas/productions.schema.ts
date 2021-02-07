@@ -2,7 +2,6 @@ import mongoose = require('mongoose');
 import moment from 'moment';
 
 import { GlobalConfig } from '@global/config';
-import { ObjectId } from '@global/interfaces/database.interface';
 import { IProdFinish, IProductions } from '@global/interfaces/production.interface';
 import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from '@interfaces/laboratory.class';
@@ -13,7 +12,7 @@ import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import { StockSchema } from './stocks.schema';
 
 const prodSchema = new mongoose.Schema({
-    server: { type: ObjectId, ref: 'servers' },
+    server: { type: String, ref: 'servers' },
     labo: { type: String, ref: 'laboratories' },
     quantity: { type: Number, required: false },
     finishDate: { type: Date, required: false, default: () => moment(moment.now()).add(GlobalConfig.productions.timeoutMinutes, 'minutes').toDate() },
