@@ -140,8 +140,28 @@ export class ServerSchema {
     }
 
     public setDefaultChannel(server: CServer, textChannel: TextChannel): Promise<void> {
-        server.defaultChannel = textChannel;
-        return this.edit(server);
+        return new Promise<void>((resolve, reject) => {
+
+            if (server.defaultChannel?.id !== textChannel.id) {
+                return reject(textChannel.name.toString() + " est déjà le channel par défaut");
+            }
+
+            server.defaultChannel = textChannel;
+            this.edit(server)
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau channel par défaut");
+                    const guildIcon = textChannel.guild.iconURL();
+                    if (guildIcon) {
+                        embedMessage.setThumbnail(guildIcon);
+                    }
+                    embedMessage.setDescription("**" + textChannel.name.toString() + "**");
+                    server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
+                .catch((err) => reject(err));
+        });
     }
 
     public setUrl(server: CServer, url: string): Promise<void> {
