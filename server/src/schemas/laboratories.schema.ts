@@ -169,29 +169,37 @@ export class LaboratorySchema {
         });
     }
 
-    public delete(labo: CLaboratory): Promise<number> {
+    public delete(labo: CLaboratory, reason?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: labo.server._id, _id: labo._id })
                 .then((res) => {
                     if (res.deletedCount <= 0) {
                         return reject("Le laboratoire " + labo.name + " n'existe pas");
                     }
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Laboratoire **" + labo.name + "** supprimé");
+                    if (labo.screen) {
+                        embedMessage.setImage(labo.screen);
+                    }
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    labo.server.defaultChannel?.send(embedMessage);
+
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
         });
     }
 
-    public deleteByName(server: CServer, name: string): Promise<number> {
+    public deleteByName(server: CServer, name: string, reason?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
-            this._model.deleteOne({ server: server._id, name: name })
-                .then((res) => {
-                    if (res.deletedCount <= 0) {
-                        return reject("Aucun laboratoire existe sous le nom " + name);
-                    }
-                    resolve(res.deletedCount);
-                })
-                .catch((err) => reject(err));
+            this.findOneByName(server, name).then((labo) => {
+                this.delete(labo, reason)
+                    .then((nbrDeleted) => resolve(nbrDeleted))
+                    .catch((err) => reject(err));
+
+            }).catch((err) => reject(err));
         });
     }
 
