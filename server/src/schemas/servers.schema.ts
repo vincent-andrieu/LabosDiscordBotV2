@@ -165,8 +165,28 @@ export class ServerSchema {
     }
 
     public setUrl(server: CServer, url: string): Promise<void> {
-        server.url = url;
-        return this.edit(server);
+        return new Promise<void>((resolve, reject) => {
+
+            if (server.url === url) {
+                return reject(url.toString() + " est déjà l'URL utilisé");
+            }
+
+            server.url = url;
+            this.edit(server)
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouvel URL");
+                    const guildIcon = server.defaultChannel?.guild?.iconURL();
+                    if (guildIcon) {
+                        embedMessage.setThumbnail(guildIcon);
+                    }
+                    embedMessage.setDescription("**" + url.toString() + "**");
+                    server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
+                .catch((err) => reject(err));
+        });
     }
 
     public setReminder(server: CServer, reminder: number): Promise<void> {
@@ -174,16 +194,50 @@ export class ServerSchema {
             if (reminder < 0 || reminder > GlobalConfig.productions.timeoutMinutes) {
                 return reject("Le rappel d'une production doit être comprit entre 0 (désactivé) et " + GlobalConfig.productions.timeoutMinutes.toString());
             }
+            if (server.reminder === reminder) {
+                return reject("Le rappel est déjà défini à " + reminder.toString());
+            }
 
             server.reminder = reminder;
             this.edit(server)
-                .then(() => resolve())
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Changement du rappel");
+                    const guildIcon = server.defaultChannel?.guild?.iconURL();
+                    if (guildIcon) {
+                        embedMessage.setThumbnail(guildIcon);
+                    }
+                    embedMessage.setDescription("**" + reminder.toString() + " minutes** avant la fin de la production");
+                    server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
                 .catch((err) => reject(err));
         });
     }
 
     public setRoleTag(server: CServer, roleTag: string): Promise<void> {
-        server.roleTag = roleTag;
-        return this.edit(server);
+        return new Promise<void>((resolve, reject) => {
+
+            if (server.roleTag === roleTag) {
+                return reject("Ce rôle est déjà défini");
+            }
+
+            server.roleTag = roleTag;
+            this.edit(server)
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle");
+                    const guildIcon = server.defaultChannel?.guild?.iconURL();
+                    if (guildIcon) {
+                        embedMessage.setThumbnail(guildIcon);
+                    }
+                    embedMessage.setDescription("**ID : " + roleTag.toString() + "**");
+                    server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
+                .catch((err) => reject(err));
+        });
     }
 }
