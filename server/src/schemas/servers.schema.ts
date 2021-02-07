@@ -100,7 +100,7 @@ export class ServerSchema {
                             .then((createdServer: CServer) => resolve(createdServer))
                             .catch((err) => reject(err));
                     } else {
-                        return new CServer(server);
+                        resolve(new CServer(server));
                     }
                 })
                 .catch((err) => reject(err));

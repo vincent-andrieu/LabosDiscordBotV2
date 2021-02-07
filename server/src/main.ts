@@ -3,7 +3,6 @@ import { exit, pid } from "process";
 import 'module-alias/register';
 
 import { EXIT_ERROR } from "@global/utils";
-import { ObjectId } from "@global/interfaces/database.interface";
 import { CServer } from "@interfaces/server.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { ServerSchema } from "@schemas/servers.schema";
