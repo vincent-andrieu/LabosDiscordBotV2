@@ -1,6 +1,7 @@
 import { CServer } from "@interfaces/server.class";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
+import { help } from "@commands/help/help";
 
 export default class LaboratorySetDefaultLabo extends CCommand<LaboratorySchema> {
 
@@ -20,6 +21,7 @@ export default class LaboratorySetDefaultLabo extends CCommand<LaboratorySchema>
             const name: string | undefined = this.getParamsTemplate(params);
 
             if (!name) {
+                help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setDefaultLaboByName(server, name)

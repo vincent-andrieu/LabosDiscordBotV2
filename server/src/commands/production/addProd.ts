@@ -4,6 +4,7 @@ import { CProductions } from "@interfaces/production.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
+import { help } from "@commands/help/help";
 
 export default class ProductionAddProd extends CCommand<ProductionSchema> {
 
@@ -28,6 +29,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
     public doAction(server: CServer, params: Array<string>): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (params.length < 1) {
+                help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
             this.getLabo(server, params[1])
@@ -35,6 +37,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
                     const prod: CProductions | undefined = this.getParamsTemplate(params, labo);
 
                     if (!prod) {
+                        help(server, this);
                         return reject("Paramètres de la commande invalide");
                     }
                     this._schema.add(prod)

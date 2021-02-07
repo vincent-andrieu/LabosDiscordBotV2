@@ -1,6 +1,7 @@
 import { CServer } from "@interfaces/server.class";
 import { StockSchema } from "@schemas/stocks.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
+import { help } from "@commands/help/help";
 
 export default class StockDelStockLoc extends CCommand<StockSchema> {
 
@@ -20,6 +21,7 @@ export default class StockDelStockLoc extends CCommand<StockSchema> {
             const name: string | undefined = this.getParamsTemplate(params);
 
             if (!name) {
+                help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.deleteByName(server, name)

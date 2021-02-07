@@ -33,7 +33,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new LaboratoryDelLaboStock("Supprime un entrepôt d'un laboratoire", "**Nom du laboratoire**, **Nom de l'entrepôt**"),
 
     new ProductionAddProd("Ajoute une production", "**Quantité**, Laboratoire, Description"),
-    new ProductionDelProd("Supprime toute les productions d'un laboratoire", "Laboratoire, Raison"),
+    new ProductionDelProd("Supprime toute les productions", "Laboratoire, Raison"),
     new ProductionInfoProd("Affiche la liste des productions en cours", "Nom du laboratoire"),
 
     new StockAddStockLoc("Ajoute un entrepôt", "**Nom**, **Drogue**, Lien"),

@@ -4,6 +4,7 @@ import { EDrugsList, EStuffList } from "@global/interfaces/drug-stuff.interface"
 import { isADrugOrStuff } from "@global/utils";
 import { StockSchema } from "@schemas/stocks.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
+import { help } from "@commands/help/help";
 
 export default class StockAddStockLoc extends CCommand<StockSchema> {
 
@@ -28,6 +29,7 @@ export default class StockAddStockLoc extends CCommand<StockSchema> {
             const stock: CStock | undefined = this.getParamsTemplate(params, server);
 
             if (!stock) {
+                help(server, this);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(stock)
