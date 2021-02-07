@@ -59,6 +59,6 @@ export default class DiscordBot {
     }
 
     public static putError(channel: TextChannel, msg: string): Promise<Message> {
-        return channel.send("```diff\nErreur : " + msg + "\n```");
+        return channel.send("```diff\n- Erreur : " + msg + "\n```");
     }
 }
