@@ -6,6 +6,7 @@ import { IServer } from '@global/interfaces/server.interface';
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
+import DiscordBot, { EEmbedMsgColors } from 'init/bot';
 
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
@@ -122,7 +123,16 @@ export class ServerSchema {
             this.getById(labo.server._id.toString()).then((server: CServer) => {
                 server.defaultLabo = labo._id as unknown as CLaboratory;
                 this.edit(server)
-                    .then((result) => resolve(result))
+                    .then(() => {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau laboratoire par défaut");
+                        if (labo.screen) {
+                            embedMessage.setThumbnail(labo.screen);
+                        }
+                        embedMessage.setDescription("**" + labo.name + "**");
+                        server.defaultChannel?.send(embedMessage);
+
+                        resolve();
+                    })
                     .catch((err) => reject(err));
             });
 
