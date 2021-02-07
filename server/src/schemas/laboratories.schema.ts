@@ -9,6 +9,7 @@ import { GlobalConfig } from '@global/config';
 import { getDrugError, isADrug } from '@global/utils';
 import { ServerSchema } from './servers.schema';
 import { StockSchema } from './stocks.schema';
+import DiscordBot, { EEmbedMsgColors } from 'init/bot';
 
 const laboSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
@@ -63,6 +64,13 @@ export class LaboratorySchema {
 
                 this._model.create(labo)
                     .then(() => {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté")
+                            .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
+                        if (labo.screen) {
+                            embedMessage.setImage(labo.screen);
+                        }
+                        labo.server.defaultChannel?.send(embedMessage);
+
                         resolve();
                     })
                     .catch((err) => reject(err));
