@@ -53,6 +53,13 @@ export class StockSchema {
 
                 this._model.create(stock)
                     .then(() => {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté")
+                            .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
+                        if (stock.screen) {
+                            embedMessage.setImage(stock.screen);
+                        }
+                        stock.server.defaultChannel?.send(embedMessage);
+
                         resolve();
                     })
                     .catch((err) => reject(err));
@@ -135,48 +142,73 @@ export class StockSchema {
         });
     }
 
-    public delete(stock: CStock): Promise<number> {
+    public delete(stock: CStock, reason?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: stock.server._id, _id: stock._id })
                 .then((res) => {
                     if (res.deletedCount <= 0) {
                         return reject("L'entrepôt " + stock.name + " n'existe pas");
                     }
-                    resolve(res.deletedCount);
-                })
-                .catch((err) => reject(err));
-        });
-    }
 
-    public deleteByName(server: CServer, name: string): Promise<number> {
-        return new Promise<number>((resolve, reject) => {
-            this._model.deleteOne({ server: server._id, name: name })
-                .then((res) => {
-                    if (res.deletedCount <= 0) {
-                        return reject("Aucun entrepôt existe sous le nom " + name);
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Entrepôt supprimé");
+                    if (reason) {
+                        embedMessage.setDescription(reason);
                     }
+                    embedMessage.addField("**" + stock.name + "**", stock.quantity.toString() + " kg de " + stock.drug);
+                    if (stock.screen) {
+                        embedMessage.setImage(stock.screen);
+                    }
+                    stock.server.defaultChannel?.send(embedMessage);
+
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
         });
     }
 
-    public addStockQty(stock: CStock, quantity: number): Promise<void> {
+    public deleteByName(server: CServer, name: string, reason?: string): Promise<number> {
+        return new Promise<number>((resolve, reject) => {
+            this.findOneByName(server, name).then((stock) => {
+                this.delete(stock, reason)
+                    .then((nbrDeleted) => resolve(nbrDeleted))
+                    .catch((err) => reject(err));
+            });
+        });
+    }
+
+    public addStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findByIdAndUpdate(stock._id, { $inc: { quantity: quantity } })
-                .then(() => resolve())
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Ajout du stock de l'entrepôt **" + stock.name + "**")
+                        .addFields(
+                            { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
+                            { name: "Ajouté", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
+                            { name: "Contient maintenant", value: "**" + (stock.quantity + quantity).toString() + " kg** de " + stock.drug, inline: true }
+                        );
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    if (stock.screen) {
+                        embedMessage.setThumbnail(stock.screen);
+                    }
+                    stock.server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public addStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+    public addStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.addStockQty(stock, quantity)
+                    this.addStockQty(stock, quantity, reason)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 )
@@ -184,22 +216,39 @@ export class StockSchema {
         );
     }
 
-    public removeStockQty(stock: CStock, quantity: number): Promise<void> {
+    public removeStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findOneAndUpdate({ _id: stock._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
-                .then(() => resolve())
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Suppression du stock de l'entrepôt **" + stock.name + "**")
+                        .addFields(
+                            { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
+                            { name: "Supprimé", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
+                            { name: "Contient maintenant", value: "**" + (stock.quantity - quantity).toString() + " kg** de " + stock.drug, inline: true }
+                        );
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    if (stock.screen) {
+                        embedMessage.setThumbnail(stock.screen);
+                    }
+                    stock.server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public removeStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+    public removeStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.removeStockQty(stock, quantity)
+                    this.removeStockQty(stock, quantity, reason)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 )
@@ -207,21 +256,37 @@ export class StockSchema {
         );
     }
 
-    public setStockQty(stock: CStock, quantity: number): Promise<void> {
+    public setStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             this._model.findByIdAndUpdate(stock._id, { quantity: quantity })
-                .then(() => resolve())
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.EDIT, "Modification du stock de l'entrepôt **" + stock.name + "**")
+                        .addFields(
+                            { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
+                            { name: "Modifié à", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true }
+                        );
+                    if (reason) {
+                        embedMessage.setDescription(reason);
+                    }
+                    if (stock.screen) {
+                        embedMessage.setThumbnail(stock.screen);
+                    }
+                    stock.server.defaultChannel?.send(embedMessage);
+
+                    resolve();
+                })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public setStockQtyByName(server: CServer, name: string, quantity: number): Promise<void> {
+    public setStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
         return new Promise<void>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.setStockQty(stock, quantity)
+                    this.setStockQty(stock, quantity, reason)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 )
