@@ -22,6 +22,9 @@ export default class ServerSetUrl extends CCommand<ServerSchema> {
             if (!url) {
                 return reject("Paramètres de la commande invalide");
             }
+            if (!url.startsWith("http") && !url.startsWith("https")) {
+                return reject("L'URL doit commencer par http ou https");
+            }
             this._schema.setUrl(server, url)
                 .then(() => resolve())
                 .catch((err) => reject(err));
