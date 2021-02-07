@@ -6,6 +6,7 @@ import { IStock } from '@global/interfaces/stock.interface';
 import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from "@interfaces/stock.class";
+import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 
 const stockSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },

@@ -6,7 +6,7 @@ import { IServer } from '@global/interfaces/server.interface';
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
-import DiscordBot, { EEmbedMsgColors } from 'init/bot';
+import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },

@@ -9,7 +9,7 @@ import { GlobalConfig } from '@global/config';
 import { getDrugError, isADrug } from '@global/utils';
 import { ServerSchema } from './servers.schema';
 import { StockSchema } from './stocks.schema';
-import DiscordBot, { EEmbedMsgColors } from 'init/bot';
+import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 
 const laboSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
