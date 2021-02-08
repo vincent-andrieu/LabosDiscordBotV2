@@ -37,7 +37,7 @@ export default class StockInfoStock extends CCommand<StockSchema> {
                     .then(() => resolve())
                     .catch((err) => reject(err));
             }
-            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (stocks.length === 1 ? "l'" : "les " + stocks.length) + "entrepôt" + (stocks.length === 1 ? " " + stocks[0].name : "s"));
+            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (stocks.length === 1 ? "l'" : "les " + stocks.length + " ") + "entrepôt" + (stocks.length === 1 ? " " + stocks[0].name : "s"));
             if (stocks.length === 1 && stocks[0].screen) {
                 embedMessage.setImage(stocks[0].screen);
             }
