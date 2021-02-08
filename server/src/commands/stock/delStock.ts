@@ -17,7 +17,7 @@ export default class StockDelStock extends CCommand<StockSchema> {
         return {
             name: params[0],
             quantity: nbrQty,
-            reason: params[2]
+            reason: this.concatLastParams(params, 2)
         };
     }
 

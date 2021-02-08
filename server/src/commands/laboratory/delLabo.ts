@@ -15,7 +15,7 @@ export default class LaboratoryDelLabo extends CCommand<LaboratorySchema> {
         }
         return {
             laboName: params[0],
-            reason: params[1]
+            reason: this.concatLastParams(params, 1)
         };
     }
 
