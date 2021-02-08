@@ -175,6 +175,11 @@ export class LaboratorySchema {
                         return reject("Le laboratoire " + labo.name + " n'existe pas");
                     }
 
+                    if (labo.server.defaultLabo?._id?.toString() === labo._id?.toString()) {
+                        new ServerSchema().deleteDefaultLabo(labo.server);
+                    }
+
+                    labo.server = new CServer(labo.server);
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Laboratoire **" + labo.name + "** supprimé");
                     if (labo.screen) {
                         embedMessage.setImage(labo.screen);

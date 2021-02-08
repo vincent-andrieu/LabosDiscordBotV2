@@ -6,6 +6,7 @@ import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
+import { resolve } from 'path';
 
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
@@ -131,6 +132,28 @@ export class ServerSchema {
                     })
                     .catch((err) => reject(err));
             });
+
+        });
+    }
+
+    public deleteDefaultLabo(server: CServer): Promise<void> {
+        return new Promise<void>((resovle, reject) => {
+
+            const labo = server.defaultLabo;
+            delete server.defaultLabo;
+            this.edit(server).then(() => {
+                server = new CServer(server);
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.DEL, "Laboratoire par défaut supprimé");
+                if (labo?.screen) {
+                    embedMessage.setThumbnail(labo?.screen);
+                }
+                if (labo?.name) {
+                    embedMessage.setDescription("**" + labo?.name + "**");
+                }
+                server.defaultChannel?.send(embedMessage);
+
+                resolve();
+            }).catch((err) => reject(err));
 
         });
     }
