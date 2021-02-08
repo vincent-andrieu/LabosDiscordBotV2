@@ -13,7 +13,7 @@ import { StockSchema } from './stocks.schema';
 
 const prodSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
-    labo: { type: String, ref: 'laboratories' },
+    labo: { type: mongoose.Schema.Types.ObjectId, ref: 'laboratories' },
     quantity: { type: Number, required: false },
     finishDate: { type: Date, required: false, default: () => moment(moment.now()).add(GlobalConfig.productions.timeoutMinutes, 'minutes').toDate() },
     description: { type: String, required: false}
@@ -26,7 +26,6 @@ const prodSchema = new mongoose.Schema({
 
 function autoPopulate(this: any, next: any) {
     this.populate('server');
-    this.populate('labo');
     next();
 }
 
@@ -56,7 +55,7 @@ export class ProductionSchema {
                             tablesQty = GlobalConfig.productions.drugs[prod.labo.drug].table;
                         }
                         if (stock.quantity < (stuff.needAll ? stuff.quantity * tablesQty : prod.quantity)) {
-                            str += "Il n'y a pas assez de " + stuff.name + " dans l'entrepôt " + stock.name;
+                            str += "\nIl n'y a pas assez de " + stuff.name + " dans l'entrepôt " + stock.name;
                             doesCancel = true;
                         }
                     } else {
@@ -72,11 +71,13 @@ export class ProductionSchema {
                 }
 
                 new StockSchema().removeProdStock(labo, prod.quantity).then(() => {
+                    const tempLabo = prod.labo;
                     prod.labo = labo._id as unknown as CLaboratory;
                     delete prod._id;
                     this._model.create(prod)
                         .then((prodAdded) => {
                             prod._id = prodAdded._id;
+                            prod.labo = tempLabo;
                             resolve(this.addProdProcess(prod));
                         })
                         .catch((err) => reject(err));
@@ -89,7 +90,7 @@ export class ProductionSchema {
     private addProdProcess(prod: CProductions): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const newProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Nouvelle production dans le laboratoire **" + prod.labo.name + "**")
-                .setDescription("**" + prod.quantity + " kg** de **" + prod.labo.drug + "**");
+                .setDescription((prod.description + "\n" || "") + "**" + prod.quantity + " kg** de **" + prod.labo.drug + "**");
             if (prod.labo.screen) {
                 newProdEmbedMsg.setThumbnail(prod.labo.screen);
             }
@@ -147,7 +148,10 @@ export class ProductionSchema {
 
             new LaboratorySchema().findByName(server, laboName, ignoreCase)
                 .then((labos) =>
-                    this._model.find({ labo: { $in: labos.map((labo) => labo._id) } })
+                    this._model.find({ labo: { $in: labos.map((labo) => labo._id) } }).populate({
+                        path: 'labo',
+                        populate: 'server stocks'
+                    })
                         .then((prods: Array<IProductions>) =>
                             resolve(prods.map((prod) => new CProductions(prod))))
                         .catch((err) => reject(err))
@@ -164,7 +168,10 @@ export class ProductionSchema {
      */
     public getById(prod: CProductions): Promise<CProductions> {
         return new Promise<CProductions>((resolve, reject) => {
-            this._model.findById(prod._id)
+            this._model.findById(prod._id).populate({
+                path: 'labo',
+                populate: 'server stocks'
+            })
                 .then((result: IProductions) => {
                     if (!result) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
@@ -183,7 +190,10 @@ export class ProductionSchema {
      */
     public getByLaboId(labo: CLaboratory): Promise<Array<CProductions>> {
         return new Promise<Array<CProductions>>((resolve, reject) => {
-            this._model.find({ server: labo.server._id, labo: labo._id })
+            this._model.find({ server: labo.server._id, labo: labo._id }).populate({
+                path: 'labo',
+                populate: 'server stocks'
+            })
                 .then((result: Array<IProductions>) => {
                     if (result.length == 0) {
                         return reject("Aucune production n'est en cours dans le laboratoire " + labo.name);
@@ -202,8 +212,13 @@ export class ProductionSchema {
      */
     public getByServer(server: CServer): Promise<Array<CProductions>> {
         return new Promise<Array<CProductions>>((resolve, reject) => {
-            this._model.find({ server: server._id })
-                .then((result: Array<IProductions>) => resolve(result.map((labo) => new CProductions(labo))))
+            this._model.find({ server: server._id }).populate({
+                path: 'labo',
+                populate: 'server stocks'
+            })
+                .then((result: Array<IProductions>) =>
+                    resolve(result.map((prod) => new CProductions(prod)))
+                )
                 .catch((err) => reject(err));
         });
     }
