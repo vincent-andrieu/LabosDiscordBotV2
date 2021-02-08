@@ -111,6 +111,9 @@ export class ServerSchema {
             if (!labo.server._id) {
                 return reject("No server id");
             }
+            if (labo.server.defaultLabo?._id?.toString() === labo._id?.toString()) {
+                return reject("Le laboratoire " + (labo.name || labo.server.defaultLabo?.name)?.toString() + " est déjà le laboratoire par défaut");
+            }
 
             this.getById(labo.server._id.toString()).then((server: CServer) => {
                 server.defaultLabo = labo._id as unknown as CLaboratory;
