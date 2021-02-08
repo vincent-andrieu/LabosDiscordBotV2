@@ -232,9 +232,9 @@ export class ProductionSchema {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "La production du laboratoire **" + prod.labo.name + "** a été supprimée");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée");
                     if (prod.labo.screen) {
-                        embedMessage.setImage(prod.labo.screen);
+                        embedMessage.setThumbnail(prod.labo.screen);
                     }
                     if (reason) {
                         embedMessage.setDescription(reason);
@@ -265,7 +265,7 @@ export class ProductionSchema {
                     }
 
                     const embedMsgTitle = res.deletedCount > 1
-                        ? res.deletedCount.toString() + " productions ont été supprimées du laboratoire **" + laboProdName
+                        ? res.deletedCount.toString() + " productions ont été supprimées du laboratoire **" + laboProdName + "**"
                         : "La production du laboratoire " + laboProdName + " a été supprimée";
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(laboProd.server, EEmbedMsgColors.DEL, embedMsgTitle);
                     const laboProdScreen = (laboProd as CLaboratory).screen || (laboProd as CProductions).labo.screen;
@@ -323,8 +323,9 @@ export class ProductionSchema {
             if (prodIndex < 0) {
                 return undefined;
             }
+            const prodResult = ProductionSchema.finishProdReactions[prodIndex].prod;
             ProductionSchema.finishProdReactions.splice(prodIndex, 1);
-            return ProductionSchema.finishProdReactions[prodIndex].prod;
+            return prodResult;
         } else {
             const prodIndex = ProductionSchema.finishProdReactions.findIndex((prodElem) => prodElem.prod._id === prodId._id);
 
@@ -372,7 +373,7 @@ export class ProductionSchema {
                             {
                                 $match: {
                                     $expr: {
-                                        $eq: [{$toString: '$_id'}, "$$laboId"]
+                                        $eq: ['$_id', "$$laboId"]
                                     }
                                 }
                             },
@@ -393,7 +394,7 @@ export class ProductionSchema {
                                 $match: {
                                     $expr: {
                                         $and: [
-                                            { $in: [{$toString: '$_id'}, '$$laboData.stocks'] },
+                                            { $in: ['$_id', '$$laboData.stocks'] },
                                             { $eq: ['$drug', '$$laboData.drug'] }
                                         ]
                                     }
@@ -427,16 +428,17 @@ export class ProductionSchema {
                     if (result && result[0]._id && result[0].server && result[0].quantity && result[0].labo && result[0].stock) {
                         const prodFinish = result[0];
 
+                        prodFinish.server = new CServer(prodFinish.server);
                         new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity || 0).then(() =>
 
-                            this.deleteById(new CProductions(prodFinish))
+                            this.deleteById(prodFinish as unknown as CProductions)
                                 .then(() => {
                                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée")
                                         .setDescription("**" + prodFinish.stock.name + "** : **" + (prodFinish.stock.quantity || 0).toString() + " kg** de " + prodFinish.stock.drug + ".");
                                     if (prodFinish.stock.screen) {
                                         embedMessage.setThumbnail(prodFinish.stock.screen);
                                     }
-                                    new CServer(prodFinish.server).defaultChannel?.send(embedMessage);
+                                    (prodFinish.server as CServer).defaultChannel?.send(embedMessage);
                                     resolve(prodFinish);
                                 })
                                 .catch((error) => reject(error))
