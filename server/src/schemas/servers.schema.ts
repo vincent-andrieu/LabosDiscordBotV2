@@ -246,13 +246,14 @@ export class ServerSchema {
             server.roleTag = roleTag;
             this.edit(server)
                 .then(() => {
+                    server = new CServer(server);
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle");
                     const guildIcon = server.defaultChannel?.guild?.iconURL();
                     if (guildIcon) {
                         embedMessage.setThumbnail(guildIcon);
                     }
-                    embedMessage.setDescription("**ID : " + roleTag.toString() + "**");
+                    embedMessage.setDescription(roleTag);
                     server.defaultChannel?.send(embedMessage);
 
                     resolve();
