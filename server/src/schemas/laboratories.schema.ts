@@ -283,8 +283,8 @@ export class LaboratorySchema {
         return new Promise<void>((resolve, reject) => {
 
             Promise.all([
-                this.findOneByName(server, laboName),
-                new StockSchema().findOneByName(server, stockName)
+                this.findOneByName(server, laboName, true),
+                new StockSchema().findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.addLaboStock(result[0], result[1])
