@@ -172,7 +172,7 @@ export class StockSchema {
                 this.delete(stock, reason)
                     .then((nbrDeleted) => resolve(nbrDeleted))
                     .catch((err) => reject(err));
-            });
+            }).catch((err) => reject(err));
         });
     }
 
