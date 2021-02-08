@@ -22,7 +22,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
             server: labo.server,
             labo: labo,
             quantity: quantity,
-            description: params[2]
+            description: this.concatLastParams(params, 2)
         });
     }
 
