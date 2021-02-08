@@ -5,7 +5,7 @@ import { CCommand, ECommand } from "@interfaces/command.class";
 export default class ServerSetRoleTag extends CCommand<ServerSchema> {
 
     constructor(helpDesc = "", helpParams = "") {
-        super(new ServerSchema(), ECommand.SERVER_SET_URL, helpDesc, helpParams);
+        super(new ServerSchema(), ECommand.SERVER_SET_ROLETAG, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {
