@@ -41,7 +41,7 @@ function startBot(client: Client) {
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
                     message.delete();
-                    return help(server);
+                    return help(server, msgElems[1]);
                 }
                 const cmdFunc = CommandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
                 if (cmdFunc) {

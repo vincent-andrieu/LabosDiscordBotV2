@@ -9,7 +9,15 @@ import { ServerSchema } from "@schemas/servers.schema";
 import { CommandsList } from "@commands/commands";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
-export function help(server: CServer, command?: CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>): Promise<Message | undefined> | undefined {
+type CommandType = CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>;
+
+export function help(server: CServer, commandParam?: CommandType | string): Promise<Message | undefined> | undefined {
+    let command: CommandType | undefined = commandParam as CommandType;
+
+    if (typeof commandParam === 'string') {
+        const regex = new RegExp(commandParam, 'i');
+        command = CommandsList.find((cmd) => regex.test(cmd.name));
+    }
     if (command) {
         return command.sendHelp(server);
     }
