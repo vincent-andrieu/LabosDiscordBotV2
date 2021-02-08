@@ -1,6 +1,5 @@
 import mongoose = require('mongoose');
 
-import { ObjectId } from "@global/interfaces/database.interface";
 import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from "@interfaces/laboratory.class";
@@ -16,7 +15,7 @@ const laboSchema = new mongoose.Schema({
     name: { type: String, required: true },
     drug: { type: String, required: true },
     stocks: [
-        { type: ObjectId, ref: 'stocks' }
+        { type: mongoose.Schema.Types.ObjectId, ref: 'stocks' }
     ],
     screen: { type: String, required: false }
 }, {
@@ -33,7 +32,6 @@ laboSchema.virtual('quantity').get(function(this: ILaboratory) {
 
 function autoPopulate(this: any, next: any) {
     this.populate('server');
-    this.populate('stocks');
     next();
 }
 
@@ -53,7 +51,7 @@ export class LaboratorySchema {
             this._model.findOne({
                 server: labo.server._id,
                 name: { $regex: new RegExp(labo.name, 'i') }
-            }).then((currentLabo: ILaboratory) => {
+            }).populate('stocks').then((currentLabo: ILaboratory) => {
                 if (currentLabo) {
                     return reject("Un laboratoire existe déjà sous le nom " + currentLabo.name);
                 }
@@ -101,7 +99,7 @@ export class LaboratorySchema {
             this._model.findOne({
                 server: server._id,
                 name: search
-            })
+            }).populate('stocks')
                 .then((result: ILaboratory) => {
                     if (!result) {
                         return reject("Aucun laboratoire existe sous le nom " + name);
@@ -127,7 +125,7 @@ export class LaboratorySchema {
             this._model.find({
                 server: server._id,
                 name: search
-            })
+            }).populate('stocks')
                 .then((res: Array<ILaboratory>) => {
                     if (res.length == 0) {
                         return reject("Aucun laboratoire existe sous le nom " + name);
@@ -145,7 +143,7 @@ export class LaboratorySchema {
      */
     public getById(labo: CLaboratory): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
-            this._model.findById(labo._id)
+            this._model.findById(labo._id).populate('stocks')
                 .then((result: ILaboratory) => {
                     if (!result) {
                         return reject("Le laboratoire " + labo.name + " n'existe pas");
@@ -163,7 +161,7 @@ export class LaboratorySchema {
      */
     public getByServer(server: CServer): Promise<Array<CLaboratory>> {
         return new Promise<Array<CLaboratory>>((resolve, reject) => {
-            this._model.find({ server: server._id })
+            this._model.find({ server: server._id }).populate('stocks')
                 .then((result: Array<ILaboratory>) => resolve(result.map((labo) => new CLaboratory(labo))))
                 .catch((err) => reject(err));
         });

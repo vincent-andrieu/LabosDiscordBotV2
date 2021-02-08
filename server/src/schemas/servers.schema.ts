@@ -1,7 +1,6 @@
 import mongoose = require('mongoose');
 import { TextChannel } from 'discord.js';
 
-import { ObjectId } from "@global/interfaces/database.interface";
 import { IServer } from '@global/interfaces/server.interface';
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from '@interfaces/laboratory.class';
@@ -12,21 +11,14 @@ const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     url: { type: String, required: false },
     //activity: { type: String, required: true },
-    defaultLabo: { type: ObjectId, ref: 'laboratories', required: false },
+    defaultLabo: { type: mongoose.Schema.Types.ObjectId, ref: 'laboratories', required: false },
     defaultChannel: { type: String, required: true },
     reminder: { type: Number, required: false, default: 0 },
     roleTag: { type: String, required: false }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
-})
-    .pre('findOne', autoPopulate)
-    .pre('find', autoPopulate);
-
-function autoPopulate(this: any, next: any) {
-    this.populate('defaultLabo');
-    next();
-}
+});
 
 export class ServerSchema {
     private _model = mongoose.model('servers', serverSchema);
@@ -77,7 +69,7 @@ export class ServerSchema {
 
     public getById(id: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
-            this._model.findById(id)
+            this._model.findById(id).populate('defaultLabo')
                 .then((result: IServer | undefined) => {
                     if (!result) {
                         return reject("Le serveur (" + id.toString() + ") n'existe pas");
@@ -91,7 +83,7 @@ export class ServerSchema {
     public createOrGet(textChannel: TextChannel): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
 
-            this._model.findById(textChannel.guild.id)
+            this._model.findById(textChannel.guild.id).populate('defaultLabo')
                 .then((server: IServer | undefined) => {
                     if (!server) {
                         this.add(new CServer({
@@ -124,6 +116,7 @@ export class ServerSchema {
                 server.defaultLabo = labo._id as unknown as CLaboratory;
                 this.edit(server)
                     .then(() => {
+                        server = new CServer(server);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau laboratoire par défaut");
                         if (labo.screen) {
                             embedMessage.setThumbnail(labo.screen);
