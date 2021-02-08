@@ -11,7 +11,7 @@ export default class StockDelStock extends CCommand<StockSchema> {
 
     private getParamsTemplate(params: Array<string>): { name: string, quantity: number, reason?: string } | undefined {
         const nbrQty = Number(params[1]);
-        if (params.length < 2 || !nbrQty) {
+        if (params.length < 2 || isNaN(nbrQty)) {
             return undefined;
         }
         return {
