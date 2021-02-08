@@ -61,4 +61,12 @@ export abstract class CCommand<T> {
         );
     }
 
+    protected concatLastParams(params: Array<string>, atIndex: number): string {
+        if (params.length > atIndex) {
+            params.splice(0, atIndex);
+            return params.join(' ');
+        }
+        return "";
+    }
+
 }
