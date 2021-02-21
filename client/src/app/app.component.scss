@@ -1,0 +1,9 @@
+mat-sidenav {
+    min-width: 280px;
+    border-right: 0 !important;
+}
+
+mat-tab-group ::ng-deep .mat-tab-label {
+    opacity: 1;
+    font-size: 17px;
+}

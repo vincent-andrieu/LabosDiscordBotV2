@@ -2,7 +2,7 @@
 {
     "compileOnSave": true,
     "compilerOptions": {
-        "baseUrl": "./",
+        "baseUrl": "./src",
         "outDir": "./dist/out-tsc",
         "forceConsistentCasingInFileNames": true,
         "strict": true,
@@ -19,7 +19,15 @@
         "lib": [
             "ES2018",
             "DOM"
-        ]
+        ],
+        "paths": {
+            "@global/*": [
+                "../../global/*"
+            ],
+            "@interfaces/*": [
+                "interfaces/*"
+            ]
+        },
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,
