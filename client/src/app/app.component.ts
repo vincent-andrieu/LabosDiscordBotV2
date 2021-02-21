@@ -4,7 +4,7 @@ import { Location } from '@angular/common';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { CookieService } from 'ngx-cookie';
 
-import { EPageStatus } from '@interfaces/main.interface';
+import { EPageStatus } from '@interfaces/root.interface';
 import { environment } from 'environments/environment';
 
 @Component({

@@ -3,7 +3,7 @@ import { Resolve, Router, RouterModule, Routes } from '@angular/router';
 import { Location } from '@angular/common';
 import { CookieService } from 'ngx-cookie';
 
-import { EPageStatus } from '@interfaces/main.interface';
+import { EPageStatus } from '@interfaces/root.interface';
 import { environment } from 'environments/environment';
 import { LabosListComponent } from './labos-list/labos-list.component';
 import { StocksListComponent } from './stocks-list/stocks-list.component';
