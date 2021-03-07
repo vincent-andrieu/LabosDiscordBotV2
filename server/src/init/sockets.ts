@@ -5,7 +5,7 @@ import socketIo from 'socket.io';
 import { serverConfig } from "../server.config";
 
 export default class Sockets {
-    public static server: socketIo.Server;
+    public static server: socketIo.Server | undefined = undefined;
 
     constructor(private app: Express) {}
 
