@@ -1,5 +1,4 @@
 import mongoose = require('mongoose');
-import { Server } from 'socket.io';
 
 import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import { CServer } from '@interfaces/server.class';
@@ -10,6 +9,7 @@ import { getDrugError, isADrug } from '@global/utils';
 import { ServerSchema } from './servers.schema';
 import { StockSchema } from './stocks.schema';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
+import Sockets from '../init/sockets';
 
 const laboSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
@@ -39,8 +39,6 @@ function autoPopulate(this: any, next: any) {
 export class LaboratorySchema {
     private _model = mongoose.model('laboratories', laboSchema);
 
-    constructor(private _socketServer?: Server) {}
-
     public add(labo: CLaboratory): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
@@ -65,7 +63,7 @@ export class LaboratorySchema {
 
                 this._model.create(labo)
                     .then((newLabo: unknown) => {
-                        this._socketServer?.emit('labo.add', newLabo);
+                        Sockets.server?.emit('labo.add', newLabo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté")
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
@@ -85,7 +83,7 @@ export class LaboratorySchema {
             this._model.findByIdAndUpdate(labo._id, labo)
                 .then(() => {
                     this.getById(labo).then((editedLabo: CLaboratory) => {
-                        this._socketServer?.emit('labo.edit', labo);
+                        Sockets.server?.emit('labo.edit', labo);
                         resolve(editedLabo);
                     });
                 })
@@ -198,7 +196,7 @@ export class LaboratorySchema {
                     }
                     labo.server.defaultChannel?.send(embedMessage);
 
-                    this._socketServer?.emit('labo.del', labo);
+                    Sockets.server?.emit('labo.del', labo);
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
@@ -230,7 +228,7 @@ export class LaboratorySchema {
                     return reject("Aucun laboratoire existe sous le nom " + name);
                 }
 
-                new ServerSchema(this._socketServer).forceSetDefaultLabo(labo)
+                new ServerSchema(Sockets.server).forceSetDefaultLabo(labo)
                     .then((newDefaultLabo: CLaboratory) => resolve(newDefaultLabo))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
@@ -280,7 +278,7 @@ export class LaboratorySchema {
                             crtLabo.server.defaultChannel?.send(embedMessage);
 
                             this._model.findById(crtLabo._id).populate('stocks').then((editedLabo: ILaboratory) => {
-                                this._socketServer?.emit('labo.addStock', editedLabo);
+                                Sockets.server?.emit('labo.addStock', editedLabo);
                                 resolve(new CLaboratory(editedLabo));
                             }).catch((err) => reject(err));
                         })
@@ -297,7 +295,7 @@ export class LaboratorySchema {
 
             Promise.all([
                 this.findOneByName(server, laboName, true),
-                new StockSchema(this._socketServer).findOneByName(server, stockName, true)
+                new StockSchema(Sockets.server).findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.addLaboStock(result[0], result[1])
@@ -328,7 +326,7 @@ export class LaboratorySchema {
                     labo.server.defaultChannel?.send(embedMessage);
 
                     this.getById(labo).then((deletedLabo: CLaboratory) => {
-                        this._socketServer?.emit('labo.delStock', deletedLabo);
+                        Sockets.server?.emit('labo.delStock', deletedLabo);
                         resolve(deletedLabo);
                     }).catch((err) => reject((err)));
                 })

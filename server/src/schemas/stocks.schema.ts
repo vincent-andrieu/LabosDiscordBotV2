@@ -1,5 +1,4 @@
 import mongoose = require('mongoose');
-import { Server } from 'socket.io';
 
 import { GlobalConfig } from '@global/config';
 import { getDrugError, isADrugOrStuff } from '@global/utils';
@@ -8,6 +7,7 @@ import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from "@interfaces/stock.class";
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
+import Sockets from '../init/sockets';
 
 const stockSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
@@ -29,8 +29,6 @@ function autoPopulate(this: any, next: any) {
 
 export class StockSchema {
     private _model = mongoose.model('stocks', stockSchema);
-
-    constructor(private _socketServer?: Server) {}
 
     public add(stock: CStock): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
@@ -62,7 +60,7 @@ export class StockSchema {
                             embedMessage.setImage(stock.screen);
                         }
                         stock.server.defaultChannel?.send(embedMessage);
-                        this._socketServer?.emit('stock.add', newStock);
+                        Sockets.server?.emit('stock.add', newStock);
 
                         resolve(new CStock(newStock as IStock));
                     })
@@ -76,7 +74,7 @@ export class StockSchema {
             this._model.findByIdAndUpdate(stock._id, stock)
                 .then(() => {
                     this.getById(stock).then((editedStock: CStock) => {
-                        this._socketServer?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock);
                         resolve(editedStock);
                     });
                 })
@@ -169,7 +167,7 @@ export class StockSchema {
                     }
                     stock.server.defaultChannel?.send(embedMessage);
 
-                    this._socketServer?.emit('stock.del', stock);
+                    Sockets.server?.emit('stock.del', stock);
 
                     resolve(res.deletedCount);
                 })
@@ -209,7 +207,7 @@ export class StockSchema {
                     stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        this._socketServer?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock);
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -251,7 +249,7 @@ export class StockSchema {
                     stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        this._socketServer?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock);
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -292,7 +290,7 @@ export class StockSchema {
                     stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        this._socketServer?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock);
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })

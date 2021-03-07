@@ -1,6 +1,5 @@
 import mongoose = require('mongoose');
 import moment from 'moment';
-import { Server } from 'socket.io';
 
 import { GlobalConfig } from '@global/config';
 import { IProdFinish, IProductions } from '@global/interfaces/production.interface';
@@ -9,8 +8,9 @@ import { CLaboratory } from '@interfaces/laboratory.class';
 import { CProductions } from "@interfaces/production.class";
 import { CStock } from '@interfaces/stock.class';
 import { LaboratorySchema } from './laboratories.schema';
-import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import { StockSchema } from './stocks.schema';
+import DiscordBot, { EEmbedMsgColors } from '../init/bot';
+import Sockets from '../init/sockets';
 
 const prodSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
@@ -33,8 +33,6 @@ function autoPopulate(this: any, next: any) {
 export class ProductionSchema {
     private _model = mongoose.model('productions', prodSchema);
     private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
-
-    constructor(private _socketServer?: Server) {}
 
     public add(prod: CProductions): Promise<Promise<void>> {
         return new Promise<Promise<void>>((resolve, reject) => {
@@ -81,8 +79,8 @@ export class ProductionSchema {
                         .then((prodAdded) => {
                             prod._id = prodAdded._id;
                             prod.labo = tempLabo;
-                            if (this._socketServer) {
-                                this._socketServer.emit('prod.add', prod);
+                            if (Sockets.server) {
+                                Sockets.server.emit('prod.add', prod);
                             }
                             resolve(this.addProdProcess(prod));
                         })
@@ -104,8 +102,8 @@ export class ProductionSchema {
 
                 setTimeout(() => {
                     this.getById(prod).then((readyProd: CProductions) => {
-                        if (this._socketServer) {
-                            this._socketServer.emit('prod.finish', readyProd);
+                        if (Sockets.server) {
+                            Sockets.server.emit('prod.finish', readyProd);
                         }
                         const finishProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prod.labo.name + "** prête")
                             .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
@@ -127,8 +125,8 @@ export class ProductionSchema {
                 if (prod.server.reminder && prod.server.reminder > 0) {
                     setTimeout(() => {
                         this.getById(prod).then((readyProd: CProductions) => {
-                            if (this._socketServer) {
-                                this._socketServer.emit('prod.reminder', readyProd);
+                            if (Sockets.server) {
+                                Sockets.server.emit('prod.reminder', readyProd);
                             }
                             const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes")
                                 .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
@@ -152,7 +150,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, prod)
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        this._socketServer?.emit('prod.edit', editedProd);
+                        Sockets.server?.emit('prod.edit', editedProd);
                         resolve(editedProd);
                     });
                 })
@@ -256,8 +254,8 @@ export class ProductionSchema {
                     if (res.deletedCount <= 0) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
-                    if (this._socketServer) {
-                        this._socketServer.emit('prod.del', prod);
+                    if (Sockets.server) {
+                        Sockets.server.emit('prod.del', prod);
                     }
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée");
@@ -291,8 +289,8 @@ export class ProductionSchema {
                     if (res.deletedCount <= 0) {
                         return reject("Aucune production n'est en cours dans le laboratoire " + laboProdName);
                     }
-                    if (this._socketServer) {
-                        this._socketServer.emit('prod.del', laboProd.server);
+                    if (Sockets.server) {
+                        Sockets.server.emit('prod.del', laboProd.server);
                     }
 
                     const embedMsgTitle = res.deletedCount > 1
@@ -322,7 +320,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, { $inc: { quantity: quantity } })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        this._socketServer?.emit('prod.edit', editedProd);
+                        Sockets.server?.emit('prod.edit', editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));
@@ -339,7 +337,7 @@ export class ProductionSchema {
             this._model.findOneAndUpdate({ _id: prod._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        this._socketServer?.emit('prod.edit', editedProd);
+                        Sockets.server?.emit('prod.edit', editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));
@@ -355,7 +353,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, { quantity: quantity })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        this._socketServer?.emit('prod.edit', editedProd);
+                        Sockets.server?.emit('prod.edit', editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));

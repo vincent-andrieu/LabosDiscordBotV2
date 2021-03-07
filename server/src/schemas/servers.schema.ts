@@ -1,13 +1,12 @@
 import mongoose = require('mongoose');
 import { TextChannel } from 'discord.js';
-import { Server } from 'socket.io';
 
 import { IServer } from '@global/interfaces/server.interface';
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { GlobalConfig } from '@global/config';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
-import { resolve } from 'path';
+import Sockets from '../init/sockets';
 
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
@@ -25,8 +24,6 @@ const serverSchema = new mongoose.Schema({
 
 export class ServerSchema {
     private _model = mongoose.model('servers', serverSchema);
-
-    constructor(private _socketServer?: Server) {}
 
     public login(serverId: string, password: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
@@ -140,7 +137,7 @@ export class ServerSchema {
                         embedMessage.setDescription("**" + labo.name + "**");
                         server.defaultChannel?.send(embedMessage);
 
-                        this._socketServer?.emit('labo.default', labo);
+                        Sockets.server?.emit('labo.default', labo);
                         resolve(labo);
                     })
                     .catch((err) => reject(err));
@@ -150,7 +147,7 @@ export class ServerSchema {
     }
 
     public deleteDefaultLabo(server: CServer): Promise<void> {
-        return new Promise<void>((resovle, reject) => {
+        return new Promise<void>((resolve, reject) => {
 
             const labo = server.defaultLabo;
             delete server.defaultLabo;
@@ -243,7 +240,7 @@ export class ServerSchema {
                     embedMessage.setDescription("**" + reminder.toString() + " minutes** avant la fin de la production");
                     server.defaultChannel?.send(embedMessage);
 
-                    this._socketServer?.emit('server.reminder', server);
+                    Sockets.server?.emit('server.reminder', server);
                     resolve(server);
                 })
                 .catch((err) => reject(err));
