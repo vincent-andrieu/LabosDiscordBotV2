@@ -1,19 +1,57 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
+import { CStock } from '@interfaces/stock.class';
 import { SnackbarService } from './snackbar.service';
 import { MainService } from './main.service';
-import { CStock } from '@interfaces/stock.class';
+import { ServerService } from './server.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
 
-    constructor(protected _http: HttpClient, protected _snackbarService: SnackbarService) {
+    constructor(protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
         super('labo', CLaboratory, _http, _snackbarService);
+
+        _socket.on(`labo.add`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Laboratoire ${labo.name} ajouté`);
+            }
+        });
+
+        _socket.on(`labo.del`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Laboratoire ${labo.name} supprimé`);
+            }
+        });
+
+        _socket.on(`labo.edit`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Laboratoire ${labo.name} modifié`);
+            }
+        });
+
+        _socket.on(`labo.addStock`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Entrepôt ajouté au laboratoire ${labo.name}`);
+            }
+        });
+
+        _socket.on(`labo.delStock`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Entrepôt supprimé du laboratoire ${labo.name}`);
+            }
+        });
+
+        _socket.on(`labo.default`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getServerId()) {
+                this._snackbarService.open(`Nouveau laboratoire par défaut : ${labo.name}`);
+            }
+        });
     }
 
     /**

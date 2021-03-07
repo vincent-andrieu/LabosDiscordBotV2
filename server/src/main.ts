@@ -1,4 +1,5 @@
 import { Client, Message, TextChannel } from "discord.js";
+import express from 'express';
 import { exit, pid } from "process";
 import 'module-alias/register';
 
@@ -10,10 +11,12 @@ import { CommandsList } from "@commands/commands";
 import { help } from "@commands/help/help";
 import DiscordBot from "./init/bot";
 import DataBase from "./init/database";
+import ExpressServer from "./init/express";
 import { serverConfig } from "./server.config";
 
 const discordBot = new DiscordBot();
 const database = new DataBase();
+new ExpressServer(express());
 
 discordBot.connect().then((client: Client) => {
     startBot(client);

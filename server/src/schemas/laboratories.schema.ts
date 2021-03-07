@@ -1,4 +1,5 @@
 import mongoose = require('mongoose');
+import { Server } from 'socket.io';
 
 import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import { CServer } from '@interfaces/server.class';
@@ -38,8 +39,10 @@ function autoPopulate(this: any, next: any) {
 export class LaboratorySchema {
     private _model = mongoose.model('laboratories', laboSchema);
 
-    public add(labo: CLaboratory): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    constructor(private _socketServer?: Server) {}
+
+    public add(labo: CLaboratory): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
 
             if (!isADrug(labo.drug)) {
                 return reject(getDrugError({ drug: true }, labo.drug));
@@ -61,7 +64,8 @@ export class LaboratorySchema {
                 }
 
                 this._model.create(labo)
-                    .then(() => {
+                    .then((newLabo: unknown) => {
+                        this._socketServer?.emit('labo.add', newLabo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté")
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
@@ -69,17 +73,22 @@ export class LaboratorySchema {
                         }
                         labo.server.defaultChannel?.send(embedMessage);
 
-                        resolve();
+                        resolve(new CLaboratory(newLabo as ILaboratory));
                     })
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
         });
     }
 
-    public edit(labo: CLaboratory): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public edit(labo: CLaboratory): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
             this._model.findByIdAndUpdate(labo._id, labo)
-                .then(() => resolve())
+                .then(() => {
+                    this.getById(labo).then((editedLabo: CLaboratory) => {
+                        this._socketServer?.emit('labo.edit', labo);
+                        resolve(editedLabo);
+                    });
+                })
                 .catch((err) => reject(err));
         });
     }
@@ -189,6 +198,7 @@ export class LaboratorySchema {
                     }
                     labo.server.defaultChannel?.send(embedMessage);
 
+                    this._socketServer?.emit('labo.del', labo);
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
@@ -220,8 +230,8 @@ export class LaboratorySchema {
                     return reject("Aucun laboratoire existe sous le nom " + name);
                 }
 
-                new ServerSchema().forceSetDefaultLabo(labo)
-                    .then(() => resolve(labo))
+                new ServerSchema(this._socketServer).forceSetDefaultLabo(labo)
+                    .then((newDefaultLabo: CLaboratory) => resolve(newDefaultLabo))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
 
@@ -234,8 +244,8 @@ export class LaboratorySchema {
      * @param  {CStock} stock
      * @returns Promise
      */
-    public addLaboStock(labo: CLaboratory, stock: CStock): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public addLaboStock(labo: CLaboratory, stock: CStock): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
 
             if (labo.server._id !== stock.server._id) {
                 return reject("No same server");
@@ -269,7 +279,10 @@ export class LaboratorySchema {
                             }
                             crtLabo.server.defaultChannel?.send(embedMessage);
 
-                            resolve();
+                            this._model.findById(crtLabo._id).populate('stocks').then((editedLabo: ILaboratory) => {
+                                this._socketServer?.emit('labo.addStock', editedLabo);
+                                resolve(new CLaboratory(editedLabo));
+                            }).catch((err) => reject(err));
                         })
                         .catch((err) => reject(err));
 
@@ -279,16 +292,16 @@ export class LaboratorySchema {
         });
     }
 
-    public addLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public addLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
 
             Promise.all([
                 this.findOneByName(server, laboName, true),
-                new StockSchema().findOneByName(server, stockName, true)
+                new StockSchema(this._socketServer).findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.addLaboStock(result[0], result[1])
-                    .then(() => resolve())
+                    .then((editedLabo: CLaboratory) => resolve(editedLabo))
                     .catch((err) => reject(err));
 
             }).catch((err) => reject(err));
@@ -302,8 +315,8 @@ export class LaboratorySchema {
      * @param  {CStock} stock
      * @returns Promise
      */
-    public delLaboStock(labo: CLaboratory, stock: CStock): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public delLaboStock(labo: CLaboratory, stock: CStock): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
 
             this._model.findByIdAndUpdate(labo._id, { $pull: { stocks: stock._id } })
                 .then(() => {
@@ -314,15 +327,18 @@ export class LaboratorySchema {
                     }
                     labo.server.defaultChannel?.send(embedMessage);
 
-                    resolve();
+                    this.getById(labo).then((deletedLabo: CLaboratory) => {
+                        this._socketServer?.emit('labo.delStock', deletedLabo);
+                        resolve(deletedLabo);
+                    }).catch((err) => reject((err)));
                 })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public delLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public delLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
 
             Promise.all([
                 this.findOneByName(server, laboName),
@@ -330,7 +346,7 @@ export class LaboratorySchema {
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.delLaboStock(result[0], result[1])
-                    .then(() => resolve())
+                    .then((editedLabo: CLaboratory) => resolve(editedLabo))
                     .catch((err) => reject(err));
 
             }).catch((err) => reject(err));

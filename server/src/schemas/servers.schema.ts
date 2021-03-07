@@ -1,5 +1,6 @@
 import mongoose = require('mongoose');
 import { TextChannel } from 'discord.js';
+import { Server } from 'socket.io';
 
 import { IServer } from '@global/interfaces/server.interface';
 import { CServer } from "@interfaces/server.class";
@@ -11,6 +12,7 @@ import { resolve } from 'path';
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     url: { type: String, required: false },
+    password: { type: String, required: false, default: "" },
     //activity: { type: String, required: true },
     defaultLabo: { type: mongoose.Schema.Types.ObjectId, ref: 'laboratories', required: false },
     defaultChannel: { type: String, required: true },
@@ -23,6 +25,16 @@ const serverSchema = new mongoose.Schema({
 
 export class ServerSchema {
     private _model = mongoose.model('servers', serverSchema);
+
+    constructor(private _socketServer?: Server) {}
+
+    public login(serverId: string, password: string): Promise<boolean> {
+        return new Promise<boolean>((resolve, reject) => {
+            this._model.find({ _id: serverId, password: password }).then((result: Array<IServer>) => {
+                resolve(result.length === 1);
+            }).catch((err) => reject(err));
+        });
+    }
 
     /**
      * Auto convert defaultLabo & defaultChannel to their id
@@ -107,8 +119,8 @@ export class ServerSchema {
      * @param  {CLaboratory} labo
      * @returns Promise
      */
-    public forceSetDefaultLabo(labo: CLaboratory): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public forceSetDefaultLabo(labo: CLaboratory): Promise<CLaboratory> {
+        return new Promise<CLaboratory>((resolve, reject) => {
             if (!labo.server._id) {
                 return reject("No server id");
             }
@@ -128,7 +140,8 @@ export class ServerSchema {
                         embedMessage.setDescription("**" + labo.name + "**");
                         server.defaultChannel?.send(embedMessage);
 
-                        resolve();
+                        this._socketServer?.emit('labo.default', labo);
+                        resolve(labo);
                     })
                     .catch((err) => reject(err));
             });
@@ -208,8 +221,8 @@ export class ServerSchema {
         });
     }
 
-    public setReminder(server: CServer, reminder: number): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public setReminder(server: CServer, reminder: number): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
             if (reminder < 0 || reminder > GlobalConfig.productions.timeoutMinutes) {
                 return reject("Le rappel d'une production doit être comprit entre 0 (désactivé) et " + GlobalConfig.productions.timeoutMinutes.toString());
             }
@@ -230,7 +243,8 @@ export class ServerSchema {
                     embedMessage.setDescription("**" + reminder.toString() + " minutes** avant la fin de la production");
                     server.defaultChannel?.send(embedMessage);
 
-                    resolve();
+                    this._socketServer?.emit('server.reminder', server);
+                    resolve(server);
                 })
                 .catch((err) => reject(err));
         });

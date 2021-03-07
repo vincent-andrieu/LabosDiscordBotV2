@@ -1,4 +1,5 @@
 import mongoose = require('mongoose');
+import { Server } from 'socket.io';
 
 import { GlobalConfig } from '@global/config';
 import { getDrugError, isADrugOrStuff } from '@global/utils';
@@ -29,8 +30,10 @@ function autoPopulate(this: any, next: any) {
 export class StockSchema {
     private _model = mongoose.model('stocks', stockSchema);
 
-    public add(stock: CStock): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    constructor(private _socketServer?: Server) {}
+
+    public add(stock: CStock): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) => {
 
             if (!isADrugOrStuff(stock.drug)) {
                 return reject(getDrugError({ drug: true, stuff: true }, stock.drug));
@@ -52,25 +55,31 @@ export class StockSchema {
                 }
 
                 this._model.create(stock)
-                    .then(() => {
+                    .then((newStock: unknown) => {
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté")
                             .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
                         if (stock.screen) {
                             embedMessage.setImage(stock.screen);
                         }
                         stock.server.defaultChannel?.send(embedMessage);
+                        this._socketServer?.emit('stock.add', newStock);
 
-                        resolve();
+                        resolve(new CStock(newStock as IStock));
                     })
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
         });
     }
 
-    public edit(stock: CStock): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public edit(stock: CStock): Promise<CStock | void> {
+        return new Promise<CStock | void>((resolve, reject) => {
             this._model.findByIdAndUpdate(stock._id, stock)
-                .then(() => resolve())
+                .then(() => {
+                    this.getById(stock).then((editedStock: CStock) => {
+                        this._socketServer?.emit('stock.edit', editedStock);
+                        resolve(editedStock);
+                    });
+                })
                 .catch((err) => reject(err));
         });
     }
@@ -160,6 +169,8 @@ export class StockSchema {
                     }
                     stock.server.defaultChannel?.send(embedMessage);
 
+                    this._socketServer?.emit('stock.del', stock);
+
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
@@ -176,8 +187,8 @@ export class StockSchema {
         });
     }
 
-    public addStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public addStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findByIdAndUpdate(stock._id, { $inc: { quantity: quantity } })
@@ -197,27 +208,29 @@ export class StockSchema {
                     }
                     stock.server.defaultChannel?.send(embedMessage);
 
-                    resolve();
+                    this.getById(stock).then((editedStock: CStock) => {
+                        this._socketServer?.emit('stock.edit', editedStock);
+                        resolve(editedStock);
+                    }).catch((err) => reject(err));
                 })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public addStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) =>
+    public addStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
                     this.addStockQty(stock, quantity, reason)
-                        .then(() => resolve())
-                        .catch((err) => reject(err))
+                        .then((editedStock: CStock) => resolve(editedStock))
                 )
                 .catch((err) => reject(err))
         );
     }
 
-    public removeStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public removeStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findOneAndUpdate({ _id: stock._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
@@ -237,27 +250,30 @@ export class StockSchema {
                     }
                     stock.server.defaultChannel?.send(embedMessage);
 
-                    resolve();
+                    this.getById(stock).then((editedStock: CStock) => {
+                        this._socketServer?.emit('stock.edit', editedStock);
+                        resolve(editedStock);
+                    }).catch((err) => reject(err));
                 })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public removeStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) =>
+    public removeStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
                     this.removeStockQty(stock, quantity, reason)
-                        .then(() => resolve())
+                        .then((editedStock: CStock) => resolve(editedStock))
                         .catch((err) => reject(err))
                 )
                 .catch((err) => reject(err))
         );
     }
 
-    public setStockQty(stock: CStock, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public setStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+        return new Promise<CStock>((resolve, reject) => {
 
             this._model.findByIdAndUpdate(stock._id, { quantity: quantity })
                 .then(() => {
@@ -275,29 +291,31 @@ export class StockSchema {
                     }
                     stock.server.defaultChannel?.send(embedMessage);
 
-                    resolve();
+                    this.getById(stock).then((editedStock: CStock) => {
+                        this._socketServer?.emit('stock.edit', editedStock);
+                        resolve(editedStock);
+                    }).catch((err) => reject(err));
                 })
                 .catch((err) => reject(err));
 
         });
     }
 
-    public setStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) =>
+    public setStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock | void> {
+        return new Promise<CStock | void>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
                     this.setStockQty(stock, quantity, reason)
-                        .then(() => resolve())
-                        .catch((err) => reject(err))
+                        .then((editedStock: CStock) => resolve(editedStock))
                 )
                 .catch((err) => reject(err))
         );
     }
 
-    public removeProdStock(labo: CLaboratory, prodQty: number): Promise<Array<void>> {
-        return new Promise<Array<void>>((resolve, reject) => {
+    public removeProdStock(labo: CLaboratory, prodQty: number): Promise<Array<CStock>> {
+        return new Promise<Array<CStock>>((resolve, reject) => {
             let tablesQty: number;
-            const updatesList: Array<Promise<void>> = [];
+            const updatesList: Array<Promise<CStock>> = [];
 
             labo.stocks.forEach((stock) => {
                 if (stock.drug === labo.drug) {

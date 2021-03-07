@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Socket } from 'ngx-socket-io';
 
 import { environment } from '@environment';
 import { IServer } from '@global/interfaces/server.interface';
@@ -13,8 +14,16 @@ import { SnackbarService } from './snackbar.service';
 export class ServerService {
 
     private _serverUrl = `${environment.server.url}/server`;
+    private _serverId = "";
 
-    constructor(private _http: HttpClient, private _snackbarService: SnackbarService) {}
+    constructor(private _http: HttpClient, private _snackbarService: SnackbarService, private _socket: Socket) {
+
+        _socket.on(`server.reminder`, (server: IServer) => {
+            if (server._id == this._serverId) {
+                this._snackbarService.open(`Rappel modifié`);
+            }
+        });
+    }
 
     public login(serverId: string, serverPassword: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
@@ -24,6 +33,9 @@ export class ServerService {
                     password: serverPassword
                 }
             }).subscribe((isValid: boolean) => {
+                if (isValid) {
+                    this._serverId = serverId;
+                }
                 resolve(isValid);
             }, (err: HttpErrorResponse) => {
                 this._snackbarService.openError(err);
@@ -49,5 +61,9 @@ export class ServerService {
                 reject(err);
             });
         });
+    }
+
+    public getServerId(): string {
+        return this._serverId;
     }
 }

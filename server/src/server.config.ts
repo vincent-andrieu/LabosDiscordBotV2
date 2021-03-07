@@ -6,5 +6,11 @@ export const serverConfig = {
     },
     commands: {
         prefix: "!"
+    },
+    express: {
+        port: 8080
+    },
+    socket: {
+        port: 3000
     }
 };
