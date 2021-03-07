@@ -11,10 +11,9 @@
 - Utiliser des alias pour les paths des imports des fichiers globaux
 
 ## Should
-- Traductions
-
-## Can
 - Authentification entre les serveurs (pas le but premier et ralenti l'utilisation par le user)
     - Mot de passe facultatif qui peut être ajouté dans l'url pour pas avoir à le mettre dans une popup
 
+## Can
+- Traductions
 - Docker
