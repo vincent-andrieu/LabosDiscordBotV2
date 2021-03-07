@@ -24,8 +24,14 @@
             "@global/*": [
                 "../../global/*"
             ],
+            "@environment": [
+                "environments/environment"
+            ],
             "@interfaces/*": [
                 "interfaces/*"
+            ],
+            "@services/*": [
+                "services/*"
             ]
         },
     },

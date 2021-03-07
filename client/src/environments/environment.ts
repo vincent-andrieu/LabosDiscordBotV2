@@ -7,6 +7,9 @@ export const environment = {
     cookiesName: {
         sidenavStatus: 'sidenavStatus',
         pageStatus: 'pageStatus'
+    },
+    server: {
+        url: 'http://localhost:8080'
     }
 };
 
