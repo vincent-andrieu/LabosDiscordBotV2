@@ -13,7 +13,7 @@ export class LaboratoryHttp {
     private _laboratorySchema: LaboratorySchema;
 
     constructor(private _app: Express, private _socketServer: Server) {
-        this._laboratorySchema = new LaboratorySchema(_socketServer);
+        this._laboratorySchema = new LaboratorySchema();
         this._init();
     }
 

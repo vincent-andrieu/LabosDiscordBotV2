@@ -228,7 +228,7 @@ export class LaboratorySchema {
                     return reject("Aucun laboratoire existe sous le nom " + name);
                 }
 
-                new ServerSchema(Sockets.server).forceSetDefaultLabo(labo)
+                new ServerSchema().forceSetDefaultLabo(labo)
                     .then((newDefaultLabo: CLaboratory) => resolve(newDefaultLabo))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
@@ -295,7 +295,7 @@ export class LaboratorySchema {
 
             Promise.all([
                 this.findOneByName(server, laboName, true),
-                new StockSchema(Sockets.server).findOneByName(server, stockName, true)
+                new StockSchema().findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.addLaboStock(result[0], result[1])

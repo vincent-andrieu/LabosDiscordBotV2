@@ -10,7 +10,7 @@ export class StockHttp {
     private _stockSchema: StockSchema;
 
     constructor(private _app: Express, private _socketServer: Server) {
-        this._stockSchema = new StockSchema(_socketServer);
+        this._stockSchema = new StockSchema();
         this._init();
     }
 

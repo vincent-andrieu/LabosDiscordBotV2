@@ -5,10 +5,10 @@ import { Server } from 'socket.io';
 
 import { serverConfig } from '../server.config';
 import Sockets from '../init/sockets';
-import { LaboratoryHttp } from 'api/laboratory';
-import { StockHttp } from 'api/stock';
-import { ProductionHttp } from 'api/production';
-import { ServerHttp } from 'api/server';
+import { LaboratoryHttp } from '@api/laboratory';
+import { StockHttp } from '@api/stock';
+import { ProductionHttp } from '@api/production';
+import { ServerHttp } from '@api/server';
 
 export default class ExpressServer {
 

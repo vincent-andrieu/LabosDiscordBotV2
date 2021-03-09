@@ -10,7 +10,7 @@ export class ProductionHttp {
     private _productionSchema: ProductionSchema;
 
     constructor(private _app: Express, private _socketServer: Server) {
-        this._productionSchema = new ProductionSchema(this._socketServer);
+        this._productionSchema = new ProductionSchema();
         this._init();
     }
 

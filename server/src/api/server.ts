@@ -10,7 +10,7 @@ export class ServerHttp {
     private _serverSchema: ServerSchema;
 
     constructor(private _app: Express, private _socketServer: Server) {
-        this._serverSchema = new ServerSchema(this._socketServer);
+        this._serverSchema = new ServerSchema();
         this._init();
     }
 
