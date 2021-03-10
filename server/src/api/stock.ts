@@ -43,6 +43,15 @@ export class StockHttp {
             }).catch((err) => response.send(err));
         });
 
+        // Get stocks
+        this._app.get(`${this._urlBase}/get`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._stockSchema.getByServerId(serverId).then((stocks) => {
+                response.send(stocks);
+            }).catch((err) => response.send(err));
+        });
+
         // Add stock quantity
         this._app.post(`${this._urlBase}/addStock`, (request, response) => {
             const stock: CStock = new CStock(request.body.stock);

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 import { IStock } from '@global/interfaces/stock.interface';
@@ -13,8 +13,8 @@ import { ServerService } from './server.service';
 })
 export class StockService extends MainService<CStock, IStock> {
 
-    constructor(protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
-        super('stock', CStock, _http, _snackbarService);
+    constructor(protected _injector: Injector, protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
+        super('stock', CStock, _injector);
 
         _socket.on(`stock.add`, (stock: IStock) => {
             if (stock.server._id === this._serverService.getServerId()) {

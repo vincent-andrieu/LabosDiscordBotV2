@@ -8,6 +8,7 @@ import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from "@interfaces/stock.class";
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import Sockets from '../init/sockets';
+import { ServerSchema } from './servers.schema';
 
 const stockSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
@@ -146,6 +147,16 @@ export class StockSchema {
             this._model.find({ server: server._id })
                 .then((result: Array<unknown>) => resolve((result as Array<IStock>).map((labo) => new CStock(labo))))
                 .catch((err) => reject(err));
+        });
+    }
+
+    public getByServerId(serverId: string): Promise<Array<CStock>> {
+        return new Promise<Array<CStock>>((resolve, reject) => {
+            new ServerSchema().getById(serverId).then((server) => {
+                this.getByServer(server).then((result) =>
+                    resolve(result)
+                ).catch((err) => reject(err));
+            }).catch((err) => reject(err));
         });
     }
 

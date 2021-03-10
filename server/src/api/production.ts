@@ -42,5 +42,14 @@ export class ProductionHttp {
                 response.send(editedProd || prod);
             }).catch((err) => response.send(err));
         });
+
+        // Get prods
+        this._app.get(`${this._urlBase}/get`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._productionSchema.getByServerId(serverId).then((prods) => {
+                response.send(prods);
+            }).catch((err) => response.send(err));
+        });
     }
 }

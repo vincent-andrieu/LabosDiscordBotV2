@@ -174,6 +174,16 @@ export class LaboratorySchema {
         });
     }
 
+    public getByServerId(serverId: string): Promise<Array<CLaboratory>> {
+        return new Promise<Array<CLaboratory>>((resolve, reject) => {
+            new ServerSchema().getById(serverId).then((server) => {
+                this.getByServer(server).then((result) =>
+                    resolve(result)
+                ).catch((err) => reject(err));
+            }).catch((err) => reject(err));
+        });
+    }
+
     public delete(labo: CLaboratory, reason?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: labo.server._id, _id: labo._id })

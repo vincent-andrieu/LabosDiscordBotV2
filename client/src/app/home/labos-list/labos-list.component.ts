@@ -1,15 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+import { CLaboratory } from '@interfaces/laboratory.class';
+import { LaboratoryService } from '@services/laboratory.service';
 
 @Component({
-  selector: 'app-labos-list',
-  templateUrl: './labos-list.component.html',
-  styleUrls: ['./labos-list.component.scss']
+    selector: 'app-labos-list',
+    templateUrl: './labos-list.component.html',
+    styleUrls: ['./labos-list.component.scss']
 })
-export class LabosListComponent implements OnInit {
+export class LabosListComponent {
+    public laboratories: Array<CLaboratory> = [];
+    public isLoading = true;
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+    constructor(private _laboratoryService: LaboratoryService) {
+        _laboratoryService.get().then((result) => {
+            this.laboratories = result;
+            this.isLoading = false;
+        });
+    }
 
 }

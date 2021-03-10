@@ -1,15 +1,20 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { Injector } from "@angular/core";
 import { ClassType } from 'class-transformer/ClassTransformer';
 
 import { environment } from "@environment";
 import { SnackbarService } from "./snackbar.service";
+import { Router } from "@angular/router";
 
 
 export class MainService<C, I> {
 
     protected _serverUrl: string;
+    protected _http: HttpClient = this._injector.get(HttpClient);
+    protected _snackbarService: SnackbarService = this._injector.get(SnackbarService);
+    protected _router: Router = this._injector.get(Router);
 
-    constructor(private _serverUrlBase: string, private _ctor: ClassType<C>, protected _http: HttpClient, protected _snackbarService: SnackbarService) {
+    constructor(private _serverUrlBase: string, private _ctor: ClassType<C>, protected _injector: Injector) {
         this._serverUrl = `${environment.server.url}/${_serverUrlBase}`;
     }
 
@@ -40,6 +45,21 @@ export class MainService<C, I> {
         return new Promise<C>((resolve, reject) => {
             this._http.post<I>(`${this._serverUrl}/edit`, param).subscribe((result: I) =>
                 resolve(new this._ctor(result))
+            , (err: HttpErrorResponse) => {
+                this._snackbarService.openError(err);
+                reject(err);
+            });
+        });
+    }
+
+    public get(): Promise<Array<C>> {
+        return new Promise<Array<C>>((resolve, reject) => {
+            this._http.get<Array<I>>(`${this._serverUrl}/get`, {
+                params: {
+                    serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
+                }
+            }).subscribe((result: Array<I>) =>
+                resolve(result.map((value: I) => new this._ctor(value)))
             , (err: HttpErrorResponse) => {
                 this._snackbarService.openError(err);
                 reject(err);

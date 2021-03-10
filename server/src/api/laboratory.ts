@@ -11,9 +11,11 @@ export class LaboratoryHttp {
 
     private _urlBase = '/labo';
     private _laboratorySchema: LaboratorySchema;
+    private _serverSchema: ServerSchema;
 
     constructor(private _app: Express, private _socketServer: Server) {
         this._laboratorySchema = new LaboratorySchema();
+        this._serverSchema = new ServerSchema();
         this._init();
     }
 
@@ -43,6 +45,15 @@ export class LaboratoryHttp {
 
             this._laboratorySchema.edit(new CLaboratory(labo)).then((editedLabo: CLaboratory) => {
                 response.send(editedLabo);
+            }).catch((err) => response.send(err));
+        });
+
+        // Get labos
+        this._app.get(`${this._urlBase}/get`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._laboratorySchema.getByServerId(serverId).then((labos) => {
+                response.send(labos);
             }).catch((err) => response.send(err));
         });
 

@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
@@ -14,8 +14,8 @@ import { ServerService } from './server.service';
 })
 export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
 
-    constructor(protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
-        super('labo', CLaboratory, _http, _snackbarService);
+    constructor(protected _injector: Injector, protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
+        super('labo', CLaboratory, _injector);
 
         _socket.on(`labo.add`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getServerId()) {

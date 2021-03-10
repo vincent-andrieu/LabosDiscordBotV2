@@ -11,6 +11,7 @@ import { LaboratorySchema } from './laboratories.schema';
 import { StockSchema } from './stocks.schema';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import Sockets from '../init/sockets';
+import { ServerSchema } from './servers.schema';
 
 const prodSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
@@ -244,6 +245,16 @@ export class ProductionSchema {
                     resolve((result as Array<IProductions>).map((prod) => new CProductions(prod)))
                 )
                 .catch((err) => reject(err));
+        });
+    }
+
+    public getByServerId(serverId: string): Promise<Array<CProductions>> {
+        return new Promise<Array<CProductions>>((resolve, reject) => {
+            new ServerSchema().getById(serverId).then((server) => {
+                this.getByServer(server).then((result) =>
+                    resolve(result)
+                ).catch((err) => reject(err));
+            }).catch((err) => reject(err));
         });
     }
 

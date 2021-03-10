@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 import { IServer } from '@global/interfaces/server.interface';
@@ -14,8 +14,8 @@ import { ServerService } from './server.service';
 })
 export class ProductionService extends MainService<CProductions, IProductions> {
 
-    constructor(protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
-        super('prod', CProductions, _http, _snackbarService);
+    constructor(protected _injector: Injector, protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
+        super('prod', CProductions, _injector);
 
         _socket.on(`prod.add`, (prod: IProductions) => {
             if (prod.server._id === this._serverService.getServerId()) {
