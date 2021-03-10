@@ -175,8 +175,8 @@ export class ProductionSchema {
                         path: 'labo',
                         populate: 'server stocks'
                     })
-                        .then((prods: Array<IProductions>) =>
-                            resolve(prods.map((prod) => new CProductions(prod))))
+                        .then((prods: unknown) =>
+                            resolve((prods as Array<IProductions>).map((prod) => new CProductions(prod))))
                         .catch((err) => reject(err))
                 ).catch((err) => reject(err));
 
@@ -195,11 +195,11 @@ export class ProductionSchema {
                 path: 'labo',
                 populate: 'server stocks'
             })
-                .then((result: IProductions) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
-                    resolve(new CProductions(result));
+                    resolve(new CProductions(result as IProductions));
                 })
                 .catch((err) => reject(err));
         });
@@ -217,11 +217,12 @@ export class ProductionSchema {
                 path: 'labo',
                 populate: 'server stocks'
             })
-                .then((result: Array<IProductions>) => {
-                    if (result.length == 0) {
+                .then((result: Array<unknown>) => {
+                    const labos = result as Array<IProductions>;
+                    if (labos.length == 0) {
                         return reject("Aucune production n'est en cours dans le laboratoire " + labo.name);
                     }
-                    resolve(result.map((prod) => new CProductions(prod)));
+                    resolve(labos.map((prod) => new CProductions(prod)));
                 })
                 .catch((err) => reject(err));
         });
@@ -239,8 +240,8 @@ export class ProductionSchema {
                 path: 'labo',
                 populate: 'server stocks'
             })
-                .then((result: Array<IProductions>) =>
-                    resolve(result.map((prod) => new CProductions(prod)))
+                .then((result: Array<unknown>) =>
+                    resolve((result as Array<IProductions>).map((prod) => new CProductions(prod)))
                 )
                 .catch((err) => reject(err));
         });
@@ -251,7 +252,7 @@ export class ProductionSchema {
 
             this._model.deleteOne({ server: prod.server._id, _id: prod._id })
                 .then((res) => {
-                    if (res.deletedCount <= 0) {
+                    if (!res.deletedCount ||  res.deletedCount <= 0) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
                     if (Sockets.server) {
@@ -286,7 +287,7 @@ export class ProductionSchema {
             this._model.deleteMany({ server: laboProd.server._id, labo: (laboProd as CProductions).labo?._id || laboProd._id })
                 .then((res) => {
                     const laboProdName = ((laboProd as CLaboratory).name || (laboProd as CProductions).labo.name);
-                    if (res.deletedCount <= 0) {
+                    if (!res.deletedCount || res.deletedCount <= 0) {
                         return reject("Aucune production n'est en cours dans le laboratoire " + laboProdName);
                     }
                     if (Sockets.server) {

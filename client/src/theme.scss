@@ -2,6 +2,8 @@
 
 // Import custom themes
 @import "./app/app.theme.scss";
+@import "./app/auth/auth.theme.scss";
+@import "./app/home/home.theme.scss";
 
 @include mat-core();
 
@@ -9,7 +11,6 @@
 // Custom colors
 $primary: mat-palette($mat-indigo);
 $accent: mat-palette($mat-grey, 200);
-// $background-color: map-get($mat-grey, 200);
 
 // Create the theme object
 $theme: mat-dark-theme($primary, $accent);
@@ -20,6 +21,8 @@ $theme: mat-dark-theme($primary, $accent);
 @include angular-material-theme($theme);
 
 // Include theme styles for your custom components.
+@include app-theme($theme);
+@include auth-theme($theme);
 @include toolbar-theme($theme);
 
 /*

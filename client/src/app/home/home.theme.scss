@@ -1,0 +1,12 @@
+@import "~@angular/material/theming";
+
+@mixin toolbar-theme($theme) {
+    $primary: map-get($theme, primary);
+
+    .toggle-sidenav-button {
+        height: 48px !important;
+        background-color: map-get($primary, default);
+        border-radius: 0 !important;
+        color: white;
+    }
+}

@@ -1,12 +1,14 @@
+import { TextChannel } from "discord.js";
+
 import { CModel } from "@global/interfaces/database.interface";
+import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import { IServer, IServerModel } from "@global/interfaces/server.interface";
-import { CLaboratory } from "./laboratory.class";
 
 export class CServer implements IServer {
     _id: string;
     url?: string;
     //activity: string;
-    defaultLabo?: CLaboratory;
+    defaultLabo?: ILaboratory;
     defaultChannel: string;
     reminder?: number;
     roleTag?: string;
@@ -16,9 +18,9 @@ export class CServer implements IServer {
         this.url = server.url;
         //this.activity = server.activity;
         if (typeof server.defaultLabo === 'object') {
-            this.defaultLabo = new CLaboratory(server.defaultLabo);
+            this.defaultLabo = server.defaultLabo;
         }
-        this.defaultChannel = server.defaultChannel;
+        this.defaultChannel = (server.defaultChannel as TextChannel | undefined)?.id || server.defaultChannel as string || "";
         this.reminder = server.reminder;
         this.roleTag = server.roleTag;
     }

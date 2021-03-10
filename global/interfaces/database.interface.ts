@@ -1,4 +1,4 @@
-import mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
 
 export type ObjectId = mongoose.Schema.Types.ObjectId;
 export const ObjectId = mongoose.Schema.Types.ObjectId;

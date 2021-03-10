@@ -1,0 +1,13 @@
+<form *ngIf="isInit" class="login-form-box" [formGroup]="loginForm" fxLayout="column" fxLayoutAlign="center center"
+      (ngSubmit)="login()" fxFill>
+
+    <h1>LOGIN</h1>
+
+    <input matInput class="login-inputs" type="text" placeholder="Server ID" formControlName="serverId" required>
+
+    <input matInput class="input-password" type="password"
+           formControlName="password" placeholder="Password">
+
+    <input type="submit" name="" value="Login">
+
+</form>

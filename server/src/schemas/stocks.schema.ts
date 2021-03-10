@@ -43,9 +43,9 @@ export class StockSchema {
             this._model.findOne({
                 server: stock.server._id,
                 name: { $regex: new RegExp(stock.name, 'i') }
-            }).then((currentStock: IStock) => {
+            }).then((currentStock: unknown) => {
                 if (currentStock) {
-                    return reject("Un entrepôt existe déjà sous le nom " + currentStock.name);
+                    return reject("Un entrepôt existe déjà sous le nom " + (currentStock as IStock).name);
                 }
 
                 if (stock._id) {
@@ -90,11 +90,11 @@ export class StockSchema {
                 server: server._id,
                 name: search
             })
-                .then((result: IStock) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("Aucun entrepôt existe sous le nom " + name);
                     }
-                    resolve(new CStock(result));
+                    resolve(new CStock(result as IStock));
                 })
                 .catch((err) => reject(err));
         });
@@ -108,11 +108,11 @@ export class StockSchema {
                 server: server._id,
                 name: search
             })
-                .then((res: Array<IStock>) => {
+                .then((res: Array<unknown>) => {
                     if (res.length == 0) {
                         return reject("Aucun entrepôt existe sous le nom " + name);
                     }
-                    resolve(res.map((labo) => new CStock(labo)));
+                    resolve((res as Array<IStock>).map((stock) => new CStock(stock)));
                 })
                 .catch((err) => reject(err));
         });
@@ -126,11 +126,11 @@ export class StockSchema {
     public getById(stock: CStock): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
             this._model.findById(stock._id)
-                .then((result: IStock) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("L'entrepôt " + stock.name + " n'existe pas");
                     }
-                    resolve(new CStock(result));
+                    resolve(new CStock(result as IStock));
                 })
                 .catch((err) => reject(err));
         });
@@ -144,7 +144,7 @@ export class StockSchema {
     public getByServer(server: CServer): Promise<Array<CStock>> {
         return new Promise<Array<CStock>>((resolve, reject) => {
             this._model.find({ server: server._id })
-                .then((result: Array<IStock>) => resolve(result.map((labo) => new CStock(labo))))
+                .then((result: Array<unknown>) => resolve((result as Array<IStock>).map((labo) => new CStock(labo))))
                 .catch((err) => reject(err));
         });
     }
@@ -153,7 +153,7 @@ export class StockSchema {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: stock.server._id, _id: stock._id })
                 .then((res) => {
-                    if (res.deletedCount <= 0) {
+                    if (!res.deletedCount || res.deletedCount <= 0) {
                         return reject("L'entrepôt " + stock.name + " n'existe pas");
                     }
 

@@ -27,7 +27,7 @@ export class ServerSchema {
 
     public login(serverId: string, password: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            this._model.find({ _id: serverId, password: password }).then((result: Array<IServer>) => {
+            this._model.find({ _id: serverId, password: password }).then((result: Array<unknown>) => {
                 resolve(result.length === 1);
             }).catch((err) => reject(err));
         });
@@ -80,11 +80,11 @@ export class ServerSchema {
     public getById(id: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             this._model.findById(id).populate('defaultLabo')
-                .then((result: IServer | undefined) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("Le serveur (" + id.toString() + ") n'existe pas");
                     }
-                    resolve(new CServer(result));
+                    resolve(new CServer(result as IServer));
                 })
                 .catch((err) => reject(err));
         });
@@ -94,7 +94,7 @@ export class ServerSchema {
         return new Promise<CServer>((resolve, reject) => {
 
             this._model.findById(textChannel.guild.id).populate('defaultLabo')
-                .then((server: IServer | undefined) => {
+                .then((server: unknown) => {
                     if (!server) {
                         this.add(new CServer({
                             _id: textChannel.guild.id,
@@ -103,7 +103,7 @@ export class ServerSchema {
                             .then((createdServer: CServer) => resolve(createdServer))
                             .catch((err) => reject(err));
                     } else {
-                        resolve(new CServer(server));
+                        resolve(new CServer(server as IServer));
                     }
                 })
                 .catch((err) => reject(err));

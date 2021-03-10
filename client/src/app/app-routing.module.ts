@@ -1,46 +1,54 @@
 import { Injectable, NgModule } from '@angular/core';
-import { Resolve, Router, RouterModule, Routes } from '@angular/router';
-import { Location } from '@angular/common';
-import { CookieService } from 'ngx-cookie';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterModule, Routes, UrlTree } from '@angular/router';
+import { Observable } from 'rxjs';
 
-import { EPageStatus } from '@interfaces/root.interface';
-import { environment } from 'environments/environment';
-import { LabosListComponent } from './labos-list/labos-list.component';
-import { StocksListComponent } from './stocks-list/stocks-list.component';
-import { AppComponent } from './app.component';
+import { ServerService } from '@services/server.service';
+import { SnackbarService } from '@services/snackbar.service';
+import { AuthComponent } from './auth/auth.component';
+import { LabosListComponent } from './home/labos-list/labos-list.component';
+import { StocksListComponent } from './home/stocks-list/stocks-list.component';
 
-@Injectable({
-    providedIn: "root"
-})
-class RootResolver implements Resolve<void> {
+@Injectable()
+class AuthGuard implements CanActivate {
+    constructor(private _router: Router, private _serverService: ServerService, private _snackbarService: SnackbarService) {}
 
-    constructor(
-        private _cookieService: CookieService,
-        private _location: Location,
-    private _router: Router) {}
+    canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        const password: string = route.params.password;
+        const serverId: string = route.params.serverId;
 
-    resolve(): void {
-        const pageCookieStatus = this._cookieService.getObject(environment.cookiesName.pageStatus) as { index: number; status: EPageStatus } | undefined;
-
-        this._router.navigate([pageCookieStatus?.status || EPageStatus.LABOS]);
+        return this._serverService.login(serverId, password).then((result) => {
+            if (result) {
+                return true;
+            } else {
+                this._snackbarService.openCustomError("Server ID ou password invalid");
+                return this._router.parseUrl(`${serverId}`);
+            }
+        });
     }
 }
 
 const routes: Routes = [
+    // { path: '**', redirectTo: '/' },
+    { path: '', component: AuthComponent },
+    { path: ':serverId', component: AuthComponent },
     {
-        path: '',
-        component: AppComponent,
-        resolve: {
-            redirect: RootResolver
-        }
-    },
-    { path: 'labos', component: LabosListComponent },
-    { path: 'stocks', component: StocksListComponent }
+        path: ':serverId/:password',
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'labos'
+            },
+            { path: 'labos', component: LabosListComponent },
+            { path: 'stocks', component: StocksListComponent }
+        ]
+    }
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
-    providers: [RootResolver]
+    providers: [AuthGuard]
 })
 export class AppRoutingModule {}

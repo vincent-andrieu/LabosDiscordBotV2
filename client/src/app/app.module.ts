@@ -2,43 +2,50 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { CookieModule } from 'ngx-cookie';
+import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatBadgeModule } from '@angular/material/badge';
+import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
+import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 
+import { environment } from '@environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LabosListComponent } from './labos-list/labos-list.component';
-import { StocksListComponent } from './stocks-list/stocks-list.component';
-import { SidenavComponent } from './sidenav/sidenav.component';
+import { HomeModule } from './home/home.module';
+import { RouterModule } from '@angular/router';
+import { AuthComponent } from './auth/auth.component';
+
+const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {} };
 
 @NgModule({
     declarations: [
         AppComponent,
-        LabosListComponent,
-        StocksListComponent,
-        SidenavComponent
+        AuthComponent
     ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         FlexLayoutModule,
+        HttpClientModule,
 
         CookieModule.forRoot(),
+        SocketIoModule.forRoot(socketConfig),
 
-        MatSidenavModule,
-        MatTabsModule,
-        MatIconModule,
-        MatButtonModule,
-        MatBadgeModule
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatSnackBarModule,
+
+        HomeModule
     ],
-    providers: [],
-    bootstrap: [AppComponent]
+    bootstrap: [AppComponent],
+    providers: [
+        { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: { appearance: 'outline' } },
+        { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 4000 } }
+    ]
 })
-export class AppModule { }
+export class AppModule {}

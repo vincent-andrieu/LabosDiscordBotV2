@@ -1,0 +1,31 @@
+<mat-sidenav-container autosize fxFill>
+
+    <mat-sidenav #sidenav [opened]="sidenavStatus" mode="side">
+        <!-- <app-sidenav [pageStatus]="pageStatus.status" fxLayout="column" fxFlex></app-sidenav> -->
+    </mat-sidenav>
+
+    <mat-sidenav-content fxLayout="row">
+        <button mat-icon-button class="toggle-sidenav-button" (click)="toggleSidenav(sidenav)">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <mat-tab-group mat-stretch-tabs [selectedIndex]="pageStatus.index"
+                       (selectedTabChange)="onTabChange($event)" backgroundColor="primary" fxFlex>
+
+            <mat-tab [aria-label]="ePageStatus.LABOS">
+                <ng-template mat-tab-label>
+                    <!-- <span [matBadge]="getNumberFinishProds()"
+                    [matBadgeHidden]="productionService.isLoading || getNumberFinishProds() === 0"
+                    matBadgeColor="warn" matBadgeOverlap="false">Laboratoires</span> -->
+                    <span>Laboratoires</span>
+                </ng-template>
+                <app-labos-list fxLayout="row wrap" fxLayoutAlign="space-evenly center"></app-labos-list>
+            </mat-tab>
+
+            <mat-tab label="Entrepôts" [aria-label]="ePageStatus.STOCKS">
+                <app-stocks-list fxLayout="row wrap" fxLayoutAlign="space-evenly center"></app-stocks-list>
+            </mat-tab>
+
+        </mat-tab-group>
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

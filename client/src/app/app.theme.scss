@@ -1,12 +1,11 @@
 @import "~@angular/material/theming";
 
-@mixin toolbar-theme($theme) {
+@mixin app-theme($theme) {
     $primary: map-get($theme, primary);
+    $accent: map-get($theme, accent);
+    $background: map-get($theme, background);
 
-    .toggle-sidenav-button {
-        height: 48px !important;
-        background-color: map-get($primary, default);
-        border-radius: 0 !important;
-        color: white;
+    .background-theme {
+        background-color: map-get($background, card);
     }
 }

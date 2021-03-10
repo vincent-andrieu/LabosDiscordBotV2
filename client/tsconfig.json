@@ -15,7 +15,7 @@
         "moduleResolution": "node",
         "importHelpers": true,
         "target": "ES2015",
-        "module": "ES2020",
+        "module": "CommonJS",
         "lib": [
             "ES2018",
             "DOM"
@@ -33,7 +33,7 @@
             "@services/*": [
                 "services/*"
             ]
-        },
+        }
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

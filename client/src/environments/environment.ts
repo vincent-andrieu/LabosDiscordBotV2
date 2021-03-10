@@ -8,6 +8,9 @@ export const environment = {
         sidenavStatus: 'sidenavStatus',
         pageStatus: 'pageStatus'
     },
+    sockets: {
+        url: 'http://localhost:3000'
+    },
     server: {
         url: 'http://localhost:8080'
     }

@@ -1,4 +1,4 @@
-import mongoose = require('mongoose');
+import * as mongoose from 'mongoose';
 
 import { ILaboratory } from "@global/interfaces/laboratory.interface";
 import { CServer } from '@interfaces/server.class';
@@ -52,9 +52,9 @@ export class LaboratorySchema {
             this._model.findOne({
                 server: labo.server._id,
                 name: { $regex: new RegExp(labo.name, 'i') }
-            }).populate('stocks').then((currentLabo: ILaboratory) => {
+            }).populate('stocks').then((currentLabo: unknown) => {
                 if (currentLabo) {
-                    return reject("Un laboratoire existe déjà sous le nom " + currentLabo.name);
+                    return reject("Un laboratoire existe déjà sous le nom " + (currentLabo as ILaboratory).name);
                 }
 
                 if (labo._id) {
@@ -107,11 +107,11 @@ export class LaboratorySchema {
                 server: server._id,
                 name: search
             }).populate('stocks')
-                .then((result: ILaboratory) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("Aucun laboratoire existe sous le nom " + name);
                     }
-                    resolve(new CLaboratory(result));
+                    resolve(new CLaboratory(result as ILaboratory));
                 })
                 .catch((err) => reject(err));
         });
@@ -133,11 +133,11 @@ export class LaboratorySchema {
                 server: server._id,
                 name: search
             }).populate('stocks')
-                .then((res: Array<ILaboratory>) => {
+                .then((res: Array<unknown>) => {
                     if (res.length == 0) {
                         return reject("Aucun laboratoire existe sous le nom " + name);
                     }
-                    resolve(res.map((labo) => new CLaboratory(labo)));
+                    resolve((res as Array<ILaboratory>).map((labo) => new CLaboratory(labo)));
                 })
                 .catch((err) => reject(err));
         });
@@ -151,11 +151,11 @@ export class LaboratorySchema {
     public getById(labo: CLaboratory): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             this._model.findById(labo._id).populate('stocks')
-                .then((result: ILaboratory) => {
+                .then((result: unknown) => {
                     if (!result) {
                         return reject("Le laboratoire " + labo.name + " n'existe pas");
                     }
-                    resolve(new CLaboratory(result));
+                    resolve(new CLaboratory(result as ILaboratory));
                 })
                 .catch((err) => reject(err));
         });
@@ -169,7 +169,7 @@ export class LaboratorySchema {
     public getByServer(server: CServer): Promise<Array<CLaboratory>> {
         return new Promise<Array<CLaboratory>>((resolve, reject) => {
             this._model.find({ server: server._id }).populate('stocks')
-                .then((result: Array<ILaboratory>) => resolve(result.map((labo) => new CLaboratory(labo))))
+                .then((result: Array<unknown>) => resolve((result as Array<ILaboratory>).map((labo) => new CLaboratory(labo))))
                 .catch((err) => reject(err));
         });
     }
@@ -178,7 +178,7 @@ export class LaboratorySchema {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: labo.server._id, _id: labo._id })
                 .then((res) => {
-                    if (res.deletedCount <= 0) {
+                    if (!res.deletedCount || res.deletedCount <= 0) {
                         return reject("Le laboratoire " + labo.name + " n'existe pas");
                     }
 
@@ -277,9 +277,9 @@ export class LaboratorySchema {
                             }
                             crtLabo.server.defaultChannel?.send(embedMessage);
 
-                            this._model.findById(crtLabo._id).populate('stocks').then((editedLabo: ILaboratory) => {
+                            this._model.findById(crtLabo._id).populate('stocks').then((editedLabo: unknown) => {
                                 Sockets.server?.emit('labo.addStock', editedLabo);
-                                resolve(new CLaboratory(editedLabo));
+                                resolve(new CLaboratory(editedLabo as ILaboratory));
                             }).catch((err) => reject(err));
                         })
                         .catch((err) => reject(err));

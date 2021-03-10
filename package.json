@@ -17,9 +17,12 @@
     },
     "homepage": "https://github.com/vincent-andrieu/LabosDiscordBotV2#readme",
     "dependencies": {
+        "discord.js": "^12.5.1",
+        "mongoose": "^5.11.19",
         "typescript": "^4.1.3"
     },
     "devDependencies": {
+        "@types/ws": "^7.4.0",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
         "eslint": "^7.19.0"
