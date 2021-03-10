@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -21,6 +23,8 @@ import { SidenavComponent } from './sidenav/sidenav.component';
     ],
     imports: [
         CommonModule,
+        BrowserAnimationsModule,
+        FlexLayoutModule,
 
         MatSidenavModule,
         MatTabsModule,

@@ -5,8 +5,7 @@ import { Observable } from 'rxjs';
 import { ServerService } from '@services/server.service';
 import { SnackbarService } from '@services/snackbar.service';
 import { AuthComponent } from './auth/auth.component';
-import { LabosListComponent } from './home/labos-list/labos-list.component';
-import { StocksListComponent } from './home/stocks-list/stocks-list.component';
+import { HomeComponent } from './home/home.component';
 
 @Injectable()
 class AuthGuard implements CanActivate {
@@ -40,8 +39,8 @@ const routes: Routes = [
                 pathMatch: 'full',
                 redirectTo: 'labos'
             },
-            { path: 'labos', component: LabosListComponent },
-            { path: 'stocks', component: StocksListComponent }
+            { path: 'labos', component: HomeComponent },
+            { path: 'stocks', component: HomeComponent }
         ]
     }
 ];
