@@ -1,1 +1,5 @@
-<p>stocks-list works!</p>
+<!-- Spinner -->
+<div *ngIf="isLoading" fxLayoutAlign="start stretch" fxFlex>
+    <mat-progress-bar [mode]="'indeterminate'" color="primary"></mat-progress-bar>
+</div>
+<!-- / Spinner -->
