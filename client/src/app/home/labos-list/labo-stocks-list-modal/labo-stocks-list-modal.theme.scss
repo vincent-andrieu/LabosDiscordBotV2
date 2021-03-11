@@ -1,0 +1,9 @@
+@import "~@angular/material/theming";
+
+@mixin labos-stocks-list-modal-theme($theme) {
+    $warn: map-get($theme, warn);
+
+    .no-stocks {
+        color: map-get($warn, default);
+    }
+}

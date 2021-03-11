@@ -1,0 +1,33 @@
+.labo-card {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 25px;
+    width: 380px;
+}
+
+.drug-name-card-subtitle {
+    text-transform: capitalize;
+}
+
+.edit-labo-button {
+    position: absolute;
+    right: 20px;
+    top: 16px;
+}
+
+.labo-screen {
+    max-height: 350px;
+    object-fit: cover;
+}
+
+.mat-card {
+    border-radius: 7px;
+}
+
+.prod-stock-button {
+    color: rgb(0, 200, 0);
+}
+
+.add-prod-form ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+}

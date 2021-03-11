@@ -15,7 +15,7 @@ import { environment } from '@environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
-import { RouterModule } from '@angular/router';
+import { SharedModule } from './shared/shared.module';
 import { AuthComponent } from './auth/auth.component';
 
 const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {} };
@@ -40,7 +40,8 @@ const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {}
         MatFormFieldModule,
         MatSnackBarModule,
 
-        HomeModule
+        HomeModule,
+        SharedModule
     ],
     bootstrap: [AppComponent],
     providers: [

@@ -1,3 +1,76 @@
+<mat-card *ngFor="let labo of laboratories" class="labo-card"
+          [ngClass]="{'labo-card-primary': labo._id === defaultLabo?._id}">
+    <mat-card-header>
+        <mat-card-title>{{ labo.name }}</mat-card-title>
+        <mat-card-subtitle class="drug-name-card-subtitle">{{ labo.drug }}</mat-card-subtitle>
+        <button mat-icon-button class="edit-labo-button" color="accent" (click)="editLabo(labo)">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </mat-card-header>
+    <img mat-card-image class="labo-screen" [src]="labo.screen">
+    <mat-card-content>
+
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let prod of getLaboProds(labo)" hideToggle>
+
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <span>Production de <b>{{ prod.quantity }} kg</b></span>
+                    </mat-panel-title>
+                    <mat-panel-description>
+                        {{ getFinishProdDuration(prod) }}
+                    </mat-panel-description>
+                    <mat-icon>
+                        <mat-spinner color="accent" [diameter]="23"
+                                     [mode]="isProdFinish(prod) ? 'indeterminate' : 'determinate'"
+                                     [value]="getSpinnerDuration(prod)">
+                        </mat-spinner>
+                    </mat-icon>
+                </mat-expansion-panel-header>
+
+                <form *ngIf="prod._id && !isProdFinish(prod)" (ngSubmit)="editProd(prod)"
+                      fxLayoutAlign="space-around center" fxLayoutGap="20px">
+                    <mat-form-field color="accent" appearance="outline" fxFlex>
+                        <mat-label>Modifier la production</mat-label>
+                        <input matInput placeholder="Quantité" [min]="0" type="number" autocomplete="off"
+                               [formControl]="prodForms[prod._id.toString()]">
+                        <mat-hint>Le stock des entrepôts ne sera pas modifié</mat-hint>
+                    </mat-form-field>
+                    <button mat-flat-button color="primary" [disabled]="prodForms[prod._id.toString()].invalid"
+                            type="submit">Modifier</button>
+                </form>
+                <mat-action-row>
+                    <button mat-button color="warn" (click)="deleteProd(prod)">Supprimer</button>
+                    <button mat-button class="prod-stock-button"
+                            [disabled]="!isProdFinish(prod)" (click)="stockProd(prod)">Stocker</button>
+                </mat-action-row>
+            </mat-expansion-panel>
+        </mat-accordion>
+
+        <form *ngIf="labo._id" (ngSubmit)="addProd(labo)"
+              fxLayoutAlign="space-around center" fxLayoutGap="20px">
+            <mat-form-field class="add-prod-form" color="accent" appearance="outline">
+                <mat-label>Ajouter une production</mat-label>
+                <input matInput placeholder="Quantité" [min]="1" type="number" autocomplete="off"
+                       [formControl]="laboForms[labo._id.toString()]">
+            </mat-form-field>
+            <button mat-flat-button color="primary" type="submit"
+                    [disabled]="laboForms[labo._id.toString()].pristine || laboForms[labo._id.toString()].invalid">Ajouter</button>
+        </form>
+
+    </mat-card-content>
+    <mat-card-actions fxLayout="row" fxLayoutAlign="space-between center">
+        <button mat-icon-button [color]="labo.stocks.length <= 0 ? 'warn' : 'accent'"
+                (click)="openLaboStocksListModal(labo)">
+            <mat-icon>local_shipping</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteLabo(labo)">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>
+
 <!-- Spinner -->
 <div *ngIf="isLoading" fxLayoutAlign="start stretch" fxFlex>
     <mat-progress-bar [mode]="'indeterminate'" color="primary"></mat-progress-bar>

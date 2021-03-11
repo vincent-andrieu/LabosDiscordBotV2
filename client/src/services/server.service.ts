@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
 
 import { environment } from '@environment';
@@ -16,7 +17,7 @@ export class ServerService {
     private _serverUrl = `${environment.server.url}/server`;
     private _serverId = "";
 
-    constructor(private _http: HttpClient, private _snackbarService: SnackbarService, private _socket: Socket) {
+    constructor(private _http: HttpClient, private _snackbarService: SnackbarService, private _socket: Socket, private _router: Router) {
 
         _socket.on(`server.reminder`, (server: IServer) => {
             if (server._id == this._serverId) {
@@ -63,7 +64,22 @@ export class ServerService {
         });
     }
 
-    public getServerId(): string {
+    public getCurrentServer(): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
+            this._http.get<IServer>(`${this._serverUrl}/get`, {
+                params: {
+                    serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
+                }
+            }).subscribe((result: IServer) => {
+                resolve(new CServer(result));
+            }, (err: HttpErrorResponse) => {
+                this._snackbarService.openError(err);
+                reject(err);
+            });
+        });
+    }
+
+    public getCurrentServerId(): string {
         return this._serverId;
     }
 }

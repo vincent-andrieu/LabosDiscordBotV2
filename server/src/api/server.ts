@@ -35,5 +35,14 @@ export class ServerHttp {
                 response.send(editedServer);
             }).catch((err) => response.send(err));
         });
+
+        // Get server
+        this._app.get(`${this._urlBase}/get`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._serverSchema.getById(serverId).then((server) => {
+                response.send(server);
+            }).catch((err) => response.send(err));
+        });
     }
 }

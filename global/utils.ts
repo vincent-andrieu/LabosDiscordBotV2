@@ -1,4 +1,4 @@
-import { EDrugsList, EStuffList, EVDrugsList, EVStuffList } from "./interfaces/drug-stuff.interface";
+import { EVDrugsList, EVStuffList } from "./interfaces/drug-stuff.interface";
 
 export const EXIT_ERROR = 84;
 
@@ -38,4 +38,16 @@ export function getDrugError(option: { drug?: boolean; stuff?: boolean }, drug?:
     }
 
     return str;
+}
+
+export function removeElemFromArray<T>(tab: Array<T>, cb: (value: T, index: number, obj: T[]) => unknown, deleteCount = 1): Array<T> | null {
+    if (!tab) {
+        return null;
+    }
+    const index = tab.findIndex(cb);
+
+    if (index < 0) {
+        return null;
+    }
+    return tab.splice(index, deleteCount);
 }

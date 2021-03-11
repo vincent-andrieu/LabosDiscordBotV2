@@ -32,6 +32,9 @@
             ],
             "@services/*": [
                 "services/*"
+            ],
+            "@shared/*": [
+                "app/shared/*"
             ]
         }
     },

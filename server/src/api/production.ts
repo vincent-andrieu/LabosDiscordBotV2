@@ -2,6 +2,7 @@ import { Express } from 'express';
 import { Server } from 'socket.io';
 
 import { ProductionSchema } from '@schemas/productions.schema';
+import { IProdFinish } from '@global/interfaces/production.interface';
 import { CProductions } from '@interfaces/production.class';
 
 export class ProductionHttp {
@@ -49,6 +50,15 @@ export class ProductionHttp {
 
             this._productionSchema.getByServerId(serverId).then((prods) => {
                 response.send(prods);
+            }).catch((err) => response.send(err));
+        });
+
+        // Finish prod
+        this._app.post(`${this._urlBase}/finish`, (request, response) => {
+            const prod: CProductions = new CProductions(request.body);
+
+            this._productionSchema.finishProd(prod).then((finishProd: IProdFinish) => {
+                response.send(finishProd);
             }).catch((err) => response.send(err));
         });
     }

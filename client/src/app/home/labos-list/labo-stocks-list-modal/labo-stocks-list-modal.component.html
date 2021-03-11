@@ -1,0 +1,77 @@
+<span mat-dialog-title>Entrepôts du laboratoire {{ laboratory.name }}</span>
+
+<mat-dialog-content fxLayout="column" fxLayoutGap="20px">
+
+    <mat-table *ngIf="laboratory.stocks.length > 0" [dataSource]="laboratory.stocks">
+
+        <!-- Name -->
+        <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>
+                Nom
+            </mat-header-cell>
+            <mat-cell *matCellDef="let stock">
+                <span>{{ stock.name }}</span>
+            </mat-cell>
+        </ng-container>
+        <!-- / Name -->
+
+        <!-- Drug -->
+        <ng-container matColumnDef="drug">
+            <mat-header-cell *matHeaderCellDef>
+                Drogue
+            </mat-header-cell>
+            <mat-cell *matCellDef="let stock">
+                <span class="drug-name-table">{{ stock.drug }}</span>
+            </mat-cell>
+        </ng-container>
+        <!-- / Drug -->
+
+        <!-- Quantity -->
+        <ng-container matColumnDef="quantity">
+            <mat-header-cell *matHeaderCellDef>
+                Quantité
+            </mat-header-cell>
+            <mat-cell *matCellDef="let stock">
+                <span>{{ stock.quantity }} kg</span>
+            </mat-cell>
+        </ng-container>
+        <!-- / Quantity -->
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>
+                Actions
+            </mat-header-cell>
+            <mat-cell *matCellDef="let stock">
+                <button mat-mini-fab class="delete-stock-button" color="warn" (click)="deleteStockFromLabo(stock)">
+                    <mat-icon>delete</mat-icon>
+                </button>
+            </mat-cell>
+        </ng-container>
+        <!-- / Actions -->
+
+        <mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></mat-header-row>
+        <mat-row *matRowDef="let stock; columns: displayedColumns;">
+        </mat-row>
+    </mat-table>
+
+    <div *ngIf="laboDrugStocks.length > 0" fxLayout="row" fxLayoutAlign="start center" fxLayoutGap="20px">
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Ajouter un entrepôt au laboratoire</mat-label>
+            <mat-select [formControl]="newStockToLabo">
+                <mat-option [value]="stock" *ngFor="let stock of laboDrugStocks">
+                    {{ stock.name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button mat-flat-button color="primary" [disabled]="newStockToLabo.invalid"
+                (click)="addStockToLabo()">Ajouter</button>
+    </div>
+
+    <h3 *ngIf="laboDrugStocks.length === 0" class="no-stocks">Aucun entrepôt ajouté</h3>
+
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-flat-button mat-dialog-close color="accent">Ok</button>
+</mat-dialog-actions>

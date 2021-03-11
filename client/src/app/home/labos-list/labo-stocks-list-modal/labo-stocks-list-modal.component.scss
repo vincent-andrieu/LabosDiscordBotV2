@@ -1,0 +1,15 @@
+.mat-column-name {
+    padding-right: 10px;
+}
+
+.drug-name-table {
+    text-transform: capitalize;
+}
+
+.delete-stock-button {
+    box-shadow: 0 0;
+}
+
+mat-form-field ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0 !important;
+}

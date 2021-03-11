@@ -1,0 +1,62 @@
+<div mat-dialog-title>
+    <span *ngIf="data.pageStatus === ePageStatus.LABOS">Modifier un laboratoire</span>
+    <span *ngIf="data.pageStatus === ePageStatus.STOCKS">Modifier un entrepôt</span>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="saveArea()">
+    <mat-dialog-content fxLayout="column" fxLayoutGap="20px">
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Nom</mat-label>
+            <input matInput placeholder="Nom" type="text" formControlName="name" cdkFocusInitial required>
+            <mat-hint>Sans espaces</mat-hint>
+            <mat-error *ngIf="form.controls.name.hasError('required')">Veuillez remplir ce champ</mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('spaces')">
+                Un nom ne doit pas contenir d'espaces
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('laboExist')">
+                Un laboratoire existe déjà sous ce nom
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('stockExist')">
+                Un entrepôt existe déjà sous ce nom
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Drogue</mat-label>
+            <mat-select formControlName="drug" required>
+                <mat-optgroup label="Drogues">
+                    <mat-option value="coke">Coke</mat-option>
+                    <mat-option value="meth">Meth</mat-option>
+                    <mat-option value="weed">Weed</mat-option>
+                </mat-optgroup>
+                <mat-optgroup *ngIf="data.pageStatus === ePageStatus.STOCKS" label="Matières premières">
+                    <mat-option value="coca">Coca</mat-option>
+                    <mat-option value="acide">Acide</mat-option>
+                    <mat-option value="methy">Methylamine</mat-option>
+                    <mat-option value="phosphore">Phosphore</mat-option>
+                    <mat-option value="cannabis">Cannabis</mat-option>
+                    <mat-option value="terre">Terre</mat-option>
+                </mat-optgroup>
+            </mat-select>
+            <mat-error *ngIf="form.controls.drug.hasError('drugOrStuff')">
+                Veuillez sélectionner une drogue ou une matière première
+            </mat-error>
+            <mat-error *ngIf="form.controls.drug.hasError('drug')">
+                Veuillez sélectionner une drogue
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Screen</mat-label>
+            <input matInput placeholder="URL" type="url" formControlName="screen">
+        </mat-form-field>
+
+        <img class="save-area-screen" [src]="form.controls.screen.value" fxFlexAlign="center">
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close color="warn">Annuler</button>
+        <button mat-flat-button mat-dialog-close type="submit" color="primary"
+                [disabled]="form.invalid || form.pristine">Modifier</button>
+    </mat-dialog-actions>
+</form>
