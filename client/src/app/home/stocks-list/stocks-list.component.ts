@@ -84,9 +84,7 @@ export class StocksListComponent {
         }
         const quantity: number = this.stockForms[stock._id.toString()].value;
         this.stockForms[stock._id.toString()].reset();
-        this._stockService.setStockQuantity(stock, quantity).finally(() =>
-            this._updateStocks()
-        );
+        this._stockService.setStockQuantity(stock, quantity);
     }
 
     public deleteStock(stock: CStock): void {
@@ -102,9 +100,7 @@ export class StocksListComponent {
 
         dialog.afterClosed().subscribe((result) => {
             if (result) {
-                this._stockService.del(stock).finally(() => {
-                    this._updateStocks();
-                });
+                this._stockService.del(stock);
             }
         });
     }
