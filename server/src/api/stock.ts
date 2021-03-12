@@ -64,7 +64,7 @@ export class StockHttp {
 
         // Del stock quantity
         this._app.post(`${this._urlBase}/delStock`, (request, response) => {
-            const stock: CStock = new CStock(request.body);
+            const stock: CStock = new CStock(request.body.stock);
             const quantity: number = request.body.quantity;
 
             this._stockSchema.removeStockQty(stock, quantity).then((editedStock: CStock) => {
@@ -74,7 +74,7 @@ export class StockHttp {
 
         // Set stock quantity
         this._app.post(`${this._urlBase}/setStock`, (request, response) => {
-            const stock: CStock = new CStock(request.body);
+            const stock: CStock = new CStock(request.body.stock);
             const quantity: number = request.body.quantity;
 
             this._stockSchema.setStockQty(stock, quantity).then((editedStock: CStock) => {
