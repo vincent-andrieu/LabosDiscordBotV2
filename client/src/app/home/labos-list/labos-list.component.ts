@@ -47,9 +47,10 @@ export class LabosListComponent {
             }
         });
 
-        _socket.on(`labo.add`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
+        _socket.on('labo.add', (labo: ILaboratory) => {
+            if (labo._id && (labo.server._id || labo.server) === this._serverService.getCurrentServerId()) {
                 this.laboratories.push(new CLaboratory(labo));
+                this.laboForms[labo._id.toString()] = new FormControl();
             }
         });
 

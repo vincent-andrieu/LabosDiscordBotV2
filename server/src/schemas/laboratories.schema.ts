@@ -63,7 +63,8 @@ export class LaboratorySchema {
 
                 this._model.create(labo)
                     .then((newLabo: unknown) => {
-                        Sockets.server?.emit('labo.add', newLabo);
+                        labo._id = (newLabo as ILaboratory)._id;
+                        Sockets.server?.emit('labo.add', labo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté")
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
@@ -84,6 +85,12 @@ export class LaboratorySchema {
                 .then(() => {
                     this.getById(labo).then((editedLabo: CLaboratory) => {
                         Sockets.server?.emit('labo.edit', labo);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.EDIT, "Laboratoire modifié")
+                            .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
+                        if (labo.screen) {
+                            embedMessage.setImage(labo.screen);
+                        }
+                        labo.server.defaultChannel?.send(embedMessage);
                         resolve(editedLabo);
                     });
                 })

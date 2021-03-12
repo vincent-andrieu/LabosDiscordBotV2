@@ -18,7 +18,7 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
         super('labo', CLaboratory, _injector);
 
         _socket.on(`labo.add`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
+            if ((labo.server._id || labo.server) === this._serverService.getCurrentServerId()) {
                 this._snackbarService.open(`Laboratoire ${labo.name} ajouté`);
             }
         });
