@@ -1,12 +1,17 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Socket } from 'ngx-socket-io';
 
 import { GlobalConfig } from '@global/config';
-import { CLaboratory } from '@interfaces/laboratory.class';
-import { CStock } from '@interfaces/stock.class';
+import { ILaboratory } from '@global/interfaces/laboratory.interface';
+import { IStock } from '@global/interfaces/stock.interface';
+import { ServerService } from '@services/server.service';
 import { LaboratoryService } from '@services/laboratory.service';
 import { StockService } from '@services/stock.service';
+import { CServer } from '@interfaces/server.class';
+import { CLaboratory } from '@interfaces/laboratory.class';
+import { CStock } from '@interfaces/stock.class';
 
 @Component({
     selector: 'app-labo-stocks-list-modal',
@@ -20,11 +25,69 @@ export class LaboStocksListModalComponent {
     public isLoading = true;
 
     constructor(
-        private _dialogRef: MatDialogRef<LaboStocksListModalComponent>,
+        private _dialogRef: MatDialogRef<LaboStocksListModalComponent, void>,
         @Inject(MAT_DIALOG_DATA) public laboratory: CLaboratory,
+        private _serverService: ServerService,
         private _laboratoryService: LaboratoryService,
-        private _stockService: StockService
-    ) {}
+        private _stockService: StockService,
+        private _socket: Socket
+    ) {
+        this.laboratory.stocks.sort((first: CStock, second: CStock) => first.name.localeCompare(second.name));
+        this._updateLaboDrugStocks();
+
+        _socket.on(`labo.del`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getCurrentServerId()) {
+                if (this.laboratory._id === labo._id) {
+                    this._dialogRef.close();
+                }
+            }
+        });
+
+        _socket.on(`labo.edit`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getCurrentServerId()) {
+                if (this.laboratory._id === labo._id) {
+                    this.laboratory.server = new CServer(labo.server);
+                    this.laboratory.name = labo.name;
+                    this.laboratory.drug = labo.drug;
+                    this.laboratory.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
+                    this.laboratory.quantity = labo.quantity || 0;
+                    this.laboratory.screen = labo.screen;
+                }
+            }
+        });
+
+        _socket.on(`labo.addStock`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getCurrentServerId()) {
+                this._updateLaboDrugStocks();
+            }
+        });
+
+        _socket.on(`labo.delStock`, (labo: ILaboratory) => {
+            if (labo.server._id === this._serverService.getCurrentServerId()) {
+                this._updateLaboDrugStocks();
+            }
+        });
+
+        _socket.on(`stock.del`, (stock: IStock) => {
+            if (stock.server._id === this._serverService.getCurrentServerId()) {
+                this._updateLaboDrugStocks();
+            }
+        });
+
+        _socket.on(`stock.edit`, (stock: IStock) => {
+            if ((stock.server._id || stock.server) === this._serverService.getCurrentServerId()) {
+                const foundStock = this.laboDrugStocks.find((stockElem) => stockElem._id === stock._id);
+
+                if (foundStock) {
+                    foundStock.server = new CServer(stock.server);
+                    foundStock.name = stock.name;
+                    foundStock.drug = stock.drug;
+                    foundStock.quantity = stock.quantity || 0;
+                    foundStock.screen = stock.screen;
+                }
+            }
+        });
+    }
 
     private _updateLaboDrugStocks(): void {
         const laboDrugs = GlobalConfig.productions.drugs[this.laboratory.drug].recipe;
@@ -47,6 +110,8 @@ export class LaboStocksListModalComponent {
                 }
 
             });
+            this.laboratory.stocks.sort((first: CStock, second: CStock) => first.name.localeCompare(second.name));
+            this.laboDrugStocks.sort((first: CStock, second: CStock) => first.name.localeCompare(second.name));
             this.isLoading = false;
         }).catch(() => this._dialogRef.close());
     }
@@ -62,8 +127,8 @@ export class LaboStocksListModalComponent {
     }
 
     public deleteStockFromLabo(stock: CStock): void {
-        this._stockService.del(stock).finally(() =>
-            this._updateLaboDrugStocks()
+        this._laboratoryService.delStock(this.laboratory, stock).then((deletedStock) =>
+            this.laboDrugStocks.remove((stockElem) => stockElem._id === deletedStock._id)
         );
     }
 
