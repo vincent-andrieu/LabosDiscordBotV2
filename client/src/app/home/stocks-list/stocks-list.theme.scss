@@ -1,0 +1,9 @@
+@import "~@angular/material/theming";
+
+@mixin stocks-list-theme($theme) {
+    $accent: map-get($theme, accent);
+
+    .stock-card {
+        box-shadow: 0 0 2px 0px map-get($accent, default) !important;
+    }
+}
