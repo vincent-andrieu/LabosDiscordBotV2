@@ -1,0 +1,29 @@
+.stock-card {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 25px;
+    width: 380px;
+}
+
+.drug-name-card-subtitle {
+    text-transform: capitalize;
+}
+
+.edit-stock-button {
+    position: absolute;
+    right: 20px;
+    top: 16px;
+}
+
+.stock-screen {
+    max-height: 350px;
+    object-fit: cover;
+}
+
+.mat-card {
+    border-radius: 7px;
+}
+
+mat-form-field ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
+}

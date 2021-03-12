@@ -1,3 +1,36 @@
+<mat-card *ngFor="let stock of stocks" class="stock-card">
+    <mat-card-header>
+        <mat-card-title>{{ stock.name }}</mat-card-title>
+        <mat-card-subtitle>
+            <span>{{ stock.quantity }} kg de </span>
+            <span class="drug-name-card-subtitle">{{ stock.drug }}</span>
+        </mat-card-subtitle>
+        <button mat-icon-button class="edit-stock-button" color="accent" (click)="editStockInfo(stock)">
+            <mat-icon>edit</mat-icon>
+        </button>
+    </mat-card-header>
+    <img mat-card-image class="stock-screen" [src]="stock.screen">
+    <mat-card-content>
+
+        <form *ngIf="stock._id" (ngSubmit)="editStock(stock)" fxLayoutAlign="space-around center"
+              fxLayoutGap="20px">
+            <mat-form-field color="accent" appearance="outline">
+                <mat-label>Modifier le stock</mat-label>
+                <input matInput placeholder="Quantité" [min]="0" type="number"
+                       [formControl]="stockForms[stock._id.toString()]">
+            </mat-form-field>
+            <button mat-flat-button color="primary" type="submit"
+                    [disabled]="stockForms[stock._id.toString()].pristine || stockForms[stock._id.toString()].invalid">Modifier</button>
+        </form>
+
+    </mat-card-content>
+    <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+        <button mat-icon-button color="warn" (click)="deleteStock(stock)">
+            <mat-icon>delete</mat-icon>
+        </button>
+    </mat-card-actions>
+</mat-card>
+
 <!-- Spinner -->
 <div *ngIf="isLoading" fxLayoutAlign="start stretch" fxFlex>
     <mat-progress-bar [mode]="'indeterminate'" color="primary"></mat-progress-bar>
