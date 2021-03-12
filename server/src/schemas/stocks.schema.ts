@@ -55,13 +55,13 @@ export class StockSchema {
 
                 this._model.create(stock)
                     .then((newStock: unknown) => {
+                        Sockets.server?.emit('stock.add', newStock);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté")
                             .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
                         if (stock.screen) {
                             embedMessage.setImage(stock.screen);
                         }
                         stock.server.defaultChannel?.send(embedMessage);
-                        Sockets.server?.emit('stock.add', newStock);
 
                         resolve(new CStock(newStock as IStock));
                     })
@@ -76,6 +76,12 @@ export class StockSchema {
                 .then(() => {
                     this.getById(stock).then((editedStock: CStock) => {
                         Sockets.server?.emit('stock.edit', editedStock);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(editedStock.server, EEmbedMsgColors.EDIT, "Entrepôt modifié")
+                            .setDescription("Nom : **" + editedStock.name + "**\nDrogue : **" + editedStock.drug + "**");
+                        if (editedStock.screen) {
+                            embedMessage.setImage(editedStock.screen);
+                        }
+                        editedStock.server.defaultChannel?.send(embedMessage);
                         resolve(editedStock);
                     });
                 })
