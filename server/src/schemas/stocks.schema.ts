@@ -289,6 +289,9 @@ export class StockSchema {
 
     public setStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
+            if (stock.quantity === quantity) {
+                return reject(`L'entrepôt ${stock.name} contient déjà ${stock.quantity} kg de ${stock.drug}`);
+            }
 
             this._model.findByIdAndUpdate(stock._id, { quantity: quantity })
                 .then(() => {
