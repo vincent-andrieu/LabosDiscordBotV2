@@ -1,1 +1,21 @@
-<p>sidenav works!</p>
+<div class="sidenav-header">
+    <div fxLayout="column" fxLayoutAlign="space-around center" fxFlex>
+        <h1 class="sidenav-name">{{ serverName || "Parra Santana" }}</h1>
+    </div>
+
+    <!-- <button class="setting-icon" mat-icon-button (click)="openSettingsModal()">
+        <mat-icon>settings</mat-icon>
+    </button> -->
+</div>
+
+<div fxLayout="column" fxFlex>
+    <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
+        <!-- <app-sidenav-filter [pageStatus]="pageStatus" fxFlex></app-sidenav-filter> -->
+    </div>
+
+    <button *ngIf="pageStatus" mat-raised-button (click)="addAreaModal()"
+            class="add-button" color="accent" fxFlexAlign="center">
+        <span *ngIf="pageStatus === ePageStatus.LABOS">Ajouter un laboratoire</span>
+        <span *ngIf="pageStatus === ePageStatus.STOCKS">Ajouter un entrepôt</span>
+    </button>
+</div>

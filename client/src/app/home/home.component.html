@@ -1,7 +1,7 @@
 <mat-sidenav-container autosize fxFill>
 
     <mat-sidenav #sidenav [opened]="sidenavStatus" mode="side">
-        <!-- <app-sidenav [pageStatus]="pageStatus.status" fxLayout="column" fxFlex></app-sidenav> -->
+        <app-sidenav [pageStatus]="pageStatus.status" [serverName]="serverName" fxLayout="column" fxFlex></app-sidenav>
     </mat-sidenav>
 
     <mat-sidenav-content fxLayout="row">

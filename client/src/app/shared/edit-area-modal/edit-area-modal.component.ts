@@ -20,7 +20,7 @@ export class EditAreaModalComponent {
         name: new FormControl(this.data.area.name, [
             Validators.required,
             this._validatorsService.doesHaveSpacesValidator(),
-            this._validatorsService.doesAlreadyExistValidator(this.data.pageStatus, this.data.area.name, this.data.areaList)
+            this._validatorsService.doesAlreadyExistValidator(this.data.pageStatus, this.data.areaList, this.data.area.name)
         ]),
         drug: new FormControl(this.data.area.drug, [
             Validators.required,
@@ -30,7 +30,7 @@ export class EditAreaModalComponent {
     })
 
     constructor(
-        private _dialogRef: MatDialogRef<EditAreaModalComponent>,
+        private _dialogRef: MatDialogRef<EditAreaModalComponent, void>,
         @Inject(MAT_DIALOG_DATA) public data: {
             area: CLaboratory | CStock;
             pageStatus: EPageStatus,

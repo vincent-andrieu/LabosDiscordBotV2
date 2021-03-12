@@ -12,9 +12,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { EditAreaModalComponent } from './edit-area-modal/edit-area-modal.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
+import { CreateAreaModalComponent } from './create-area-modal/create-area-modal.component';
 
 @NgModule({
-    declarations: [EditAreaModalComponent, ConfirmModalComponent],
+    declarations: [EditAreaModalComponent, ConfirmModalComponent, CreateAreaModalComponent],
     imports: [
         CommonModule,
         BrowserAnimationsModule,

@@ -1,0 +1,12 @@
+@import "~@angular/material/theming";
+
+@mixin sidenav-theme($theme) {
+    $primary: map-get($theme, primary);
+
+    .sidenav-header {
+        position: relative;
+        min-height: 200px;
+        background-color: map-get($primary, default);
+        border-radius: 0 0 120px 0;
+    }
+}

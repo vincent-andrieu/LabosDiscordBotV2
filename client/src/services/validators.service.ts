@@ -25,12 +25,12 @@ export class ValidatorsService {
         };
     }
 
-    public doesAlreadyExistValidator(pageStatus: EPageStatus, areaName: string, areaList: Array<CLaboratory | CStock>): ValidatorFn {
+    public doesAlreadyExistValidator(pageStatus: EPageStatus, areaList: Array<CLaboratory | CStock> | undefined, areaName?: string): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             const controlValue: string = control.value.toLowerCase().trim();
-            const value = areaList.find((value) => value.name.toLowerCase() === controlValue);
+            const value = areaList?.find((value) => value.name.toLowerCase() === controlValue);
 
-            if (value && (value.name.toLowerCase() !== areaName.toLowerCase())) {
+            if (areaList === undefined || (value && (!areaName || value.name.toLowerCase() !== areaName.toLowerCase()))) {
                 if (pageStatus === EPageStatus.LABOS) {
                     return { 'laboExist': true };
                 } else {

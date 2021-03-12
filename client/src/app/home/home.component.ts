@@ -19,6 +19,7 @@ export class HomeComponent {
     public ePageStatus = EPageStatus;
     public pageStatus: { index: number; status: EPageStatus } = { index: 0, status: EPageStatus.LABOS };
     public sidenavStatus = true;
+    public serverName?: string;
 
     constructor(
         private _serverService: ServerService,
@@ -40,6 +41,7 @@ export class HomeComponent {
         _serverService.getServerName().then((name: string | undefined) => {
             if (name) {
                 _title.setTitle(name);
+                this.serverName = name;
             }
         });
     }
