@@ -13,10 +13,9 @@
 
             <mat-tab [aria-label]="ePageStatus.LABOS">
                 <ng-template mat-tab-label>
-                    <!-- <span [matBadge]="getNumberFinishProds()"
-                    [matBadgeHidden]="productionService.isLoading || getNumberFinishProds() === 0"
-                    matBadgeColor="warn" matBadgeOverlap="false">Laboratoires</span> -->
-                    <span>Laboratoires</span>
+                    <span [matBadge]="getNumberFinishProds()"
+                          [matBadgeHidden]="prodsIsLoading || getNumberFinishProds() === 0"
+                          matBadgeColor="warn" matBadgeOverlap="false">Laboratoires</span>
                 </ng-template>
                 <app-labos-list fxLayout="row wrap" fxLayoutAlign="space-evenly center"></app-labos-list>
             </mat-tab>

@@ -3,12 +3,18 @@ import { MatSidenav, MatDrawerToggleResult } from '@angular/material/sidenav';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { Title } from '@angular/platform-browser';
 import { CookieService } from 'ngx-cookie';
+import { Socket } from 'ngx-socket-io';
+import * as moment from 'moment';
 
 import { ServerService } from '@services/server.service';
+import { ProductionService } from '@services/production.service';
 import { EPageStatus } from '@interfaces/root.interface';
+import { CProductions } from '@interfaces/production.class';
 import { environment } from '@environment';
-import { Title } from '@angular/platform-browser';
+import { IProductions } from '@global/interfaces/production.interface';
+import { IServer } from '@global/interfaces/server.interface';
 
 @Component({
     selector: 'app-home',
@@ -20,12 +26,16 @@ export class HomeComponent {
     public pageStatus: { index: number; status: EPageStatus } = { index: 0, status: EPageStatus.LABOS };
     public sidenavStatus = true;
     public serverName?: string;
+    private _productions: Array<CProductions> = [];
+    public prodsIsLoading = true;
 
     constructor(
         private _serverService: ServerService,
+        private _productionService: ProductionService,
         private _cookieService: CookieService,
         private _location: Location,
         private _router: Router,
+        private _socket: Socket,
         private _title: Title
     ) {
 
@@ -44,6 +54,46 @@ export class HomeComponent {
                 this.serverName = name;
             }
         });
+
+        this._updateProductions();
+
+        _socket.on(`prod.add`, (prod: IProductions) => {
+            if (prod.server._id === this._serverService.getCurrentServerId()) {
+                this._productions.push(new CProductions(prod));
+            }
+        });
+
+        _socket.on(`prod.del`, (prod: IProductions | IServer) => {
+            if ((prod as IProductions)?.server._id === this._serverService.getCurrentServerId()) {
+                this._productions.remove((prodElem) => prodElem._id === prod._id);
+            } else if (prod._id === this._serverService.getCurrentServerId()) {
+                this._updateProductions();
+            }
+        });
+
+        _socket.on(`prod.finish`, (prod: IProductions) => {
+            if (prod.server._id === this._serverService.getCurrentServerId()) {
+                this._updateProductions();
+            }
+        });
+    }
+
+    private _updateProductions(): void {
+        this._productionService.get().then((prods) => {
+            this._productions = prods;
+            this.prodsIsLoading = false;
+        });
+    }
+
+    private _isProdFinish(prod: CProductions): boolean {
+        return moment(prod.finishDate).isBefore(moment.now());
+    }
+
+    public getNumberFinishProds(): number {
+        if (this.prodsIsLoading) {
+            return 0;
+        }
+        return this._productions.filter((prod) => this._isProdFinish(prod)).length;
     }
 
     public toggleSidenav(drawer: MatSidenav): void {
