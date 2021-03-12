@@ -24,6 +24,13 @@ export class ServerService {
                 this._snackbarService.open(`Rappel modifié`);
             }
         });
+
+        _socket.on(`server.password`, (server: IServer) => {
+            if (server._id == this._serverId) {
+                this._snackbarService.open(`Mot de passe modifié`);
+                this._router.navigate([this._router.parseUrl(this._router.url).root.children.primary.segments[0].path]);
+            }
+        });
     }
 
     public login(serverId: string, serverPassword: string): Promise<boolean> {

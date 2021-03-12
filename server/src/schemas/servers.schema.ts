@@ -227,6 +227,8 @@ export class ServerSchema {
 
             server.password = password;
             this.edit(server).then(() => {
+                const socketServer = { _id: server._id };
+                Sockets.server?.emit('server.password', socketServer);
                 server = new CServer(server);
 
                 const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau mot de passe");
