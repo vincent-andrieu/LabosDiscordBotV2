@@ -203,6 +203,7 @@ export class ServerSchema {
             server.url = url;
             this.edit(server)
                 .then(() => {
+                    server = new CServer(server);
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouvel URL");
                     const guildIcon = server.defaultChannel?.guild?.iconURL();
