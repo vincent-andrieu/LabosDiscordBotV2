@@ -27,7 +27,8 @@ export class CreateAreaModalComponent {
             Validators.required,
             this._validatorsService.isADrugOrStuffValidator(this.data.ePageStatus)
         ]),
-        screen: new FormControl('')
+        screen: new FormControl(''),
+        isDefault: new FormControl()
     });
     public server?: CServer;
     public ePageStatus = EPageStatus;
@@ -58,13 +59,17 @@ export class CreateAreaModalComponent {
             screen: this.form.controls.screen.value
         };
 
-        let addPromise: Promise<CLaboratory | CStock> | undefined;
         if (this.data.ePageStatus === EPageStatus.LABOS) {
-            addPromise = this._laboratoryService.add(new CLaboratory(area));
+            this._laboratoryService.add(new CLaboratory(area)).then((labo) => {
+                if (this.form.controls.isDefault.value) {
+                    this._laboratoryService.setDefault(labo).then(() => this._dialogRef.close());
+                } else {
+                    this._dialogRef.close();
+                }
+            });
         } else if (this.data.ePageStatus === EPageStatus.STOCKS) {
-            addPromise = this._stockService.add(new CStock(area));
+            this._stockService.add(new CStock(area)).then(() => this._dialogRef.close());
         }
-        addPromise?.then(() => this._dialogRef.close());
     }
 
 }

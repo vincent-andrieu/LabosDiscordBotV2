@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { EditAreaModalComponent } from './edit-area-modal/edit-area-modal.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
@@ -27,7 +28,8 @@ import { CreateAreaModalComponent } from './create-area-modal/create-area-modal.
         MatButtonModule,
         MatInputModule,
         MatSelectModule,
-        MatDialogModule
+        MatDialogModule,
+        MatSlideToggleModule
     ]
 })
 export class SharedModule {}

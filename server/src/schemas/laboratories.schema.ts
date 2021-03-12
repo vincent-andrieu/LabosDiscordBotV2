@@ -72,7 +72,7 @@ export class LaboratorySchema {
                         }
                         labo.server.defaultChannel?.send(embedMessage);
 
-                        resolve(new CLaboratory(newLabo as ILaboratory));
+                        resolve(labo);
                     })
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));

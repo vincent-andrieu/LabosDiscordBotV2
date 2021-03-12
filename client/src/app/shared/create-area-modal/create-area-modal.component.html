@@ -51,6 +51,10 @@
             <input matInput placeholder="URL" type="url" formControlName="screen">
         </mat-form-field>
 
+        <mat-slide-toggle *ngIf="data.ePageStatus === ePageStatus.LABOS" formControlName="isDefault">
+            Laboratoire par défaut
+        </mat-slide-toggle>
+
         <img class="add-area-screen" [src]="form.controls.screen.value" fxFlexAlign="center">
     </mat-dialog-content>
 
