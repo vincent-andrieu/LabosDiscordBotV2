@@ -13,11 +13,10 @@ import { CServer } from '@interfaces/server.class';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CProductions } from '@interfaces/production.class';
 import { EPageStatus } from '@interfaces/root.interface';
+import { CStock } from '@interfaces/stock.class';
 import { EditAreaModalComponent } from '@shared/edit-area-modal/edit-area-modal.component';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
 import { LaboStocksListModalComponent } from './labo-stocks-list-modal/labo-stocks-list-modal.component';
-import { removeElemFromArray } from '@global/utils';
-import { CStock } from '@interfaces/stock.class';
 
 @Component({
     selector: 'app-labos-list',
@@ -56,44 +55,41 @@ export class LabosListComponent {
 
         _socket.on(`labo.del`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
-                removeElemFromArray(this.laboratories, (laboElem) => labo._id === laboElem._id);
+                this.laboratories.remove((laboElem) => labo._id === laboElem._id);
             }
         });
 
         _socket.on(`labo.edit`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
-                for (const laboElem of this.laboratories) {
-                    if (labo._id === laboElem._id) {
-                        laboElem.server = new CServer(labo.server);
-                        laboElem.name = labo.name;
-                        laboElem.drug = labo.drug;
-                        laboElem.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                        laboElem.quantity = labo.quantity || 0;
-                        laboElem.screen = labo.screen;
-                        break;
-                    }
+                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+
+                if (foundLabo) {
+                    foundLabo.server = new CServer(labo.server);
+                    foundLabo.name = labo.name;
+                    foundLabo.drug = labo.drug;
+                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
+                    foundLabo.quantity = labo.quantity || 0;
+                    foundLabo.screen = labo.screen;
                 }
             }
         });
 
         _socket.on(`labo.addStock`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
-                for (const laboElem of this.laboratories) {
-                    if (labo._id === laboElem._id) {
-                        laboElem.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                        break;
-                    }
+                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+
+                if (foundLabo) {
+                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
                 }
             }
         });
 
         _socket.on(`labo.delStock`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
-                for (const laboElem of this.laboratories) {
-                    if (labo._id === laboElem._id) {
-                        laboElem.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                        break;
-                    }
+                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+
+                if (foundLabo) {
+                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
                 }
             }
         });
@@ -151,6 +147,7 @@ export class LabosListComponent {
             return;
         }
         prod.quantity = this.prodForms[prod._id.toString()].value;
+        this.prodForms[prod._id.toString()].reset();
         this._productionService.edit(prod).finally(() =>
             this._updateProductions()
         );
@@ -165,6 +162,7 @@ export class LabosListComponent {
             labo: labo,
             quantity: this.laboForms[labo._id.toString()].value
         });
+        this.laboForms[labo._id.toString()].reset();
         this._productionService.add(prod).finally(() =>
             this._updateProductions()
         );

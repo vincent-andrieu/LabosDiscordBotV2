@@ -40,14 +40,16 @@ export function getDrugError(option: { drug?: boolean; stuff?: boolean }, drug?:
     return str;
 }
 
-export function removeElemFromArray<T>(tab: Array<T>, cb: (value: T, index: number, obj: T[]) => unknown, deleteCount = 1): Array<T> | null {
-    if (!tab) {
-        return null;
+declare global {
+    interface Array<T> {
+        remove(cb: (value: T, index: number, obj: T[]) => unknown, deleteCount?: number): Array<T> | undefined;
     }
-    const index = tab.findIndex(cb);
+}
+Array.prototype.remove = function <T>(cb: (value: T, index: number, obj: T[]) => unknown, deleteCount = 1) {
+    const index = (this as Array<T>).findIndex(cb);
 
     if (index < 0) {
-        return null;
+        return undefined;
     }
-    return tab.splice(index, deleteCount);
-}
+    return (this as Array<T>).splice(index, deleteCount);
+};
