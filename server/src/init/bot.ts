@@ -53,7 +53,7 @@ export default class DiscordBot {
             .setTimestamp();
 
         if (server.url) {
-            embedMessage.setURL(server.url);
+            embedMessage.setURL(`${server.url}/${server._id}/${server.password}`);
         }
         return embedMessage;
     }
