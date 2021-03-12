@@ -21,6 +21,7 @@ import StockSetStock from "./stock/setStock";
 import StockInfoStock from "./stock/infoStock";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
 import ServerSetUrl from "./server/setUrl";
+import ServerSetPassword from "./server/setPassword";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
 
@@ -45,6 +46,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
 
     new ServerSetDefaultChannel("Modifier le channel par défaut"),
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
+    new ServerSetPassword("Modifier le mot de passe", "**Mot de passe**"),
     new ServerSetReminder("Modifier le rappel d'une production", "**Minutes**"),
     new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**")
 ];

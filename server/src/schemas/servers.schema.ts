@@ -218,6 +218,29 @@ export class ServerSchema {
         });
     }
 
+    public setPassword(server: CServer, password: string): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
+            if (!password) {
+                return reject("Nouveau mot de passe invalid");
+            }
+
+            server.password = password;
+            this.edit(server).then(() => {
+                server = new CServer(server);
+
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau mot de passe");
+                const guildIcon = server.defaultChannel?.guild?.iconURL();
+                if (guildIcon) {
+                    embedMessage.setThumbnail(guildIcon);
+                }
+                embedMessage.setDescription("**" + password.toString() + "**");
+                server.defaultChannel?.send(embedMessage);
+
+                resolve(server);
+            });
+        });
+    }
+
     public setReminder(server: CServer, reminder: number): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             if (reminder < 0 || reminder > GlobalConfig.productions.timeoutMinutes) {

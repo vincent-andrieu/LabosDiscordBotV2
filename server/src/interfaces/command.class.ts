@@ -24,6 +24,7 @@ export enum ECommand {
 
     SERVER_SET_DEFAULT_CHANNEL = 'setDefaultChannel',
     SERVER_SET_URL = 'setURL',
+    SERVER_SET_PASSWORD = 'setPassword',
     SERVER_SET_REMINDER = 'setReminder',
     SERVER_SET_ROLETAG = 'setRole'
 }
