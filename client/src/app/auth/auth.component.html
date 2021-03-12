@@ -8,6 +8,6 @@
     <input matInput class="input-password" type="password"
            formControlName="password" placeholder="Password">
 
-    <input type="submit" name="" value="Login">
+    <input type="submit" name="" [disabled]="loginForm.invalid || loginForm.pristine" value="Login">
 
 </form>
