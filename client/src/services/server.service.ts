@@ -89,4 +89,19 @@ export class ServerService {
     public getCurrentServerId(): string {
         return this._serverId;
     }
+
+    public getServerName(): Promise<string | undefined> {
+        return new Promise<string | undefined>((resolve, reject) => {
+            this._http.get<string | undefined>(`${this._serverUrl}/name`, {
+                params: {
+                    serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
+                }
+            }).subscribe((name: string | undefined) =>
+                resolve(name)
+            , (err: HttpErrorResponse) => {
+                this._snackbarService.openError(err);
+                reject(err);
+            });
+        });
+    }
 }

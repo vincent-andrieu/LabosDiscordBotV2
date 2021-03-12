@@ -5,8 +5,10 @@ import { Router } from '@angular/router';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { CookieService } from 'ngx-cookie';
 
+import { ServerService } from '@services/server.service';
 import { EPageStatus } from '@interfaces/root.interface';
 import { environment } from '@environment';
+import { Title } from '@angular/platform-browser';
 
 @Component({
     selector: 'app-home',
@@ -19,9 +21,12 @@ export class HomeComponent {
     public sidenavStatus = true;
 
     constructor(
+        private _serverService: ServerService,
         private _cookieService: CookieService,
         private _location: Location,
-    private _router: Router) {
+        private _router: Router,
+        private _title: Title
+    ) {
 
         const sidenavCookieStatus: MatDrawerToggleResult | undefined = _cookieService.get(environment.cookiesName.sidenavStatus) as MatDrawerToggleResult;
         const urlSegments = this._router.parseUrl(this._router.url).root.children.primary.segments;
@@ -31,6 +36,12 @@ export class HomeComponent {
         }
 
         this.pageStatus = { index: urlSegments[2].path === EPageStatus.LABOS ? 0 : 1, status: urlSegments[2].path as EPageStatus };
+
+        _serverService.getServerName().then((name: string | undefined) => {
+            if (name) {
+                _title.setTitle(name);
+            }
+        });
     }
 
     public toggleSidenav(drawer: MatSidenav): void {

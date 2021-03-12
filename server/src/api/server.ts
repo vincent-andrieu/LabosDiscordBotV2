@@ -44,5 +44,14 @@ export class ServerHttp {
                 response.send(server);
             }).catch((err) => response.send(err));
         });
+
+        // Get server name
+        this._app.get(`${this._urlBase}/name`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._serverSchema.getById(serverId).then((server: CServer) => {
+                response.send(JSON.stringify(server.guild?.name));
+            }).catch((err) => response.send(err));
+        });
     }
 }
