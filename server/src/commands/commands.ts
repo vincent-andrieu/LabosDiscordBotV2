@@ -26,7 +26,7 @@ import ServerSetRoleTag from "./server/setRoleTag";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
-    new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Lien"),
+    new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Screen URL"),
     new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**, Raison"),
     new LaboratoryInfoLabo("Affiche la liste des laboratoire", "Nom"),
     new LaboratoryAddLaboStock("Ajoute un entrepôt à un laboratoire", "**Nom du laboratoire**, **Nom de l'entrepôt**"),
@@ -36,7 +36,7 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new ProductionDelProd("Supprime toute les productions", "Laboratoire, Raison"),
     new ProductionInfoProd("Affiche la liste des productions en cours", "Nom du laboratoire"),
 
-    new StockAddStockLoc("Ajoute un entrepôt", "**Nom**, **Drogue**, Lien"),
+    new StockAddStockLoc("Ajoute un entrepôt", "**Nom**, **Drogue**, Screen URL"),
     new StockDelStockLoc("Supprime un entrepôt", "**Nom**, Raison"),
     new StockAddStock("Ajoute de la marchandise dans un entrepôt", "**Nom**, **Quantité**, Raison"),
     new StockDelStock("Supprime de la marchandise dans un entrepôt", "**Nom**, **Quantité**, Raison"),
