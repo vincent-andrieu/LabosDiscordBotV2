@@ -11,7 +11,7 @@ import Sockets from '../init/sockets';
 const serverSchema = new mongoose.Schema({
     _id: { type: String, required: true },
     url: { type: String, required: false },
-    password: { type: String, required: false, default: "" },
+    password: { type: String, required: false, default: "password" },
     //activity: { type: String, required: true },
     defaultLabo: { type: mongoose.Schema.Types.ObjectId, ref: 'laboratories', required: false },
     defaultChannel: { type: String, required: true },

@@ -22,7 +22,7 @@ export class CServer implements IServer {
             this.guild = DiscordBot.getServerFromId(server._id.toString());
         }
         this.url = server.url;
-        this.password = server.password || "";
+        this.password = server.password || "password";
         //this.activity = server.activity;
         if (typeof server.defaultLabo === 'object') {
             this.defaultLabo = server.defaultLabo;
