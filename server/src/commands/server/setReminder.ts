@@ -1,6 +1,9 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { ServerSchema } from "@schemas/servers.schema";
+import { help } from "@commands/help/help";
 
 export default class ServerSetReminder extends CCommand<ServerSchema> {
 
@@ -15,14 +18,15 @@ export default class ServerSetReminder extends CCommand<ServerSchema> {
         return Number(params[0]);
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const reminder: number | undefined = this.getParamsTemplate(params);
 
-            if (!reminder) {
+            if (reminder === undefined) {
+                help(server, this, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
-            this._schema.setReminder(server, reminder)
+            this._schema.setReminder(server, reminder, guildMember?.id)
                 .then(() => resolve())
                 .catch((err) => reject(err));
         });

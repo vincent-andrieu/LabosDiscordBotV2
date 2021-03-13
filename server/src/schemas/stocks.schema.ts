@@ -31,7 +31,7 @@ function autoPopulate(this: any, next: any) {
 export class StockSchema {
     private _model = mongoose.model('stocks', stockSchema);
 
-    public add(stock: CStock): Promise<CStock> {
+    public add(stock: CStock, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
             if (!isADrugOrStuff(stock.drug)) {
@@ -56,7 +56,7 @@ export class StockSchema {
                 this._model.create(stock)
                     .then((newStock: unknown) => {
                         Sockets.server?.emit('stock.add', newStock);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté")
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté", userId)
                             .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
                         if (stock.screen) {
                             embedMessage.setImage(stock.screen);
@@ -70,13 +70,13 @@ export class StockSchema {
         });
     }
 
-    public edit(stock: CStock): Promise<CStock | void> {
+    public edit(stock: CStock, userId?: string): Promise<CStock | void> {
         return new Promise<CStock | void>((resolve, reject) => {
             this._model.findByIdAndUpdate(stock._id, stock)
                 .then(() => {
                     this.getById(stock).then((editedStock: CStock) => {
                         Sockets.server?.emit('stock.edit', editedStock);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(editedStock.server, EEmbedMsgColors.EDIT, "Entrepôt modifié")
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(editedStock.server, EEmbedMsgColors.EDIT, "Entrepôt modifié", userId)
                             .setDescription("Nom : **" + editedStock.name + "**\nDrogue : **" + editedStock.drug + "**");
                         if (editedStock.screen) {
                             embedMessage.setImage(editedStock.screen);
@@ -166,7 +166,7 @@ export class StockSchema {
         });
     }
 
-    public delete(stock: CStock, reason?: string): Promise<number> {
+    public delete(stock: CStock, reason?: string, userId?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: stock.server._id, _id: stock._id })
                 .then((res) => {
@@ -174,7 +174,7 @@ export class StockSchema {
                         return reject("L'entrepôt " + stock.name + " n'existe pas");
                     }
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Entrepôt supprimé");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Entrepôt supprimé", userId);
                     if (reason) {
                         embedMessage.setDescription(reason);
                     }
@@ -192,24 +192,24 @@ export class StockSchema {
         });
     }
 
-    public deleteByName(server: CServer, name: string, reason?: string): Promise<number> {
+    public deleteByName(server: CServer, name: string, reason?: string, userId?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this.findOneByName(server, name).then((stock) => {
-                this.delete(stock, reason)
+                this.delete(stock, reason, userId)
                     .then((nbrDeleted) => resolve(nbrDeleted))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
         });
     }
 
-    public addStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+    public addStockQty(stock: CStock, quantity: number, reason?: string, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findByIdAndUpdate(stock._id, { $inc: { quantity: quantity } })
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Ajout du stock de l'entrepôt **" + stock.name + "**")
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Ajout du stock de l'entrepôt **" + stock.name + "**", userId)
                         .addFields(
                             { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
                             { name: "Ajouté", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
@@ -233,25 +233,25 @@ export class StockSchema {
         });
     }
 
-    public addStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock> {
+    public addStockQtyByName(server: CServer, name: string, quantity: number, reason?: string, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.addStockQty(stock, quantity, reason)
+                    this.addStockQty(stock, quantity, reason, userId)
                         .then((editedStock: CStock) => resolve(editedStock))
                 )
                 .catch((err) => reject(err))
         );
     }
 
-    public removeStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+    public removeStockQty(stock: CStock, quantity: number, reason?: string, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findOneAndUpdate({ _id: stock._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Suppression du stock de l'entrepôt **" + stock.name + "**")
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Suppression du stock de l'entrepôt **" + stock.name + "**", userId)
                         .addFields(
                             { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
                             { name: "Supprimé", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
@@ -275,11 +275,11 @@ export class StockSchema {
         });
     }
 
-    public removeStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock> {
+    public removeStockQtyByName(server: CServer, name: string, quantity: number, reason?: string, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.removeStockQty(stock, quantity, reason)
+                    this.removeStockQty(stock, quantity, reason, userId)
                         .then((editedStock: CStock) => resolve(editedStock))
                         .catch((err) => reject(err))
                 )
@@ -287,7 +287,7 @@ export class StockSchema {
         );
     }
 
-    public setStockQty(stock: CStock, quantity: number, reason?: string): Promise<CStock> {
+    public setStockQty(stock: CStock, quantity: number, reason?: string, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
             if (stock.quantity === quantity) {
                 return reject(`L'entrepôt ${stock.name} contient déjà ${stock.quantity} kg de ${stock.drug}`);
@@ -296,7 +296,7 @@ export class StockSchema {
             this._model.findByIdAndUpdate(stock._id, { quantity: quantity })
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.EDIT, "Modification du stock de l'entrepôt **" + stock.name + "**")
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.EDIT, "Modification du stock de l'entrepôt **" + stock.name + "**", userId)
                         .addFields(
                             { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
                             { name: "Modifié à", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true }
@@ -319,18 +319,18 @@ export class StockSchema {
         });
     }
 
-    public setStockQtyByName(server: CServer, name: string, quantity: number, reason?: string): Promise<CStock | void> {
+    public setStockQtyByName(server: CServer, name: string, quantity: number, reason?: string, userId?: string): Promise<CStock | void> {
         return new Promise<CStock | void>((resolve, reject) =>
             this.findOneByName(server, name, true)
                 .then((stock: CStock) =>
-                    this.setStockQty(stock, quantity, reason)
+                    this.setStockQty(stock, quantity, reason, userId)
                         .then((editedStock: CStock) => resolve(editedStock))
                 )
                 .catch((err) => reject(err))
         );
     }
 
-    public removeProdStock(labo: CLaboratory, prodQty: number): Promise<Array<CStock>> {
+    public removeProdStock(labo: CLaboratory, prodQty: number, userId?: string): Promise<Array<CStock>> {
         return new Promise<Array<CStock>>((resolve, reject) => {
             let tablesQty: number;
             const updatesList: Array<Promise<CStock>> = [];
@@ -349,7 +349,7 @@ export class StockSchema {
                 if (stockConfig.needAll && !tablesQty) {
                     tablesQty = GlobalConfig.productions.drugs[labo.drug].table;
                 }
-                updatesList.push(this.removeStockQty(stock, stockConfig.needAll ? stockConfig.quantity * tablesQty : prodQty));
+                updatesList.push(this.removeStockQty(stock, stockConfig.needAll ? stockConfig.quantity * tablesQty : prodQty, "Production terminée", userId));
             });
 
             Promise.all(updatesList).then(resolve).catch(reject);

@@ -1,3 +1,5 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from "@interfaces/laboratory.class";
 import { CProductions } from "@interfaces/production.class";
@@ -26,10 +28,10 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
         });
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (params.length < 1) {
-                help(server, this);
+                help(server, this, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this.getLabo(server, params[1])
@@ -37,10 +39,10 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
                     const prod: CProductions | undefined = this.getParamsTemplate(params, labo);
 
                     if (!prod) {
-                        help(server, this);
+                        help(server, this, guildMember?.id);
                         return reject("Paramètres de la commande invalide");
                     }
-                    this._schema.add(prod)
+                    this._schema.add(prod, guildMember?.id)
                         .then(() => resolve())
                         .catch((err) => reject(err));
                 })

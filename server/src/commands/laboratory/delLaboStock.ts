@@ -1,3 +1,5 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
@@ -16,15 +18,15 @@ export default class LaboratoryDelLaboStock extends CCommand<LaboratorySchema> {
         return { laboName: params[0], stockName: params[1] };
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const names: { laboName: string, stockName: string } | undefined = this.getParamsTemplate(params);
 
             if (!names) {
-                help(server, this);
+                help(server, this, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
-            this._schema.delLaboStockByNames(server, names.laboName, names.stockName)
+            this._schema.delLaboStockByNames(server, names.laboName, names.stockName, guildMember?.id)
                 .then(() => resolve())
                 .catch((err) => reject(err));
         });

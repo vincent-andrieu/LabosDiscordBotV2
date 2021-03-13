@@ -35,7 +35,7 @@ export class ProductionSchema {
     private _model = mongoose.model('productions', prodSchema);
     private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
 
-    public add(prod: CProductions): Promise<Promise<void>> {
+    public add(prod: CProductions, userId?: string): Promise<Promise<void>> {
         return new Promise<Promise<void>>((resolve, reject) => {
 
             new LaboratorySchema().getById(prod.labo).then((labo: CLaboratory) => {
@@ -72,7 +72,7 @@ export class ProductionSchema {
                     return reject("Aucun entrepôt de " + labo.drug + " a été assigné au laboratoire " + labo.name);
                 }
 
-                new StockSchema().removeProdStock(labo, prod.quantity).then(() => {
+                new StockSchema().removeProdStock(labo, prod.quantity, userId).then(() => {
                     const tempLabo = prod.labo;
                     prod.labo = labo._id as unknown as CLaboratory;
                     delete prod._id;
@@ -83,7 +83,7 @@ export class ProductionSchema {
                             if (Sockets.server) {
                                 Sockets.server.emit('prod.add', prod);
                             }
-                            resolve(this.addProdProcess(prod));
+                            resolve(this.addProdProcess(prod, userId));
                         })
                         .catch((err) => reject(err));
                 });
@@ -92,9 +92,9 @@ export class ProductionSchema {
         });
     }
 
-    private addProdProcess(prod: CProductions): Promise<void> {
+    private addProdProcess(prod: CProductions, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const newProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Nouvelle production dans le laboratoire **" + prod.labo.name + "**")
+            const newProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Nouvelle production dans le laboratoire **" + prod.labo.name + "**", userId)
                 .setDescription((prod.description + "\n" || "") + "**" + prod.quantity + " kg** de **" + prod.labo.drug + "**");
             if (prod.labo.screen) {
                 newProdEmbedMsg.setThumbnail(prod.labo.screen);
@@ -106,7 +106,7 @@ export class ProductionSchema {
                         if (Sockets.server) {
                             Sockets.server.emit('prod.finish', readyProd);
                         }
-                        const finishProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prod.labo.name + "** prête")
+                        const finishProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prod.labo.name + "** prête", userId)
                             .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
                         if (prod.labo.screen) {
                             finishProdEmbedMsg.setThumbnail(prod.labo.screen);
@@ -129,7 +129,7 @@ export class ProductionSchema {
                             if (Sockets.server) {
                                 Sockets.server.emit('prod.reminder', readyProd);
                             }
-                            const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes")
+                            const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes", userId)
                                 .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
                             if (readyProd.labo.screen) {
                                 finishAlertEmbedMsg.setThumbnail(readyProd.labo.screen);
@@ -258,7 +258,7 @@ export class ProductionSchema {
         });
     }
 
-    public deleteById(prod: CProductions, reason?: string): Promise<void> {
+    public deleteById(prod: CProductions, reason?: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             this._model.deleteOne({ server: prod.server._id, _id: prod._id })
@@ -270,7 +270,7 @@ export class ProductionSchema {
                         Sockets.server.emit('prod.del', prod);
                     }
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée", userId);
                     if (prod.labo.screen) {
                         embedMessage.setThumbnail(prod.labo.screen);
                     }
@@ -292,7 +292,7 @@ export class ProductionSchema {
      * @param  {string} reason?
      * @returns Promise
      */
-    public deleteByLabo(laboProd: CProductions | CLaboratory, reason?: string): Promise<void> {
+    public deleteByLabo(laboProd: CProductions | CLaboratory, reason?: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             this._model.deleteMany({ server: laboProd.server._id, labo: (laboProd as CProductions).labo?._id || laboProd._id })
@@ -308,7 +308,7 @@ export class ProductionSchema {
                     const embedMsgTitle = res.deletedCount > 1
                         ? res.deletedCount.toString() + " productions ont été supprimées du laboratoire **" + laboProdName + "**"
                         : "La production du laboratoire " + laboProdName + " a été supprimée";
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(laboProd.server, EEmbedMsgColors.DEL, embedMsgTitle);
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(laboProd.server, EEmbedMsgColors.DEL, embedMsgTitle, userId);
                     const laboProdScreen = (laboProd as CLaboratory).screen || (laboProd as CProductions).labo.screen;
                     if (laboProdScreen) {
                         embedMessage.setImage(laboProdScreen);
@@ -395,7 +395,7 @@ export class ProductionSchema {
         }
     }
 
-    public finishProd(prodId: string | CProductions): Promise<IProdFinish> {
+    public finishProd(prodId: string | CProductions, userId?: string): Promise<IProdFinish> {
         return new Promise<IProdFinish>((resolve, reject) => {
             const prod: CProductions | undefined = this.getFinishProd(prodId);
             if (!prod) {
@@ -490,9 +490,9 @@ export class ProductionSchema {
                         prodFinish.server = new CServer(prodFinish.server);
                         new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity || 0).then(() =>
 
-                            this.deleteById(prodFinish as unknown as CProductions)
+                            this.deleteById(prodFinish as unknown as CProductions, "Production terminée", userId)
                                 .then(() => {
-                                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée")
+                                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée", userId)
                                         .setDescription("**" + prodFinish.stock.name + "** : **" + (prodFinish.stock.quantity || 0).toString() + " kg** de " + prodFinish.stock.drug + ".");
                                     if (prodFinish.stock.screen) {
                                         embedMessage.setThumbnail(prodFinish.stock.screen);

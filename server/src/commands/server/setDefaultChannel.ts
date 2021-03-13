@@ -1,4 +1,4 @@
-import { TextChannel } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 
 import { CServer } from "@interfaces/server.class";
 import { ServerSchema } from "@schemas/servers.schema";
@@ -10,8 +10,8 @@ export default class ServerSetDefaultChannel extends CCommand<ServerSchema> {
         super(new ServerSchema(), ECommand.SERVER_SET_DEFAULT_CHANNEL, helpDesc, helpParams);
     }
 
-    public doAction(server: CServer, _: Array<string>, textChannel: TextChannel): Promise<void> {
-        return this._schema.setDefaultChannel(server, textChannel);
+    public doAction(server: CServer, _: Array<string>, guildMember: GuildMember | null, textChannel: TextChannel): Promise<void> {
+        return this._schema.setDefaultChannel(server, textChannel, guildMember?.id);
     }
 
 }

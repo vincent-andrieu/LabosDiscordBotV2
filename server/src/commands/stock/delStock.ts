@@ -1,3 +1,5 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { StockSchema } from "@schemas/stocks.schema";
@@ -21,15 +23,15 @@ export default class StockDelStock extends CCommand<StockSchema> {
         };
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const paramsValues: { name: string, quantity: number, reason?: string } | undefined = this.getParamsTemplate(params);
 
             if (!paramsValues) {
-                help(server, this);
+                help(server, this, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
-            this._schema.removeStockQtyByName(server, paramsValues.name, paramsValues.quantity, paramsValues.reason)
+            this._schema.removeStockQtyByName(server, paramsValues.name, paramsValues.quantity, paramsValues.reason, guildMember?.id)
                 .then(() => resolve())
                 .catch((err) => reject(err));
         });

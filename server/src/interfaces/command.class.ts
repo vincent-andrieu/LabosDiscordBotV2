@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, TextChannel } from "discord.js";
+import { GuildMember, Message, MessageEmbed, TextChannel } from "discord.js";
 
 import { CServer } from "./server.class";
 import DiscordBot, { EEmbedMsgColors } from "../init/bot";
@@ -44,7 +44,7 @@ export abstract class CCommand<T> {
         };
     }
 
-    public abstract doAction(server: CServer, params?: Array<string>, textChannel?: TextChannel): Promise<void>;
+    public abstract doAction(server: CServer, params?: Array<string>, guildMember?: GuildMember | null, textChannel?: TextChannel): Promise<void>;
 
     public getHelp(embedMessage?: MessageEmbed): string {
         if (embedMessage) {
@@ -53,8 +53,8 @@ export abstract class CCommand<T> {
         return this._help.description.concat(" *(", this._help.params, ")*");
     }
 
-    public sendHelp(server: CServer): Promise<Message | undefined> | undefined {
-        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP);
+    public sendHelp(server: CServer, userId?: string): Promise<Message | undefined> | undefined {
+        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, undefined, userId);
         const strMsg = this.getHelp(embedMessage);
 
         return server.defaultChannel?.send(embedMessage).catch(() =>

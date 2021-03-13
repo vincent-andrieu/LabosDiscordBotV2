@@ -1,3 +1,5 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
@@ -14,14 +16,14 @@ export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
         return params[0];
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const name: string | undefined = this.getParamsTemplate(params);
             const getFunc = name ? this._schema.findByName(server, name, true) : this._schema.getByServer(server);
 
             getFunc
                 .then((labos) =>
-                    this.sendLabosInfos(server, labos)
+                    this.sendLabosInfos(server, labos, guildMember)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 )
@@ -29,15 +31,15 @@ export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
         });
     }
 
-    private sendLabosInfos(server: CServer, labos: Array<CLaboratory>): Promise<void> {
+    private sendLabosInfos(server: CServer, labos: Array<CLaboratory>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (labos.length == 0) {
-                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucun laboratoire n'a été créé");
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucun laboratoire n'a été créé", guildMember?.id);
                 return server.defaultChannel?.send(embedMessage)
                     .then(() => resolve())
                     .catch((err) => reject(err));
             }
-            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (labos.length === 1 ? "le" : "les " + labos.length) + " laboratoire" + (labos.length === 1 ? " " + labos[0].name : "s"));
+            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (labos.length === 1 ? "le" : "les " + labos.length) + " laboratoire" + (labos.length === 1 ? " " + labos[0].name : "s"), guildMember?.id);
             if (labos.length === 1 && labos[0].screen) {
                 embedMessage.setImage(labos[0].screen);
             }

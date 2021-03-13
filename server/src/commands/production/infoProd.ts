@@ -1,3 +1,5 @@
+import { GuildMember } from "discord.js";
+
 import { CServer } from "@interfaces/server.class";
 import { CProductions } from "@interfaces/production.class";
 import { ProductionSchema } from "@schemas/productions.schema";
@@ -14,14 +16,14 @@ export default class ProductionInfoProd extends CCommand<ProductionSchema> {
         return params[0];
     }
 
-    public doAction(server: CServer, params: Array<string>): Promise<void> {
+    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const laboName: string | undefined = this.getParamsTemplate(params);
             const getFunc = laboName ? this._schema.findByName(server, laboName, true) : this._schema.getByServer(server);
 
             getFunc
                 .then((prods) =>
-                    this.sendProdsInfos(server, prods)
+                    this.sendProdsInfos(server, prods, guildMember)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 )
@@ -29,15 +31,15 @@ export default class ProductionInfoProd extends CCommand<ProductionSchema> {
         });
     }
 
-    private sendProdsInfos(server: CServer, prods: Array<CProductions>): Promise<void> {
+    private sendProdsInfos(server: CServer, prods: Array<CProductions>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (prods.length === 0) {
-                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucune production n'est en cours");
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucune production n'est en cours", guildMember?.id);
                 return server.defaultChannel?.send(embedMessage)
                     .then(() => resolve())
                     .catch((err) => reject(err));
             }
-            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (prods.length === 1 ? "la" : "les " + prods.length) + " production" + (prods.length === 1 ? "" : "s") + " en cours");
+            const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Information sur " + (prods.length === 1 ? "la" : "les " + prods.length) + " production" + (prods.length === 1 ? "" : "s") + " en cours", guildMember?.id);
             let infoMsg = "";
 
             prods.forEach((prod: CProductions) => infoMsg += prod.getInfo(embedMessage));

@@ -11,7 +11,7 @@ import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
 type CommandType = CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>;
 
-export function help(server: CServer, commandParam?: CommandType | string): Promise<Message | undefined> | undefined {
+export function help(server: CServer, commandParam?: CommandType | string, userId?: string): Promise<Message | undefined> | undefined {
     let command: CommandType | undefined = commandParam as CommandType;
 
     if (typeof commandParam === 'string') {
@@ -19,9 +19,9 @@ export function help(server: CServer, commandParam?: CommandType | string): Prom
         command = CommandsList.find((cmd) => regex.test(cmd.name));
     }
     if (command) {
-        return command.sendHelp(server);
+        return command.sendHelp(server, userId);
     }
-    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, "HELP");
+    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, "HELP", userId);
 
     CommandsList.forEach((cmd) => cmd.getHelp(embedMessage));
     return server.defaultChannel?.send(embedMessage);

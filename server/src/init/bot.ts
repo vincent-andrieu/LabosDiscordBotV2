@@ -1,4 +1,4 @@
-import { Client, Guild, Message, MessageEmbed, TextChannel } from "discord.js";
+import { Client, Guild, Message, MessageEmbed, TextChannel, User } from "discord.js";
 import { readFileSync } from "fs";
 
 import { CServer } from "@interfaces/server.class";
@@ -46,7 +46,19 @@ export default class DiscordBot {
         return this.client.guilds.cache.get(serverId);
     }
 
-    public static getDefaultEmbedMsg(server: CServer, color: EEmbedMsgColors, title?: string): MessageEmbed {
+    public static getGuildUsernameFromId(guild: Guild | undefined, userId: string): string {
+        if (!guild) {
+            return this.client.users.cache.get(userId)?.username || "";
+        }
+        const guildMember = guild.members.cache.get(userId);
+        return guildMember?.nickname || guildMember?.user.username || "";
+    }
+
+    public static getUserAvatarFromId(userId: string): string {
+        return this.client.users.cache.get(userId)?.displayAvatarURL() || "";
+    }
+
+    public static getDefaultEmbedMsg(server: CServer, color: EEmbedMsgColors, title?: string, authorId?: string): MessageEmbed {
         const embedMessage = new MessageEmbed()
             .setColor(color)
             .setTitle(title ? title : "")
@@ -54,6 +66,9 @@ export default class DiscordBot {
 
         if (server.url) {
             embedMessage.setURL(`${server.url}/${server._id}/${server.password}`);
+        }
+        if (authorId) {
+            embedMessage.setAuthor(this.getGuildUsernameFromId(server.guild, authorId), this.getUserAvatarFromId(authorId) || server.guild?.icon || '');
         }
         return embedMessage;
     }

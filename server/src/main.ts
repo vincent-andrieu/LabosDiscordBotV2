@@ -44,13 +44,13 @@ function startBot(client: Client) {
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
                     message.delete();
-                    return help(server, msgElems[1]);
+                    return help(server, msgElems[1], message.member?.id || message.author.id);
                 }
                 const cmdFunc = CommandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
                 if (cmdFunc) {
                     message.delete();
                     msgElems.splice(0, 1);
-                    cmdFunc.doAction(server, msgElems, message.channel as TextChannel).catch((err) => {
+                    cmdFunc.doAction(server, msgElems, message.member, message.channel as TextChannel).catch((err) => {
                         if (typeof err === 'string') {
                             DiscordBot.putError(server.defaultChannel || message.channel as TextChannel, err)
                                 .catch(() => console.error(err));

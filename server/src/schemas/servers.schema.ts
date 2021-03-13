@@ -126,7 +126,7 @@ export class ServerSchema {
      * @param  {CLaboratory} labo
      * @returns Promise
      */
-    public forceSetDefaultLabo(labo: CLaboratory): Promise<CLaboratory> {
+    public forceSetDefaultLabo(labo: CLaboratory, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             if (!labo.server._id) {
                 return reject("No server id");
@@ -140,7 +140,7 @@ export class ServerSchema {
                 this.edit(server)
                     .then(() => {
                         server = new CServer(server);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau laboratoire par défaut");
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau laboratoire par défaut", userId);
                         if (labo.screen) {
                             embedMessage.setThumbnail(labo.screen);
                         }
@@ -156,14 +156,14 @@ export class ServerSchema {
         });
     }
 
-    public deleteDefaultLabo(server: CServer): Promise<void> {
+    public deleteDefaultLabo(server: CServer, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             const labo = server.defaultLabo;
             delete server.defaultLabo;
             this.edit(server).then(() => {
                 server = new CServer(server);
-                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.DEL, "Laboratoire par défaut supprimé");
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.DEL, "Laboratoire par défaut supprimé", userId);
                 if (labo?.screen) {
                     embedMessage.setThumbnail(labo?.screen);
                 }
@@ -178,7 +178,7 @@ export class ServerSchema {
         });
     }
 
-    public setDefaultChannel(server: CServer, textChannel: TextChannel): Promise<void> {
+    public setDefaultChannel(server: CServer, textChannel: TextChannel, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             if (server.defaultChannel?.id === textChannel.id) {
@@ -189,7 +189,7 @@ export class ServerSchema {
             this.edit(server)
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau channel par défaut");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau channel par défaut", userId);
                     const guildIcon = textChannel.guild?.iconURL();
                     if (guildIcon) {
                         embedMessage.setThumbnail(guildIcon);
@@ -203,7 +203,7 @@ export class ServerSchema {
         });
     }
 
-    public setUrl(server: CServer, url: string): Promise<void> {
+    public setUrl(server: CServer, url: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             if (server.url === url) {
@@ -215,7 +215,7 @@ export class ServerSchema {
                 .then(() => {
                     server = new CServer(server);
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouvel URL");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouvel URL", userId);
                     const guildIcon = server.defaultChannel?.guild?.iconURL();
                     if (guildIcon) {
                         embedMessage.setThumbnail(guildIcon);
@@ -229,7 +229,7 @@ export class ServerSchema {
         });
     }
 
-    public setPassword(server: CServer, password: string): Promise<CServer> {
+    public setPassword(server: CServer, password: string, userId?: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             if (!password) {
                 return reject("Nouveau mot de passe invalid");
@@ -241,7 +241,7 @@ export class ServerSchema {
                 Sockets.server?.emit('server.password', socketServer);
                 server = new CServer(server);
 
-                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau mot de passe");
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau mot de passe", userId);
                 const guildIcon = server.defaultChannel?.guild?.iconURL();
                 if (guildIcon) {
                     embedMessage.setThumbnail(guildIcon);
@@ -254,7 +254,7 @@ export class ServerSchema {
         });
     }
 
-    public setReminder(server: CServer, reminder: number): Promise<CServer> {
+    public setReminder(server: CServer, reminder: number, userId?: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             if (reminder < 0 || reminder > GlobalConfig.productions.timeoutMinutes) {
                 return reject("Le rappel d'une production doit être comprit entre 0 (désactivé) et " + GlobalConfig.productions.timeoutMinutes.toString());
@@ -268,13 +268,22 @@ export class ServerSchema {
                 .then(() => {
                     server = new CServer(server);
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Changement du rappel");
-                    const guildIcon = server.defaultChannel?.guild?.iconURL();
-                    if (guildIcon) {
-                        embedMessage.setThumbnail(guildIcon);
+                    if (reminder > 0) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Changement du rappel", userId);
+                        const guildIcon = server.defaultChannel?.guild?.iconURL();
+                        if (guildIcon) {
+                            embedMessage.setThumbnail(guildIcon);
+                        }
+                        embedMessage.setDescription("**" + reminder.toString() + " minutes** avant la fin de la production");
+                        server.defaultChannel?.send(embedMessage);
+                    } else {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.DEL, "Suppression du rappel", userId);
+                        const guildIcon = server.defaultChannel?.guild?.iconURL();
+                        if (guildIcon) {
+                            embedMessage.setThumbnail(guildIcon);
+                        }
+                        server.defaultChannel?.send(embedMessage);
                     }
-                    embedMessage.setDescription("**" + reminder.toString() + " minutes** avant la fin de la production");
-                    server.defaultChannel?.send(embedMessage);
 
                     Sockets.server?.emit('server.reminder', server);
                     resolve(server);
@@ -283,7 +292,7 @@ export class ServerSchema {
         });
     }
 
-    public setRoleTag(server: CServer, roleTag: string): Promise<void> {
+    public setRoleTag(server: CServer, roleTag: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             if (server.roleTag === roleTag) {
@@ -295,7 +304,7 @@ export class ServerSchema {
                 .then(() => {
                     server = new CServer(server);
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle", userId);
                     const guildIcon = server.defaultChannel?.guild?.iconURL();
                     if (guildIcon) {
                         embedMessage.setThumbnail(guildIcon);

@@ -39,7 +39,7 @@ function autoPopulate(this: any, next: any) {
 export class LaboratorySchema {
     private _model = mongoose.model('laboratories', laboSchema);
 
-    public add(labo: CLaboratory): Promise<CLaboratory> {
+    public add(labo: CLaboratory, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             if (!isADrug(labo.drug)) {
@@ -65,7 +65,7 @@ export class LaboratorySchema {
                     .then((newLabo: unknown) => {
                         labo._id = (newLabo as ILaboratory)._id;
                         Sockets.server?.emit('labo.add', labo);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté")
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté", userId)
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
                             embedMessage.setImage(labo.screen);
@@ -79,13 +79,13 @@ export class LaboratorySchema {
         });
     }
 
-    public edit(labo: CLaboratory): Promise<CLaboratory> {
+    public edit(labo: CLaboratory, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             this._model.findByIdAndUpdate(labo._id, labo)
                 .then(() => {
                     this.getById(labo).then((editedLabo: CLaboratory) => {
                         Sockets.server?.emit('labo.edit', editedLabo);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.EDIT, "Laboratoire modifié")
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.EDIT, "Laboratoire modifié", userId)
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
                             embedMessage.setImage(labo.screen);
@@ -191,7 +191,7 @@ export class LaboratorySchema {
         });
     }
 
-    public delete(labo: CLaboratory, reason?: string): Promise<number> {
+    public delete(labo: CLaboratory, reason?: string, userId?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: labo.server._id, _id: labo._id })
                 .then((res) => {
@@ -204,7 +204,7 @@ export class LaboratorySchema {
                     }
 
                     labo.server = new CServer(labo.server);
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Laboratoire **" + labo.name + "** supprimé");
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Laboratoire **" + labo.name + "** supprimé", userId);
                     if (labo.screen) {
                         embedMessage.setImage(labo.screen);
                     }
@@ -220,10 +220,10 @@ export class LaboratorySchema {
         });
     }
 
-    public deleteByName(server: CServer, name: string, reason?: string): Promise<number> {
+    public deleteByName(server: CServer, name: string, reason?: string, userId?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this.findOneByName(server, name).then((labo) => {
-                this.delete(labo, reason)
+                this.delete(labo, reason, userId)
                     .then((nbrDeleted) => resolve(nbrDeleted))
                     .catch((err) => reject(err));
 
@@ -237,7 +237,7 @@ export class LaboratorySchema {
      * @param  {string} name
      * @returns Promise
      */
-    public setDefaultLaboByName(server: CServer, name: string): Promise<CLaboratory> {
+    public setDefaultLaboByName(server: CServer, name: string, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             this.findOneByName(server, name, true).then((labo: CLaboratory) => {
@@ -245,7 +245,7 @@ export class LaboratorySchema {
                     return reject("Aucun laboratoire existe sous le nom " + name);
                 }
 
-                new ServerSchema().forceSetDefaultLabo(labo)
+                new ServerSchema().forceSetDefaultLabo(labo, userId)
                     .then((newDefaultLabo: CLaboratory) => resolve(newDefaultLabo))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
@@ -259,7 +259,7 @@ export class LaboratorySchema {
      * @param  {CStock} stock
      * @returns Promise
      */
-    public addLaboStock(labo: CLaboratory, stock: CStock): Promise<CLaboratory> {
+    public addLaboStock(labo: CLaboratory, stock: CStock, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             if (labo.server._id !== stock.server._id) {
@@ -287,7 +287,7 @@ export class LaboratorySchema {
 
                     this._model.findByIdAndUpdate(crtLabo._id, { $push: { stocks: crtStock._id } })
                         .then(() => {
-                            const embedMessage = DiscordBot.getDefaultEmbedMsg(crtLabo.server, EEmbedMsgColors.ADD, "Entrepôt ajouté au laboratoire **" + crtLabo.name + "**")
+                            const embedMessage = DiscordBot.getDefaultEmbedMsg(crtLabo.server, EEmbedMsgColors.ADD, "Entrepôt ajouté au laboratoire **" + crtLabo.name + "**", userId)
                                 .setDescription("**" + crtStock.name + "** : " + crtStock.quantity.toString() + " kg de " + crtStock.drug);
                             if (crtLabo.screen) {
                                 embedMessage.setThumbnail(crtLabo.screen);
@@ -307,7 +307,7 @@ export class LaboratorySchema {
         });
     }
 
-    public addLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<CLaboratory> {
+    public addLaboStockByNames(server: CServer, laboName: string, stockName: string, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             Promise.all([
@@ -315,7 +315,7 @@ export class LaboratorySchema {
                 new StockSchema().findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
-                this.addLaboStock(result[0], result[1])
+                this.addLaboStock(result[0], result[1], userId)
                     .then((editedLabo: CLaboratory) => resolve(editedLabo))
                     .catch((err) => reject(err));
 
@@ -330,12 +330,12 @@ export class LaboratorySchema {
      * @param  {CStock} stock
      * @returns Promise
      */
-    public delLaboStock(labo: CLaboratory, stock: CStock): Promise<CLaboratory> {
+    public delLaboStock(labo: CLaboratory, stock: CStock, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             this._model.findByIdAndUpdate(labo._id, { $pull: { stocks: stock._id } })
                 .then(() => {
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Entrepôt supprimé du laboratoire **" + labo.name + "**")
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.DEL, "Entrepôt supprimé du laboratoire **" + labo.name + "**", userId)
                         .setDescription("**" + stock.name + "** : " + stock.quantity.toString() + " kg de " + stock.drug);
                     if (labo.screen) {
                         embedMessage.setThumbnail(labo.screen);
@@ -352,7 +352,7 @@ export class LaboratorySchema {
         });
     }
 
-    public delLaboStockByNames(server: CServer, laboName: string, stockName: string): Promise<CLaboratory> {
+    public delLaboStockByNames(server: CServer, laboName: string, stockName: string, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
             Promise.all([
@@ -360,7 +360,7 @@ export class LaboratorySchema {
                 new StockSchema().findOneByName(server, stockName)
             ]).then((result: [CLaboratory, CStock]) => {
 
-                this.delLaboStock(result[0], result[1])
+                this.delLaboStock(result[0], result[1], userId)
                     .then((editedLabo: CLaboratory) => resolve(editedLabo))
                     .catch((err) => reject(err));
 
