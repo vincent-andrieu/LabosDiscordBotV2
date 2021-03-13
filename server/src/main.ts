@@ -68,7 +68,7 @@ function startBot(client: Client) {
             return;
         }
 
-        new ProductionSchema().finishProd(messageReaction.message.id).catch((err) => {
+        new ProductionSchema().finishProd(messageReaction.message.id, messageReaction.message.member?.id || messageReaction.message.author.id).catch((err) => {
             if (typeof err === 'string') {
                 const serverId: string | undefined = messageReaction.message.guild?.id;
 

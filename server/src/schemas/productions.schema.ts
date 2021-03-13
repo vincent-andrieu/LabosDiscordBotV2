@@ -459,12 +459,7 @@ export class ProductionSchema {
                                     }
                                 }
                             },
-                            { $limit: 1 },
-                            {
-                                $set: {
-                                    quantity: { $add: ['$quantity', '$$prodQty'] }
-                                }
-                            }
+                            { $limit: 1 }
                         ],
                         as: 'stock'
                     }
@@ -488,14 +483,14 @@ export class ProductionSchema {
                         const prodFinish = result[0];
 
                         prodFinish.server = new CServer(prodFinish.server);
-                        new StockSchema().setStockQty(new CStock(prodFinish.stock), prodFinish.stock.quantity || 0).then(() =>
+                        new StockSchema().addStockQty(new CStock(prodFinish.stock), prodFinish.quantity || 0).then((addedStock) =>
 
                             this.deleteById(prodFinish as unknown as CProductions, "Production terminée", userId)
                                 .then(() => {
                                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée", userId)
-                                        .setDescription("**" + prodFinish.stock.name + "** : **" + (prodFinish.stock.quantity || 0).toString() + " kg** de " + prodFinish.stock.drug + ".");
-                                    if (prodFinish.stock.screen) {
-                                        embedMessage.setThumbnail(prodFinish.stock.screen);
+                                        .setDescription("**" + addedStock.name + "** : **" + (addedStock.quantity || 0).toString() + " kg** de " + addedStock.drug + ".");
+                                    if (addedStock.screen) {
+                                        embedMessage.setThumbnail(addedStock.screen);
                                     }
                                     (prodFinish.server as CServer).defaultChannel?.send(embedMessage);
                                     resolve(prodFinish);
