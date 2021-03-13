@@ -42,7 +42,7 @@ export class LabosListComponent {
         this._updateProductions();
         _serverService.getCurrentServer().then((server: CServer) => {
             if (server.defaultLabo) {
-                this.defaultLabo = new CLaboratory(server.defaultLabo);
+                this.defaultLabo = new CLaboratory(server.defaultLabo as ILaboratory);
             }
         });
 
@@ -97,6 +97,7 @@ export class LabosListComponent {
         _socket.on(`labo.default`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
                 this.defaultLabo = new CLaboratory(labo);
+                this.laboratories.forEach((laboElem) => laboElem.server.defaultLabo = labo);
             }
         });
     }
@@ -104,7 +105,6 @@ export class LabosListComponent {
     private _updateLaboratories(): void {
         this._laboratoryService.get().then((result) => {
             this.laboratories = result;
-            this.isLoading = false;
 
             this.laboForms = {};
             this.laboratories.forEach((labo: CLaboratory) => {
@@ -112,6 +112,7 @@ export class LabosListComponent {
                     this.laboForms[labo._id.toString()] = new FormControl();
                 }
             });
+            this.isLoading = false;
         });
     }
 

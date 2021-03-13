@@ -51,12 +51,16 @@
             <input matInput placeholder="URL" type="url" formControlName="screen">
         </mat-form-field>
 
+        <mat-slide-toggle *ngIf="data.pageStatus === ePageStatus.LABOS" formControlName="isDefault">
+            Laboratoire par défaut
+        </mat-slide-toggle>
+
         <img class="save-area-screen" [src]="form.controls.screen.value" fxFlexAlign="center">
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">
         <button mat-button mat-dialog-close color="warn">Annuler</button>
         <button mat-flat-button mat-dialog-close type="submit" color="primary"
-                [disabled]="form.invalid || form.pristine">Modifier</button>
+                [disabled]="form.invalid || form.pristine || (!isAreaEdited() && !doesSetDefaultLabo())">Modifier</button>
     </mat-dialog-actions>
 </form>

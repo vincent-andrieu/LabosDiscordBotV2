@@ -84,7 +84,7 @@ export class LaboratorySchema {
             this._model.findByIdAndUpdate(labo._id, labo)
                 .then(() => {
                     this.getById(labo).then((editedLabo: CLaboratory) => {
-                        Sockets.server?.emit('labo.edit', labo);
+                        Sockets.server?.emit('labo.edit', editedLabo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.EDIT, "Laboratoire modifié")
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {

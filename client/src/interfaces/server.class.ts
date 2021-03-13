@@ -8,7 +8,7 @@ export class CServer implements IServer {
     _id: string;
     url?: string;
     //activity: string;
-    defaultLabo?: ILaboratory;
+    defaultLabo?: ILaboratory | string;
     defaultChannel: string;
     reminder?: number;
     roleTag?: string;
@@ -17,9 +17,7 @@ export class CServer implements IServer {
         this._id = server._id;
         this.url = server.url;
         //this.activity = server.activity;
-        if (typeof server.defaultLabo === 'object') {
-            this.defaultLabo = server.defaultLabo;
-        }
+        this.defaultLabo = server.defaultLabo;
         this.defaultChannel = (server.defaultChannel as TextChannel | undefined)?.id || server.defaultChannel as string || "";
         this.reminder = server.reminder;
         this.roleTag = server.roleTag;
