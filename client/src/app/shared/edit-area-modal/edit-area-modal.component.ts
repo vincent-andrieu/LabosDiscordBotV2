@@ -86,7 +86,7 @@ export class EditAreaModalComponent {
                 }
             }
         }
-        if (this.data.pageStatus === EPageStatus.STOCKS && area !== this.data.area) {
+        if (this.data.pageStatus === EPageStatus.STOCKS && isEdited) {
             this._stockService.edit(area as CStock).then(() =>
                 this._dialogRef.close()
             );
