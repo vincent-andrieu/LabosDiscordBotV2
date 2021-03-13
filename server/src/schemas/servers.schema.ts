@@ -79,7 +79,12 @@ export class ServerSchema {
 
     public getById(id: string): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
-            this._model.findById(id).populate('defaultLabo')
+            this._model.findById(id).populate({
+                path: 'defaultLabo',
+                populate: {
+                    path: 'stocks'
+                }
+            })
                 .then((result: unknown) => {
                     if (!result) {
                         return reject("Le serveur (" + id.toString() + ") n'existe pas");
@@ -93,7 +98,12 @@ export class ServerSchema {
     public createOrGet(textChannel: TextChannel): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
 
-            this._model.findById(textChannel.guild.id).populate('defaultLabo')
+            this._model.findById(textChannel.guild.id).populate({
+                path: 'defaultLabo',
+                populate: {
+                    path: 'stocks'
+                }
+            })
                 .then((server: unknown) => {
                     if (!server) {
                         this.add(new CServer({
