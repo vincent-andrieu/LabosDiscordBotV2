@@ -7,7 +7,7 @@ import { EPageStatus } from '@interfaces/root.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
 import { CreateAreaModalComponent } from '@shared/create-area-modal/create-area-modal.component';
-import { SettingsModalComponent } from './settings-modal/settings-modal.component';
+import { SettingsModalComponent } from '@shared/settings-modal/settings-modal.component';
 
 @Component({
     selector: 'app-sidenav',

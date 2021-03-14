@@ -14,9 +14,15 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { EditAreaModalComponent } from './edit-area-modal/edit-area-modal.component';
 import { ConfirmModalComponent } from './confirm-modal/confirm-modal.component';
 import { CreateAreaModalComponent } from './create-area-modal/create-area-modal.component';
+import { SettingsModalComponent } from './settings-modal/settings-modal.component';
 
 @NgModule({
-    declarations: [EditAreaModalComponent, ConfirmModalComponent, CreateAreaModalComponent],
+    declarations: [
+        EditAreaModalComponent,
+        ConfirmModalComponent,
+        CreateAreaModalComponent,
+        SettingsModalComponent
+    ],
     imports: [
         CommonModule,
         BrowserAnimationsModule,
