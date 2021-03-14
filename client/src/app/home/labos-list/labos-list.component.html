@@ -8,7 +8,7 @@
         </button>
     </mat-card-header>
     <img mat-card-image class="labo-screen" [src]="labo.screen">
-    <mat-card-content>
+    <mat-card-content fxLayoutGap="15px">
 
         <mat-accordion>
             <mat-expansion-panel *ngFor="let prod of getLaboProds(labo)" hideToggle>

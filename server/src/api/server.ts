@@ -28,10 +28,10 @@ export class ServerHttp {
 
         // Set reminder
         this._app.post(`${this._urlBase}/setReminder`, (request, response) => {
-            const server: CServer = new CServer(request.body.server);
+            const serverId: string = request.body.serverId;
             const reminder: number = request.body.reminder;
 
-            this._serverSchema.setReminder(server, reminder).then((editedServer: CServer) => {
+            this._serverSchema.setReminderFromId(serverId, reminder).then((editedServer: CServer) => {
                 response.send(editedServer);
             }).catch((err) => response.send(err));
         });

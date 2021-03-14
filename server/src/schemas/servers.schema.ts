@@ -292,6 +292,16 @@ export class ServerSchema {
         });
     }
 
+    public setReminderFromId(serverId: string, reminder: number, userId?: string): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
+            this.getById(serverId).then((server: CServer) =>
+                this.setReminder(server, reminder, userId)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err))
+            ).catch((err) => reject(err));
+        });
+    }
+
     public setRoleTag(server: CServer, roleTag: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 

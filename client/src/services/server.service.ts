@@ -52,7 +52,7 @@ export class ServerService {
         });
     }
 
-    public setReminder(server: CServer, reminder: number): Promise<CServer> {
+    public setReminder(reminder: number): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             if (reminder < 0 || reminder >= GlobalConfig.productions.timeoutMinutes) {
                 const errMsg = "Le rappel doit être comprit entre 0 et " + GlobalConfig.productions.timeoutMinutes;
@@ -60,7 +60,7 @@ export class ServerService {
                 return reject(errMsg);
             }
             this._http.post<IServer>(`${this._serverUrl}/setReminder`, {
-                server: server,
+                serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path,
                 reminder: reminder
             }).subscribe((result: IServer) =>
                 resolve(new CServer(result))

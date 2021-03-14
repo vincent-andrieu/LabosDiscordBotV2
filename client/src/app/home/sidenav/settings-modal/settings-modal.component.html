@@ -1,0 +1,17 @@
+<span mat-dialog-title>Settings</span>
+
+<form [formGroup]="form" (ngSubmit)="saveSettings()">
+    <mat-dialog-content *ngIf="server">
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Rappel des productions</mat-label>
+            <input matInput placeholder="Rappel" [min]="0" [max]="59" type="number" autocomplete="off"
+                   formControlName="reminder">
+        </mat-form-field>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close color="warn">Annuler</button>
+        <button mat-flat-button color="primary" type="submit"
+                [disabled]="form.invalid || form.pristine || server?.reminder === form.controls.reminder.value">Modifier</button>
+    </mat-dialog-actions>
+</form>
