@@ -64,7 +64,8 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
-        <button mat-flat-button color="primary" [disabled]="newStockToLabo.invalid"
+        <button mat-flat-button color="primary"
+                [disabled]="newStockToLabo.invalid || newStockToLabo.pristine || !newStockToLabo.value"
                 (click)="addStockToLabo()">Ajouter</button>
     </div>
 
