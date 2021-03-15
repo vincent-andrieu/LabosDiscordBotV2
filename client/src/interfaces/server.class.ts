@@ -7,6 +7,7 @@ import { IServer, IServerModel } from "@global/interfaces/server.interface";
 export class CServer implements IServer {
     _id: string;
     url?: string;
+    password: string;
     //activity: string;
     defaultLabo?: ILaboratory | string;
     defaultChannel: string;
@@ -16,6 +17,7 @@ export class CServer implements IServer {
     constructor(server: IServer) {
         this._id = server._id;
         this.url = server.url;
+        this.password = server.password || "password";
         //this.activity = server.activity;
         this.defaultLabo = server.defaultLabo;
         this.defaultChannel = (server.defaultChannel as TextChannel | undefined)?.id || server.defaultChannel as string || "";
