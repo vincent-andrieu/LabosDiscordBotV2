@@ -5,10 +5,11 @@ import { Server } from 'socket.io';
 
 import { serverConfig } from '../server.config';
 import Sockets from '../init/sockets';
+import { DiscordHttp } from '@api/discord';
+import { ServerHttp } from '@api/server';
 import { LaboratoryHttp } from '@api/laboratory';
 import { StockHttp } from '@api/stock';
 import { ProductionHttp } from '@api/production';
-import { ServerHttp } from '@api/server';
 
 export default class ExpressServer {
 
@@ -30,6 +31,7 @@ export default class ExpressServer {
     }
 
     private _init(socketServer: Server): void {
+        new DiscordHttp(this._app, socketServer);
         new LaboratoryHttp(this._app, socketServer);
         new StockHttp(this._app, socketServer);
         new ProductionHttp(this._app, socketServer);

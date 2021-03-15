@@ -5,12 +5,14 @@ import { ClassType } from 'class-transformer/ClassTransformer';
 import { environment } from "@environment";
 import { SnackbarService } from "./snackbar.service";
 import { Router } from "@angular/router";
+import { DiscordService } from "./discord.service";
 
 
 export class MainService<C, I> {
 
     protected _serverUrl: string;
     protected _http: HttpClient = this._injector.get(HttpClient);
+    protected _discordService: DiscordService = this._injector.get(DiscordService);
     protected _snackbarService: SnackbarService = this._injector.get(SnackbarService);
     protected _router: Router = this._injector.get(Router);
 
@@ -20,7 +22,11 @@ export class MainService<C, I> {
 
     public add(param: C): Promise<C> {
         return new Promise<C>((resolve, reject) => {
-            this._http.put<I>(`${this._serverUrl}/add`, param).subscribe((result: I) =>
+            this._http.put<I>(`${this._serverUrl}/add`, param, {
+                params: {
+                    userId: this._discordService.getUserId() || ''
+                }
+            }).subscribe((result: I) =>
                 resolve(new this._ctor(result))
             , (err: HttpErrorResponse) => {
                 this._snackbarService.openError(err);
@@ -31,7 +37,12 @@ export class MainService<C, I> {
 
     public del(param: C): Promise<C> {
         return new Promise<C>((resolve, reject) => {
-            this._http.delete<I>(`${this._serverUrl}/delete`, { params: { value: JSON.stringify(param) } }).subscribe((result: I) =>
+            this._http.delete<I>(`${this._serverUrl}/delete`, {
+                params: {
+                    userId: this._discordService.getUserId() || '',
+                    value: JSON.stringify(param)
+                }
+            }).subscribe((result: I) =>
                 resolve(new this._ctor(result))
             , (err: HttpErrorResponse) => {
                 this._snackbarService.openError(err);
@@ -43,7 +54,11 @@ export class MainService<C, I> {
 
     public edit(param: C): Promise<C> {
         return new Promise<C>((resolve, reject) => {
-            this._http.post<I>(`${this._serverUrl}/edit`, param).subscribe((result: I) =>
+            this._http.post<I>(`${this._serverUrl}/edit`, param, {
+                params: {
+                    userId: this._discordService.getUserId() || ''
+                }
+            }).subscribe((result: I) =>
                 resolve(new this._ctor(result))
             , (err: HttpErrorResponse) => {
                 this._snackbarService.openError(err);
@@ -56,6 +71,7 @@ export class MainService<C, I> {
         return new Promise<Array<C>>((resolve, reject) => {
             this._http.get<Array<I>>(`${this._serverUrl}/get`, {
                 params: {
+                    userId: this._discordService.getUserId() || '',
                     serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
                 }
             }).subscribe((result: Array<I>) =>

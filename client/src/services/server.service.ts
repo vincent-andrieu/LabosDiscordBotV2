@@ -8,6 +8,7 @@ import { IServer } from '@global/interfaces/server.interface';
 import { GlobalConfig } from '@global/config';
 import { CServer } from '@interfaces/server.class';
 import { SnackbarService } from './snackbar.service';
+import { DiscordService } from './discord.service';
 
 @Injectable({
     providedIn: 'root'
@@ -17,7 +18,7 @@ export class ServerService {
     private _serverUrl = `${environment.server.url}/server`;
     private _serverId = "";
 
-    constructor(private _http: HttpClient, private _snackbarService: SnackbarService, private _socket: Socket, private _router: Router) {
+    constructor(private _http: HttpClient, private _discordService: DiscordService, private _snackbarService: SnackbarService, private _socket: Socket, private _router: Router) {
 
         _socket.on(`server.reminder`, (server: IServer) => {
             if (server._id == this._serverId) {
@@ -60,6 +61,7 @@ export class ServerService {
                 return reject(errMsg);
             }
             this._http.post<IServer>(`${this._serverUrl}/setReminder`, {
+                userId: this._discordService.getUserId(),
                 serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path,
                 reminder: reminder
             }).subscribe((result: IServer) =>

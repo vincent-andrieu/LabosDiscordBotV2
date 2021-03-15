@@ -53,3 +53,17 @@ Array.prototype.remove = function <T>(cb: (value: T, index: number, obj: T[]) =>
     }
     return (this as Array<T>).splice(index, deleteCount);
 };
+
+export function btoa(data: string | undefined): string | undefined {
+    if (!data) {
+        return undefined;
+    }
+    return Buffer.from(data).toString('base64');
+}
+
+export function atob(data: string | undefined): string | undefined {
+    if (!data) {
+        return undefined;
+    }
+    return Buffer.from(data, 'base64').toString();
+}

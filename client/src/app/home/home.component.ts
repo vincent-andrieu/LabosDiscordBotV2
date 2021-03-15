@@ -106,7 +106,6 @@ export class HomeComponent {
         this.pageStatus = { index: tab.index, status: (tab.tab.ariaLabel as EPageStatus) };
         const urlSegments = this._router.parseUrl(this._router.url).root.children.primary.segments;
         this._location.go(`${urlSegments[0].path}/${urlSegments[1].path}/${this.pageStatus.status}`);
-        this._cookieService.putObject(environment.cookiesName.pageStatus, this.pageStatus);
     }
 
 }

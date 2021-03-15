@@ -3,11 +3,14 @@ import { Server } from 'socket.io';
 
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
+import { DiscordService } from '@services/discord.service';
+import { atob } from '@global/utils';
 
 export class ServerHttp {
 
     private _urlBase = '/server';
     private _serverSchema: ServerSchema;
+    private _discordService = new DiscordService;
 
     constructor(private _app: Express, private _socketServer: Server) {
         this._serverSchema = new ServerSchema();
@@ -28,10 +31,11 @@ export class ServerHttp {
 
         // Set reminder
         this._app.post(`${this._urlBase}/setReminder`, (request, response) => {
+            const userId: string = request.body.userId;
             const serverId: string = request.body.serverId;
             const reminder: number = request.body.reminder;
 
-            this._serverSchema.setReminderFromId(serverId, reminder).then((editedServer: CServer) => {
+            this._serverSchema.setReminderFromId(serverId, reminder, atob(userId)).then((editedServer: CServer) => {
                 response.send(editedServer);
             }).catch((err) => response.send(err));
         });

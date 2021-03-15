@@ -1,12 +1,23 @@
 <span mat-dialog-title>Settings</span>
 
 <form [formGroup]="form" (ngSubmit)="saveSettings()">
-    <mat-dialog-content *ngIf="server">
+    <mat-dialog-content *ngIf="server" fxLayout="column" fxLayoutGap="20px">
         <mat-form-field color="accent" fxFlex>
             <mat-label>Rappel des productions</mat-label>
             <input matInput placeholder="Rappel" [min]="0" [max]="59" type="number" autocomplete="off"
                    formControlName="reminder">
+            <mat-error *ngIf="form.controls.reminder.hasError('required')">
+                Ce champ est obligatoire (0 pour le supprimer)
+            </mat-error>
         </mat-form-field>
+        <button *ngIf="!discordUserId" mat-flat-button color="accent" type="button"
+                (click)="discordService.redirectToAuth()">
+            Associer mon compte Discord
+        </button>
+        <button *ngIf="discordUserId" mat-flat-button color="warn" type="button"
+                (click)="discordService.remove() ; refreshDiscordUserId()">
+            Dissocier mon compte Discord
+        </button>
     </mat-dialog-content>
 
     <mat-dialog-actions align="end">

@@ -5,7 +5,6 @@ import { Socket } from 'ngx-socket-io';
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
-import { SnackbarService } from './snackbar.service';
 import { MainService } from './main.service';
 import { ServerService } from './server.service';
 
@@ -14,7 +13,12 @@ import { ServerService } from './server.service';
 })
 export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
 
-    constructor(protected _injector: Injector, protected _http: HttpClient, protected _snackbarService: SnackbarService, private _socket: Socket, private _serverService: ServerService) {
+    constructor(
+        protected _injector: Injector,
+        protected _http: HttpClient,
+        private _socket: Socket,
+        private _serverService: ServerService
+    ) {
         super('labo', CLaboratory, _injector);
 
         _socket.on(`labo.add`, (labo: ILaboratory) => {
@@ -63,6 +67,7 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
     public addStock(labo: CLaboratory, stock: CStock): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             this._http.put<ILaboratory>(`${this._serverUrl}/addStock`, {
+                userId: this._discordService.getUserId(),
                 labo: labo,
                 stock: stock
             }).subscribe((result: ILaboratory) =>
@@ -84,6 +89,7 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             this._http.delete<ILaboratory>(`${this._serverUrl}/delStock`, {
                 params: {
+                    userId: this._discordService.getUserId() || '',
                     labo: JSON.stringify(labo),
                     stock: JSON.stringify(stock)
                 }
@@ -104,6 +110,7 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
     public setDefault(labo: CLaboratory): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
             this._http.post<ILaboratory>(`${this._serverUrl}/setDefault`, {
+                userId: this._discordService.getUserId(),
                 labo: labo
             }).subscribe((result: ILaboratory) =>
                 resolve(new CLaboratory(result))

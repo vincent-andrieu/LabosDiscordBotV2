@@ -1,7 +1,7 @@
 <mat-card *ngFor="let labo of laboratories" class="labo-card"
           [ngClass]="{'labo-card-primary': labo._id === defaultLabo?._id}">
     <mat-card-header>
-        <mat-card-title>{{ labo.name }}</mat-card-title>
+        <mat-card-title class="labo-name">{{ labo.name }}</mat-card-title>
         <mat-card-subtitle class="drug-name-card-subtitle">{{ labo.drug }}</mat-card-subtitle>
         <button mat-icon-button class="edit-labo-button" color="accent" (click)="editLabo(labo)">
             <mat-icon>edit</mat-icon>

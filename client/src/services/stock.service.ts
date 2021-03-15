@@ -43,6 +43,7 @@ export class StockService extends MainService<CStock, IStock> {
     public addStockQuantity(stock: CStock, quantity: number): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
             this._http.post<IStock>(`${this._serverUrl}/addStock`, {
+                userId: this._discordService.getUserId(),
                 stock: stock,
                 quantity: quantity
             }).subscribe((result: IStock) =>
@@ -62,6 +63,7 @@ export class StockService extends MainService<CStock, IStock> {
     public delStockQuantity(stock: CStock, quantity: number): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
             this._http.post<IStock>(`${this._serverUrl}/delStock`, {
+                userId: this._discordService.getUserId(),
                 stock: stock,
                 quantity: quantity
             }).subscribe((result: IStock) =>
@@ -81,6 +83,7 @@ export class StockService extends MainService<CStock, IStock> {
     public setStockQuantity(stock: CStock, quantity: number): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
             this._http.post<IStock>(`${this._serverUrl}/setStock`, {
+                userId: this._discordService.getUserId(),
                 stock: stock,
                 quantity: quantity
             }).subscribe((result: IStock) =>

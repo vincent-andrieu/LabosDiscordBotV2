@@ -47,6 +47,7 @@ export class ProductionService extends MainService<CProductions, IProductions> {
     public finish(prod: CProductions): Promise<IProdFinish> {
         return new Promise<IProdFinish>((resolve, reject) => {
             this._http.post<IProdFinish>(`${this._serverUrl}/finish`, {
+                userId: this._discordService.getUserId(),
                 prod: prod
             }).subscribe((result: IProdFinish) =>
                 resolve(result)

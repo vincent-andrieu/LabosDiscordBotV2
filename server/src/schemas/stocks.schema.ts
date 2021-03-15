@@ -55,7 +55,8 @@ export class StockSchema {
 
                 this._model.create(stock)
                     .then((newStock: unknown) => {
-                        Sockets.server?.emit('stock.add', newStock);
+                        stock._id = (newStock as IStock)._id;
+                        Sockets.server?.emit('stock.add', stock);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté", userId)
                             .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
                         if (stock.screen) {

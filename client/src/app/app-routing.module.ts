@@ -1,9 +1,11 @@
 import { Injectable, NgModule } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterModule, Routes, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Resolve, Router, RouterModule, Routes, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
 
-import { ServerService } from '@services/server.service';
+import { DiscordService } from '@services/discord.service';
 import { SnackbarService } from '@services/snackbar.service';
+import { ServerService } from '@services/server.service';
+import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
 
@@ -26,9 +28,60 @@ class AuthGuard implements CanActivate {
     }
 }
 
+@Injectable()
+class DiscordAuthResolver implements Resolve<void> {
+
+    constructor(
+        private _discordService: DiscordService,
+        private _serverService: ServerService,
+        private _snackbarService: SnackbarService,
+        private _router: Router
+    ) {}
+
+    resolve(route: ActivatedRouteSnapshot): void {
+        const code: string = route.queryParams.code;
+        const states: { serverId: string, password: string } | undefined = route.queryParams.state ? JSON.parse(route.queryParams.state) : undefined;
+
+        if (code && states) {
+            this._serverService.login(states.serverId, states.password).then((isValid: boolean) => {
+                if (isValid) {
+                    this._discordService.setToken(code, states.serverId)
+                        .then(() => {
+                            this._snackbarService.open("Compte discord associé");
+                            this._router.navigate([states.serverId, states.password]);
+                        }).catch((err) => {
+                            this._snackbarService.openError(err);
+                            this._router.navigate([states.serverId, states.password]);
+                        });
+                } else {
+                    this._snackbarService.openCustomError("Permission denied");
+                    this._router.navigate([states.serverId]);
+                }
+            }).catch((err) => {
+                this._snackbarService.openError(err);
+                this._router.navigate([states.serverId]);
+            });
+        } else {
+            if (states?.serverId) {
+                this._router.navigate([states.serverId]);
+            } else {
+                this._router.navigate([]);
+            }
+
+        }
+    }
+}
+
 const routes: Routes = [
     // { path: '**', redirectTo: '/' },
     { path: '', component: AuthComponent },
+    {
+        path: 'auth/discord/redirect',
+        component: AppComponent,
+        resolve: {
+            discordAuth: DiscordAuthResolver
+        }
+    },
     { path: ':serverId', component: AuthComponent },
     {
         path: ':serverId/:password',
@@ -48,6 +101,6 @@ const routes: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
-    providers: [AuthGuard]
+    providers: [AuthGuard, DiscordAuthResolver]
 })
 export class AppRoutingModule {}

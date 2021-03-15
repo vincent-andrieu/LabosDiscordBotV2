@@ -1,6 +1,6 @@
 <mat-card *ngFor="let stock of stocks" class="stock-card">
     <mat-card-header>
-        <mat-card-title>{{ stock.name }}</mat-card-title>
+        <mat-card-title class="stock-name">{{ stock.name }}</mat-card-title>
         <mat-card-subtitle>
             <span>{{ stock.quantity }} kg de </span>
             <span class="drug-name-card-subtitle">{{ stock.drug }}</span>

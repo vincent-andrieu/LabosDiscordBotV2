@@ -6,7 +6,7 @@ export const environment = {
     production: false,
     cookiesName: {
         sidenavStatus: 'sidenavStatus',
-        pageStatus: 'pageStatus'
+        discordUserId: 'discordUserId'
     },
     sockets: {
         url: 'http://localhost:3000'
