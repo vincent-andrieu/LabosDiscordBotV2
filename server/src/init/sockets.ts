@@ -1,7 +1,8 @@
 import { Express } from 'express';
 import http from 'http';
-import socketIo from 'socket.io';
+import socketIo, { Socket } from 'socket.io';
 
+import { OnlineUsersService } from '@services/online-users.service';
 import { serverConfig } from "../server.config";
 
 export default class Sockets {
@@ -17,8 +18,22 @@ export default class Sockets {
             server.listen(serverConfig.socket.port, undefined, undefined, () => {
                 console.info(`Sockets are listening on port ${serverConfig.socket.port} !`);
 
+                this._userConnectionEvent(io);
+
                 Sockets.server = io;
                 resolve(io);
+            });
+        });
+    }
+
+    private _userConnectionEvent(io: socketIo.Server): void {
+        const onlineUsersService = new OnlineUsersService(io);
+
+        io.on('connection', (socket: Socket) => {
+            onlineUsersService.userConnection(socket);
+
+            socket.on('disconnect', () => {
+                onlineUsersService.removeUser(socket);
             });
         });
     }

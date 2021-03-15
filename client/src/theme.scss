@@ -5,6 +5,7 @@
 @import "./app/auth/auth.theme.scss";
 @import "./app/home/home.theme.scss";
 @import "./app/home/sidenav/sidenav.theme.scss";
+@import "./app/home/sidenav/online-users-list/online-users-list.theme.scss";
 @import "./app/home/labos-list/labos-list.theme.scss";
 @import "./app/home/labos-list/labo-stocks-list-modal/labo-stocks-list-modal.theme.scss";
 @import "./app/home/stocks-list/stocks-list.theme.scss";
@@ -29,6 +30,7 @@ $theme: mat-dark-theme($primary, $accent);
 @include auth-theme($theme);
 @include toolbar-theme($theme);
 @include sidenav-theme($theme);
+@include online-users-list-theme($theme);
 @include labos-list-theme($theme);
 @include labos-stocks-list-modal-theme($theme);
 @include stocks-list-theme($theme);

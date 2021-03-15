@@ -57,5 +57,14 @@ export class ServerHttp {
                 response.send(JSON.stringify(server.guild?.name));
             }).catch((err) => response.send(err));
         });
+
+        // Get server avatar
+        this._app.get(`${this._urlBase}/avatar`, (request, response) => {
+            const serverId: string = request.query.serverId as string;
+
+            this._serverSchema.getById(serverId).then((server: CServer) => {
+                response.send(JSON.stringify(server.guild?.iconURL()));
+            }).catch((err) => response.send(err));
+        });
     }
 }

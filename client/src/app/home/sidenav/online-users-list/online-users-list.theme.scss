@@ -1,0 +1,42 @@
+@import "~@angular/material/theming";
+
+@mixin online-users-list-theme($theme) {
+    $accent: map-get($theme, accent);
+    $background: map-get($theme, background);
+
+    .title-bar {
+        width: 200px !important;
+        height: 45px;
+        background-color: map-get($accent, default);
+        color: mat-color($background, card);
+
+        margin: 0;
+        border-radius: 0 30px 30px 0;
+        h3 {
+            margin: 0;
+            margin-left: 10px;
+            border-width: 0;
+            border-style: hidden;
+        }
+        border: solid map-get($accent, default);
+        border-width: 1px unset 3px 0;
+        border-left-width: 0;
+    }
+
+    .user-bar {
+        margin: 0;
+        max-width: 260px;
+        min-height: 55px;
+        padding-left: 4px;
+        border-radius: 0 30px 30px 0;
+        h3 {
+            margin: 0;
+            margin-left: 10px;
+            border-width: 0;
+            border-style: hidden;
+        }
+        border: solid map-get($accent, default);
+        border-width: 1px unset 3px 0;
+        border-left-width: 0;
+    }
+}

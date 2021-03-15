@@ -1,4 +1,4 @@
-import { Client, Guild, Message, MessageEmbed, TextChannel, User } from "discord.js";
+import { Client, Guild, GuildMember, Message, MessageEmbed, TextChannel, User } from "discord.js";
 import { readFileSync } from "fs";
 
 import { CServer } from "@interfaces/server.class";
@@ -46,12 +46,16 @@ export default class DiscordBot {
         return this.client.guilds.cache.get(serverId);
     }
 
+    public static getMemberFromGuild(guild: Guild, memberId: string): GuildMember | undefined {
+        return guild.members.cache.get(memberId);
+    }
+
     public static getGuildUsernameFromId(guild: Guild | undefined, userId: string): string {
         if (!guild) {
             return this.client.users.cache.get(userId)?.username || "";
         }
         const guildMember = guild.members.cache.get(userId);
-        return guildMember?.nickname || guildMember?.user.username || "";
+        return guildMember?.displayName || "";
     }
 
     public static getUserAvatarFromId(userId: string): string {

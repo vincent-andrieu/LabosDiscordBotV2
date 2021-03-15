@@ -24,6 +24,7 @@ import { LabosListComponent } from './labos-list/labos-list.component';
 import { StocksListComponent } from './stocks-list/stocks-list.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { LaboStocksListModalComponent } from './labos-list/labo-stocks-list-modal/labo-stocks-list-modal.component';
+import { OnlineUsersListComponent } from './sidenav/online-users-list/online-users-list.component';
 
 @NgModule({
     declarations: [
@@ -31,7 +32,8 @@ import { LaboStocksListModalComponent } from './labos-list/labo-stocks-list-moda
         LabosListComponent,
         StocksListComponent,
         SidenavComponent,
-        LaboStocksListModalComponent
+        LaboStocksListModalComponent,
+        OnlineUsersListComponent
     ],
     imports: [
         CommonModule,

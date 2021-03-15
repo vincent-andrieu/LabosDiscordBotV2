@@ -1,0 +1,9 @@
+<div class="user-list" fxLayout="column" fxLayoutAlign="start start">
+    <div class="title-bar" fxLayoutAlign="start center">
+        <h3>Utilisateurs en ligne</h3>
+    </div>
+    <div *ngFor="let user of userList" class="user-bar" fxLayout="row" fxLayoutAlign="start center">
+        <img [src]="user?.avatar || serverAvatar" class="user-avatar">
+        <h3 class="user-name">{{ user?.name || "Inconnu" }}</h3>
+    </div>
+</div>

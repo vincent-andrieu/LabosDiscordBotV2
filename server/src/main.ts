@@ -16,9 +16,9 @@ import { serverConfig } from "./server.config";
 
 const discordBot = new DiscordBot();
 const database = new DataBase();
-new ExpressServer(express());
 
 discordBot.connect().then((client: Client) => {
+    new ExpressServer(express());
     startBot(client);
 }).catch((err) => {
     console.error(err);

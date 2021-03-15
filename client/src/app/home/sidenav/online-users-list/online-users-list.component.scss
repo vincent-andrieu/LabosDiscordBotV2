@@ -1,0 +1,17 @@
+.user-list {
+    margin-top: 30%;
+    max-height: calc(100% - 160px);
+    overflow: auto;
+}
+
+.user-avatar {
+    vertical-align: middle;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+}
+
+.user-name {
+    margin-right: 14px;
+    overflow-wrap: anywhere;
+}

@@ -9,9 +9,7 @@
 </div>
 
 <div fxLayout="column" fxFlex>
-    <div fxLayout="column" fxLayoutAlign="start stretch" fxFlex>
-        <!-- <app-sidenav-filter [pageStatus]="pageStatus" fxFlex></app-sidenav-filter> -->
-    </div>
+    <app-online-users-list fxlayout="column" fxFlex></app-online-users-list>
 
     <button *ngIf="pageStatus" mat-raised-button (click)="addAreaModal()"
             class="add-button" color="accent" fxFlexAlign="center">

@@ -106,4 +106,19 @@ export class ServerService {
             });
         });
     }
+
+    public getServerAvatar(): Promise<string | undefined> {
+        return new Promise<string | undefined>((resolve, reject) => {
+            this._http.get<string | undefined>(`${this._serverUrl}/avatar`, {
+                params: {
+                    serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
+                }
+            }).subscribe((avatar: string | undefined) =>
+                resolve(avatar)
+            , (err: HttpErrorResponse) => {
+                this._snackbarService.openError(err);
+                reject(err);
+            });
+        });
+    }
 }
