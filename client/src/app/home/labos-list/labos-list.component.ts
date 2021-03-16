@@ -4,8 +4,9 @@ import { FormControl } from '@angular/forms';
 import { Socket } from 'ngx-socket-io';
 import * as moment from 'moment';
 
-import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { GlobalConfig } from '@global/config';
+import { ILaboratory } from '@global/interfaces/laboratory.interface';
+import { IProductions } from '@global/interfaces/production.interface';
 import { LaboratoryService } from '@services/laboratory.service';
 import { ProductionService } from '@services/production.service';
 import { ServerService } from '@services/server.service';
@@ -50,6 +51,13 @@ export class LabosListComponent {
             if (labo._id && (labo.server._id || labo.server) === this._serverService.getCurrentServerId()) {
                 this.laboratories.push(new CLaboratory(labo));
                 this.laboForms[labo._id.toString()] = new FormControl();
+            }
+        });
+
+        _socket.on('prod.add', (prod: IProductions) => {
+            if (prod._id && (prod.server._id || prod.server) === this._serverService.getCurrentServerId()) {
+                this.productions.push(new CProductions(prod));
+                this.prodForms[prod._id.toString()] = new FormControl();
             }
         });
 
