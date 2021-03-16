@@ -71,7 +71,6 @@ export class MainService<C, I> {
         return new Promise<Array<C>>((resolve, reject) => {
             this._http.get<Array<I>>(`${this._serverUrl}/get`, {
                 params: {
-                    userId: this._discordService.getUserId() || '',
                     serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path
                 }
             }).subscribe((result: Array<I>) =>
