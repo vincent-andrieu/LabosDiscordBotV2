@@ -95,7 +95,7 @@ export class ProductionSchema {
     private addProdProcess(prod: CProductions, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const newProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Nouvelle production dans le laboratoire **" + prod.labo.name + "**", userId)
-                .setDescription((prod.description + "\n" || "") + "**" + prod.quantity + " kg** de **" + prod.labo.drug + "**");
+                .setDescription((prod.description ? prod.description + "\n" : "") + "**" + prod.quantity + " kg** de **" + prod.labo.drug + "**");
             if (prod.labo.screen) {
                 newProdEmbedMsg.setThumbnail(prod.labo.screen);
             }
