@@ -203,29 +203,31 @@ export class StockSchema {
         });
     }
 
-    public addStockQty(stock: CStock, quantity: number, reason?: string, userId?: string): Promise<CStock> {
+    public addStockQty(stock: CStock, quantity: number, reason?: string, userId?: string, doesPrintMsg = true): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findByIdAndUpdate(stock._id, { $inc: { quantity: quantity } })
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Ajout du stock de l'entrepôt **" + stock.name + "**", userId)
-                        .addFields(
-                            { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
-                            { name: "Ajouté", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
-                            { name: "Contient maintenant", value: "**" + (stock.quantity + quantity).toString() + " kg** de " + stock.drug, inline: true }
-                        );
-                    if (reason) {
-                        embedMessage.setDescription(reason);
+                    if (doesPrintMsg) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Ajout du stock de l'entrepôt **" + stock.name + "**", userId)
+                            .addFields(
+                                { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
+                                { name: "Ajouté", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
+                                { name: "Contient maintenant", value: "**" + (stock.quantity + quantity).toString() + " kg** de " + stock.drug, inline: true }
+                            );
+                        if (reason) {
+                            embedMessage.setDescription(reason);
+                        }
+                        if (stock.screen) {
+                            embedMessage.setThumbnail(stock.screen);
+                        }
+                        stock.server.defaultChannel?.send(embedMessage);
                     }
-                    if (stock.screen) {
-                        embedMessage.setThumbnail(stock.screen);
-                    }
-                    stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock, doesPrintMsg);
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -245,29 +247,31 @@ export class StockSchema {
         );
     }
 
-    public removeStockQty(stock: CStock, quantity: number, reason?: string, userId?: string): Promise<CStock> {
+    public removeStockQty(stock: CStock, quantity: number, reason?: string, userId?: string, doesPrintMsg = true): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
             quantity = Math.abs(quantity);
             this._model.findOneAndUpdate({ _id: stock._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
                 .then(() => {
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Suppression du stock de l'entrepôt **" + stock.name + "**", userId)
-                        .addFields(
-                            { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
-                            { name: "Supprimé", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
-                            { name: "Contient maintenant", value: "**" + (stock.quantity - quantity).toString() + " kg** de " + stock.drug, inline: true }
-                        );
-                    if (reason) {
-                        embedMessage.setDescription(reason);
+                    if (doesPrintMsg) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Suppression du stock de l'entrepôt **" + stock.name + "**", userId)
+                            .addFields(
+                                { name: "Contenait", value: "**" + stock.quantity.toString() + " kg** de " + stock.drug, inline: true },
+                                { name: "Supprimé", value: "**" + quantity.toString() + " kg** de " + stock.drug, inline: true },
+                                { name: "Contient maintenant", value: "**" + (stock.quantity - quantity).toString() + " kg** de " + stock.drug, inline: true }
+                            );
+                        if (reason) {
+                            embedMessage.setDescription(reason);
+                        }
+                        if (stock.screen) {
+                            embedMessage.setThumbnail(stock.screen);
+                        }
+                        stock.server.defaultChannel?.send(embedMessage);
                     }
-                    if (stock.screen) {
-                        embedMessage.setThumbnail(stock.screen);
-                    }
-                    stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock);
+                        Sockets.server?.emit('stock.edit', editedStock, doesPrintMsg);
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -331,7 +335,7 @@ export class StockSchema {
         );
     }
 
-    public removeProdStock(labo: CLaboratory, prodQty: number, userId?: string): Promise<Array<CStock>> {
+    public removeProdStock(labo: CLaboratory, prodQty: number, userId?: string, doesPrintMsg = true): Promise<Array<CStock>> {
         return new Promise<Array<CStock>>((resolve, reject) => {
             let tablesQty: number;
             const updatesList: Array<Promise<CStock>> = [];
@@ -350,7 +354,7 @@ export class StockSchema {
                 if (stockConfig.needAll && !tablesQty) {
                     tablesQty = GlobalConfig.productions.drugs[labo.drug].table;
                 }
-                updatesList.push(this.removeStockQty(stock, stockConfig.needAll ? stockConfig.quantity * tablesQty : prodQty, "Production terminée", userId));
+                updatesList.push(this.removeStockQty(stock, stockConfig.needAll ? stockConfig.quantity * tablesQty : prodQty, "Production terminée", userId, doesPrintMsg));
             });
 
             Promise.all(updatesList).then(resolve).catch(reject);

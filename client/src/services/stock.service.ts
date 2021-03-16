@@ -28,8 +28,8 @@ export class StockService extends MainService<CStock, IStock> {
             }
         });
 
-        _socket.on(`stock.edit`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
+        _socket.on(`stock.edit`, (stock: IStock, doesPrintMsg = true) => {
+            if (doesPrintMsg && stock.server._id === this._serverService.getCurrentServerId()) {
                 this._snackbarService.open(`Entrepôt ${stock.name} modifié`);
             }
         });

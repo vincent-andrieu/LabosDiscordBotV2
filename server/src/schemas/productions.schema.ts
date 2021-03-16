@@ -72,7 +72,7 @@ export class ProductionSchema {
                     return reject("Aucun entrepôt de " + labo.drug + " a été assigné au laboratoire " + labo.name);
                 }
 
-                new StockSchema().removeProdStock(labo, prod.quantity, userId).then(() => {
+                new StockSchema().removeProdStock(labo, prod.quantity, userId, false).then(() => {
                     const tempLabo = prod.labo;
                     prod.labo = labo._id as unknown as CLaboratory;
                     delete prod._id;
@@ -258,7 +258,7 @@ export class ProductionSchema {
         });
     }
 
-    public deleteById(prod: CProductions, reason?: string, userId?: string): Promise<void> {
+    public deleteById(prod: CProductions, reason?: string, userId?: string, doesPrintMsg = true): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             this._model.deleteOne({ server: prod.server._id, _id: prod._id })
@@ -266,18 +266,18 @@ export class ProductionSchema {
                     if (!res.deletedCount ||  res.deletedCount <= 0) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
-                    if (Sockets.server) {
-                        Sockets.server.emit('prod.del', prod);
-                    }
+                    Sockets.server?.emit('prod.del', prod, doesPrintMsg);
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée", userId);
-                    if (prod.labo.screen) {
-                        embedMessage.setThumbnail(prod.labo.screen);
+                    if (doesPrintMsg) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée", userId);
+                        if (prod.labo.screen) {
+                            embedMessage.setThumbnail(prod.labo.screen);
+                        }
+                        if (reason) {
+                            embedMessage.setDescription(reason);
+                        }
+                        prod.server.defaultChannel?.send(embedMessage);
                     }
-                    if (reason) {
-                        embedMessage.setDescription(reason);
-                    }
-                    prod.server.defaultChannel?.send(embedMessage);
 
                     resolve();
                 })
@@ -404,7 +404,7 @@ export class ProductionSchema {
             const query = [
                 {
                     $match: {
-                        _id: prod._id
+                        _id: typeof prod._id === 'string' ? mongoose.Types.ObjectId(prod._id) : prod._id
                     }
                 },
                 {
@@ -483,9 +483,9 @@ export class ProductionSchema {
                         const prodFinish = result[0];
 
                         prodFinish.server = new CServer(prodFinish.server);
-                        new StockSchema().addStockQty(new CStock(prodFinish.stock), prodFinish.quantity || 0).then((addedStock) =>
+                        new StockSchema().addStockQty(new CStock(prodFinish.stock), prodFinish.quantity || 0, "Production terminée", userId, false).then((addedStock) =>
 
-                            this.deleteById(prodFinish as unknown as CProductions, "Production terminée", userId)
+                            this.deleteById(prodFinish as unknown as CProductions, "Production terminée", userId, false)
                                 .then(() => {
                                     const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prodFinish.labo.name + "** stockée", userId)
                                         .setDescription("**" + addedStock.name + "** : **" + (addedStock.quantity || 0).toString() + " kg** de " + addedStock.drug + ".");
