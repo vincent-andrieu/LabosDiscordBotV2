@@ -59,7 +59,7 @@ export class ProductionHttp {
         // Finish prod
         this._app.post(`${this._urlBase}/finish`, (request, response) => {
             const userId: string | undefined = request.body.userId;
-            const prod: CProductions = new CProductions(request.body);
+            const prod: CProductions = new CProductions(request.body.prod);
 
             this._productionSchema.finishProd(prod, atob(userId)).then((finishProd: IProdFinish) => {
                 response.send(finishProd);
