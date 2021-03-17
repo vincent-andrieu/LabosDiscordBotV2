@@ -5,6 +5,7 @@ import { Socket } from 'ngx-socket-io';
 import * as moment from 'moment';
 
 import { GlobalConfig } from '@global/config';
+import { IServer } from '@global/interfaces/server.interface';
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { IProductions } from '@global/interfaces/production.interface';
 import { LaboratoryService } from '@services/laboratory.service';
@@ -114,6 +115,13 @@ export class LabosListComponent {
                 this.laboratories.forEach((laboElem) => laboElem.server.defaultLabo = labo);
             }
         });
+
+        _socket.on(`server.reminder`, (server: IServer) => {
+            if (server._id === this._serverService.getCurrentServerId()) {
+                this.laboratories.forEach((labo) => labo.server = new CServer(server));
+                this.productions.forEach((prod) => prod.server = new CServer(server));
+            }
+        });
     }
 
     private _updateLaboratories(): void {
@@ -176,9 +184,7 @@ export class LabosListComponent {
             quantity: this.laboForms[labo._id.toString()].value
         });
         this.laboForms[labo._id.toString()].reset();
-        this._productionService.add(prod).finally(() =>
-            this._updateProductions()
-        );
+        this._productionService.add(prod);
     }
 
     public deleteProd(prod: CProductions): void {
