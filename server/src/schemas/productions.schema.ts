@@ -127,17 +127,17 @@ export class ProductionSchema {
                 if (prod.server.reminder && prod.server.reminder > 0) {
                     setTimeout(() => {
                         this.getById(prod).then((readyProd: CProductions) => {
-                            if (Sockets.server) {
-                                Sockets.server.emit('prod.reminder', readyProd);
-                            }
-                            const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes", userId)
-                                .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
-                            if (readyProd.labo.screen) {
-                                finishAlertEmbedMsg.setThumbnail(readyProd.labo.screen);
-                            }
-                            prod.server.defaultChannel?.send(finishAlertEmbedMsg);
-                            if (prod.server.roleTag) {
-                                prod.server.defaultChannel?.send(prod.server.roleTag);
+                            if (readyProd.server.reminder && readyProd.server.reminder > 0) {
+                                Sockets.server?.emit('prod.reminder', readyProd);
+                                const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes", userId)
+                                    .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
+                                if (readyProd.labo.screen) {
+                                    finishAlertEmbedMsg.setThumbnail(readyProd.labo.screen);
+                                }
+                                prod.server.defaultChannel?.send(finishAlertEmbedMsg);
+                                if (prod.server.roleTag) {
+                                    prod.server.defaultChannel?.send(prod.server.roleTag);
+                                }
                             }
                         });
                     }, (GlobalConfig.productions.timeoutMinutes - prod.server.reminder) * 60 * 1000);
