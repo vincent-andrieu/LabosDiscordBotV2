@@ -67,6 +67,12 @@ export class LabosListComponent {
             }
         });
 
+        _socket.on(`prod.del`, (prod: IProductions) => {
+            if (prod.server._id === this._serverService.getCurrentServerId()) {
+                this.productions.remove((prodElem) => prod._id === prodElem._id);
+            }
+        });
+
         _socket.on(`labo.edit`, (labo: ILaboratory) => {
             if (labo.server._id === this._serverService.getCurrentServerId()) {
                 const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
@@ -157,9 +163,7 @@ export class LabosListComponent {
         }
         prod.quantity = this.prodForms[prod._id.toString()].value;
         this.prodForms[prod._id.toString()].reset();
-        this._productionService.edit(prod).finally(() =>
-            this._updateProductions()
-        );
+        this._productionService.edit(prod);
     }
 
     public addProd(labo: CLaboratory): void {

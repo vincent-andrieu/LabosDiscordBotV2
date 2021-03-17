@@ -77,8 +77,9 @@ export class ProductionSchema {
                     prod.labo = labo._id as unknown as CLaboratory;
                     delete prod._id;
                     this._model.create(prod)
-                        .then((prodAdded) => {
-                            prod._id = prodAdded._id;
+                        .then((prodAdded: unknown) => {
+                            prod._id = (prodAdded as IProductions)._id;
+                            prod.finishDate = (prodAdded as IProductions).finishDate;
                             prod.labo = tempLabo;
                             if (Sockets.server) {
                                 Sockets.server.emit('prod.add', prod);
