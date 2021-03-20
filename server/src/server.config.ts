@@ -1,7 +1,11 @@
 export const serverConfig = {
     bot: {
         clientId: '745710864316760195',
-        clientSecret: 'hbM8e03CUujP3wRH-A7CaK8VzwidfSXj'
+        clientSecret: 'hbM8e03CUujP3wRH-A7CaK8VzwidfSXj',
+        token: {
+            env: 'DISCORD_BOT_TOKEN',
+            file: './discord-bot-token'
+        }
     },
     database: {
         address: 'mongodb://127.0.0.1',

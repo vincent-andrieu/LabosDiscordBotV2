@@ -1,7 +1,9 @@
-import { Client, Guild, GuildMember, Message, MessageEmbed, TextChannel, User } from "discord.js";
+import { Client, Guild, GuildMember, Message, MessageEmbed, TextChannel } from "discord.js";
+import { env } from 'process';
 import { readFileSync } from "fs";
 
 import { CServer } from "@interfaces/server.class";
+import { serverConfig } from "../server.config";
 
 export enum EEmbedMsgColors {
     ADD = '#00ff00',
@@ -35,7 +37,7 @@ export default class DiscordBot {
     }
 
     private getBotToken(): string {
-        return readFileSync('./discord-bot-token', 'utf-8');
+        return env[serverConfig.bot.token.env] ||  readFileSync(serverConfig.bot.token.file, 'utf-8');
     }
 
     public static getChannelFromId(channelId: string): TextChannel | undefined {
