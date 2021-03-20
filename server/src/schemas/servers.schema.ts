@@ -302,7 +302,7 @@ export class ServerSchema {
         });
     }
 
-    public setRoleTag(server: CServer, roleTag: string, userId?: string): Promise<void> {
+    public setRoleTag(server: CServer, roleTag?: string, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
             if (server.roleTag === roleTag) {
@@ -314,13 +314,22 @@ export class ServerSchema {
                 .then(() => {
                     server = new CServer(server);
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle", userId);
-                    const guildIcon = server.defaultChannel?.guild?.iconURL();
-                    if (guildIcon) {
-                        embedMessage.setThumbnail(guildIcon);
+                    if (roleTag) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau rôle", userId);
+                        const guildIcon = server.defaultChannel?.guild?.iconURL();
+                        if (guildIcon) {
+                            embedMessage.setThumbnail(guildIcon);
+                        }
+                        embedMessage.setDescription(roleTag);
+                        server.defaultChannel?.send(embedMessage);
+                    } else {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.DEL, "Suppression du rôle", userId);
+                        const guildIcon = server.defaultChannel?.guild?.iconURL();
+                        if (guildIcon) {
+                            embedMessage.setThumbnail(guildIcon);
+                        }
+                        server.defaultChannel?.send(embedMessage);
                     }
-                    embedMessage.setDescription(roleTag);
-                    server.defaultChannel?.send(embedMessage);
 
                     resolve();
                 })
