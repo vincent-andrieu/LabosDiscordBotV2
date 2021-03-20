@@ -112,10 +112,7 @@ export class ProductionSchema {
                         if (prod.labo.screen) {
                             finishProdEmbedMsg.setThumbnail(prod.labo.screen);
                         }
-                        prod.server.defaultChannel?.send(finishProdEmbedMsg);
-                        if (prod.server.roleTag) {
-                            prod.server.defaultChannel?.send(prod.server.roleTag);
-                        }
+                        prod.server.defaultChannel?.send({ embed: finishProdEmbedMsg, content: prod.server.roleTag });
                         prodMsg.react(GlobalConfig.productions.getProdEmoji).then((messageReaction) =>
                             ProductionSchema.finishProdReactions.push({ msgId: messageReaction.message.id, prod: readyProd })
                         )
@@ -134,10 +131,7 @@ export class ProductionSchema {
                                 if (readyProd.labo.screen) {
                                     finishAlertEmbedMsg.setThumbnail(readyProd.labo.screen);
                                 }
-                                prod.server.defaultChannel?.send(finishAlertEmbedMsg);
-                                if (prod.server.roleTag) {
-                                    prod.server.defaultChannel?.send(prod.server.roleTag);
-                                }
+                                prod.server.defaultChannel?.send({ embed: finishAlertEmbedMsg, content: prod.server.roleTag});
                             }
                         });
                     }, (GlobalConfig.productions.timeoutMinutes - prod.server.reminder) * 60 * 1000);
