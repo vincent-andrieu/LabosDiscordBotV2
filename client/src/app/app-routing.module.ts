@@ -1,6 +1,7 @@
 import { Injectable, NgModule } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Resolve, Router, RouterModule, Routes, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
+import { Socket } from 'ngx-socket-io';
 
 import { DiscordService } from '@services/discord.service';
 import { SnackbarService } from '@services/snackbar.service';
@@ -32,10 +33,11 @@ class AuthGuard implements CanActivate {
 class DiscordAuthResolver implements Resolve<void> {
 
     constructor(
+        private _router: Router,
+        private _socket: Socket,
         private _discordService: DiscordService,
         private _serverService: ServerService,
-        private _snackbarService: SnackbarService,
-        private _router: Router
+        private _snackbarService: SnackbarService
     ) {}
 
     resolve(route: ActivatedRouteSnapshot): void {
@@ -48,7 +50,8 @@ class DiscordAuthResolver implements Resolve<void> {
                     this._discordService.setToken(code, states.serverId)
                         .then(() => {
                             this._snackbarService.open("Compte discord associé");
-                            this._router.navigate([states.serverId, states.password]);
+                            this._router.navigate([states.serverId, states.password])
+                                .then(() => this._socket.emit('users.getId.callback', states.serverId, this._discordService.getUserId()));
                         }).catch((err) => {
                             this._snackbarService.openError(err);
                             this._router.navigate([states.serverId, states.password]);
