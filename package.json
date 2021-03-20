@@ -4,7 +4,8 @@
     "description": "",
     "main": "main.js",
     "scripts": {
-        "lint": "npm run lint --prefix server"
+        "lint": "npm run lint --prefix server",
+        "deploy": "npm run deploy --prefix server && npm run deploy --prefix client"
     },
     "repository": {
         "type": "git",

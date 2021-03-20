@@ -12,7 +12,7 @@
         "clean": "rm -rf node_modules/ ; rm -rf ./build/",
         "auto": "npx nodemon -x npm run start -w src/ -e .ts",
         "lint": "eslint src/ --fix ; exit 0",
-        "deploy": "npm run rebuild && pkg . --targets node12-linux-x64"
+        "deploy": "npm run rebuild && pkg . --targets node12-linux-x64 --out-path ../production/server"
     },
     "private": true,
     "author": "gassastsina",
