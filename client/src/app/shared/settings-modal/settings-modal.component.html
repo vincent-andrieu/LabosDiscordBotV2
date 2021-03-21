@@ -10,7 +10,7 @@
                 Ce champ est obligatoire (0 pour le supprimer)
             </mat-error>
         </mat-form-field>
-        <button *ngIf="!discordUserId" mat-flat-button color="accent" type="button"
+        <button *ngIf="server.url && !discordUserId" mat-flat-button color="accent" type="button"
                 (click)="discordService.redirectToAuth()">
             Associer mon compte Discord
         </button>

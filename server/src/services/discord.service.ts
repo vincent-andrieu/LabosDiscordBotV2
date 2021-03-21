@@ -18,6 +18,9 @@ export class DiscordService {
                     return reject("Permission denied");
                 }
                 this._serverSchema.getById(serverId).then((server: CServer) => {
+                    if (!server.url) {
+                        return reject("No URL");
+                    }
                     const oauthUrl: string = this._discordOAuth.generateAuthUrl({
                         scope: ['identify'],
                         state: JSON.stringify({
