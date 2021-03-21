@@ -250,7 +250,7 @@ export class LabosListComponent {
     }
 
     public getSpinnerDuration(prod: CProductions): number {
-        return Math.ceil(100 - moment(prod.finishDate).diff(moment.now()) / (GlobalConfig.productions.timeoutMinutes * 10));
+        return Math.ceil(100 - moment(prod.finishDate).diff(moment.now()) / (GlobalConfig.productions.timeoutMinutes * 600));
     }
 
 }
