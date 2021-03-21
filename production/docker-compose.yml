@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+    client:
+        build: ./client
+        ports:
+            - "80:80"
+        restart: always
+
+    server:
+        build: ./server
+        environment:
+            DISCORD_BOT_TOKEN: NzQ1NzEwODY0MzE2NzYwMTk1.Xz1vXA.bkVKu1HdRPjdN9yLhW2zlvhFpvk
+        network_mode: "host"
+        depends_on:
+            - db
+        restart: always
+
+    db:
+        image: mongo:4.4
+        volumes:
+            - mongodb-data:/data/db
+        ports:
+            - "27017:27017"
+        environment:
+            MONGO_INITDB_DATABASE: DiscordLaboBotV2
+        restart: always
+
+volumes:
+    mongodb-data:
