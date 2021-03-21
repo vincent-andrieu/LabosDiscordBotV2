@@ -18,9 +18,9 @@ export const serverConfig = {
         prefix: "!"
     },
     express: {
-        port: 8080
+        port: Number(env['EXPRESS_PORT']) || 8080
     },
     socket: {
-        port: 3000
+        port: Number(env['SOCKET_PORT']) || 3000
     }
 };
