@@ -1,6 +1,7 @@
 FROM debian:10.8-slim
 
-COPY ./labosdiscordbotv2-server /app/server-bin
+COPY ./* /app/
 WORKDIR /app
+RUN mv ./labosdiscordbotv2-server server-bin
 RUN chmod +x server-bin
 CMD ./server-bin
