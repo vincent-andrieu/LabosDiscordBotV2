@@ -10,7 +10,7 @@ services:
     server:
         build: ./server
         environment:
-            DISCORD_BOT_TOKEN: NzQ1NzEwODY0MzE2NzYwMTk1.Xz1vXA.bkVKu1HdRPjdN9yLhW2zlvhFpvk
+            DISCORD_BOT_TOKEN: ''
         network_mode: "host"
         depends_on:
             - db
