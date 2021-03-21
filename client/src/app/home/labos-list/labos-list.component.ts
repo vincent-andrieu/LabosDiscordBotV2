@@ -129,7 +129,7 @@ export class LabosListComponent {
 
                 if (foundProd) {
                     foundProd.server = new CServer(prod.server);
-                    foundProd.labo = prod.labo;
+                    foundProd.labo = new CLaboratory(prod.labo);
                     foundProd.description = prod.description;
                     foundProd.quantity = prod.quantity || 0;
                     foundProd.finishDate = prod.finishDate;
