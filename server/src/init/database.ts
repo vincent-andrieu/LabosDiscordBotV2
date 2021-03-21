@@ -6,7 +6,7 @@ export default class DataBase {
 
     public connect(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const uris = serverConfig.database.address.concat(':', serverConfig.database.port, '/', serverConfig.database.name);
+            const uris = serverConfig.database.host.concat(':', serverConfig.database.port, '/', serverConfig.database.name);
             mongoose.connect(uris, {
                 useNewUrlParser: true,
                 useCreateIndex: true,
@@ -17,7 +17,7 @@ export default class DataBase {
                     reject(error);
                 } else {
                     console.info("DataBase successfully connected : \n\t- Address : " +
-                        serverConfig.database.address +
+                        serverConfig.database.host +
                         "\n\t- Port : " + serverConfig.database.port +
                         "\n\t- Name : " + serverConfig.database.name
                     );

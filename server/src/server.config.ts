@@ -1,3 +1,5 @@
+import { env } from 'process';
+
 export const serverConfig = {
     bot: {
         clientId: '745710864316760195',
@@ -8,9 +10,9 @@ export const serverConfig = {
         }
     },
     database: {
-        address: 'mongodb://127.0.0.1',
-        port: '27017',
-        name: 'DiscordLaboBotV2'
+        host: `mongodb://${env['MONGODB_HOST'] || '127.0.0.1'}`,
+        port: env['MONGODB_PORT'] || '27017',
+        name: env['MONGODB_NAME'] || 'DiscordLaboBotV2'
     },
     commands: {
         prefix: "!"
