@@ -23,6 +23,12 @@ export class ProductionService extends MainService<CProductions, IProductions> {
             }
         });
 
+        _socket.on(`prod.edit`, (prod: CProductions) => {
+            if (prod.server._id === this._serverService.getCurrentServerId()) {
+                this._snackbarService.open(`Production du laboratoire ${prod.labo.name} modifiée`);
+            }
+        });
+
         _socket.on(`prod.del`, (prod: IProductions | IServer, doesPrintMsg = true) => {
             if (!doesPrintMsg) {
                 return;

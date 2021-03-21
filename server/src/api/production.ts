@@ -40,9 +40,10 @@ export class ProductionHttp {
 
         // Edit prod
         this._app.post(`${this._urlBase}/edit`, (request, response) => {
+            const userId: string = request.query.userId as string;
             const prod: CProductions = new CProductions(request.body);
 
-            this._productionSchema.edit(prod).then((editedProd: CProductions) => {
+            this._productionSchema.edit(prod, atob(userId)).then((editedProd: CProductions) => {
                 response.send(editedProd || prod);
             }).catch((err) => response.send(err));
         });

@@ -122,6 +122,20 @@ export class LabosListComponent {
                 this.productions.forEach((prod) => prod.server = new CServer(server));
             }
         });
+
+        _socket.on(`prod.edit`, (prod: CProductions) => {
+            if (prod.server._id === this._serverService.getCurrentServerId()) {
+                const foundProd = this.productions.find((prodElem) => prodElem._id === prod._id);
+
+                if (foundProd) {
+                    foundProd.server = new CServer(prod.server);
+                    foundProd.labo = prod.labo;
+                    foundProd.description = prod.description;
+                    foundProd.quantity = prod.quantity || 0;
+                    foundProd.finishDate = prod.finishDate;
+                }
+            }
+        });
     }
 
     private _updateLaboratories(): void {

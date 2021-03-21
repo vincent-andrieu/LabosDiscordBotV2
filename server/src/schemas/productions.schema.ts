@@ -141,12 +141,18 @@ export class ProductionSchema {
         });
     }
 
-    public edit(prod: CProductions): Promise<CProductions> {
+    public edit(prod: CProductions, userId?: string): Promise<CProductions> {
         return new Promise<CProductions>((resolve, reject) => {
             this._model.findByIdAndUpdate(prod._id, prod)
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
                         Sockets.server?.emit('prod.edit', editedProd);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(editedProd.server, EEmbedMsgColors.EDIT, "Production du laboratoire **" + editedProd.labo.name + "** a été modifiée", userId)
+                            .setDescription("**" + editedProd.quantity + " kg** de **" + editedProd.labo.drug + "**");
+                        if (editedProd.labo.screen) {
+                            embedMessage.setThumbnail(editedProd.labo.screen);
+                        }
+                        editedProd.server.defaultChannel?.send(embedMessage);
                         resolve(editedProd);
                     });
                 })
