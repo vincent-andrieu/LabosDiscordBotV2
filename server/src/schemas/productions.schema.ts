@@ -35,8 +35,8 @@ export class ProductionSchema {
     private _model = mongoose.model('productions', prodSchema);
     private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
 
-    public add(prod: CProductions, userId?: string): Promise<Promise<void>> {
-        return new Promise<Promise<void>>((resolve, reject) => {
+    public add(prod: CProductions, userId?: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
 
             new LaboratorySchema().getById(prod.labo).then((labo: CLaboratory) => {
                 prod.labo = labo;
@@ -84,7 +84,8 @@ export class ProductionSchema {
                             if (Sockets.server) {
                                 Sockets.server.emit('prod.add', prod);
                             }
-                            resolve(this.addProdProcess(prod, userId));
+                            this.addProdProcess(prod, userId);
+                            resolve();
                         })
                         .catch((err) => reject(err));
                 });
