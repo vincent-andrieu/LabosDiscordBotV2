@@ -38,11 +38,19 @@ export class OnlineUsersService {
         if (!userId) {
             return this._addUnknownUser(socket, guild);
         }
-        const member = DiscordBot.getMemberFromGuild(guild, userId);
+        let member = DiscordBot.getMemberFromGuild(guild, userId);
+
         if (!member) {
-            return this._addUnknownUser(socket, guild);
+            guild.members.fetch(userId).then((collection) => {
+                member = collection || DiscordBot.getMemberFromGuild(guild, userId);
+                if (!member) {
+                    return this._addUnknownUser(socket, guild);
+                }
+                this._addDiscordUser(socket, guild, member);
+            });
+        } else {
+            this._addDiscordUser(socket, guild, member);
         }
-        this._addDiscordUser(socket, guild, member);
     }
 
     private _addDiscordUser(socket: Socket, guild: Guild, member: GuildMember): void {
