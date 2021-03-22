@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie';
 
 import { environment } from '@environment';
+import { btoa } from '@global/utils';
 import { SnackbarService } from './snackbar.service';
 
 @Injectable({
@@ -41,7 +42,7 @@ export class DiscordService {
                     code: code
                 }
             }).subscribe((userId: string) => {
-                this._setUserIdCookie(userId);
+                this._setUserIdCookie(userId.toString());
                 resolve();
             },
             (err) => {
