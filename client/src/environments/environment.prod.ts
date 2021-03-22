@@ -1,5 +1,3 @@
-import { env } from 'process';
-
 export const environment = {
     production: true,
     cookiesName: {
@@ -7,9 +5,9 @@ export const environment = {
         discordUserId: 'discordUserId'
     },
     sockets: {
-        url: env['SOCKETS_URL'] ||  'http://localhost:3000'
+        url: 'http://localhost:3000'
     },
     server: {
-        url: env['SERVER_URL'] || 'http://localhost:8080'
+        url: 'http://localhost:8080'
     }
 };
