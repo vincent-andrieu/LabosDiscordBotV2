@@ -2,8 +2,8 @@ import { env } from 'process';
 
 export const serverConfig = {
     bot: {
-        clientId: '745710864316760195',
-        clientSecret: 'hbM8e03CUujP3wRH-A7CaK8VzwidfSXj',
+        clientId: env['DISCORD_BOT_CLIENT_ID'],
+        clientSecret: env['DISCORD_BOT_CLIENT_SECRET'],
         token: {
             env: 'DISCORD_BOT_TOKEN',
             file: './discord-bot-token'
