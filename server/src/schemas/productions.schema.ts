@@ -401,7 +401,7 @@ export class ProductionSchema {
         return new Promise<IProdFinish>((resolve, reject) => {
             const prod: CProductions | undefined = this.getFinishProd(prodId);
             if (!prod) {
-                return reject("Production introuvée");
+                return reject();
             }
             const query = [
                 {
