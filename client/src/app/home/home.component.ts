@@ -98,7 +98,7 @@ export class HomeComponent {
 
     public toggleSidenav(drawer: MatSidenav): void {
         drawer.toggle().then((status: MatDrawerToggleResult) => {
-            this._cookieService.put(environment.cookiesName.sidenavStatus, status);
+            this._cookieService.put(environment.cookiesName.sidenavStatus, status, { expires: environment.cookiesDuration });
         });
     }
 

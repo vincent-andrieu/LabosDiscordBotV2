@@ -52,7 +52,11 @@ export class DiscordService {
         });
     }
     private _setUserIdCookie(userId: string) {
-        this._cookieService.put(environment.cookiesName.discordUserId, btoa(userId), { sameSite: true, storeUnencoded: false });
+        this._cookieService.put(environment.cookiesName.discordUserId, btoa(userId), {
+            expires: environment.cookiesDuration,
+            sameSite: true,
+            storeUnencoded: false
+        });
     }
 
     public getUserId(): string | undefined {
