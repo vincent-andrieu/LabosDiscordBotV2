@@ -10,8 +10,10 @@ export const serverConfig = {
         }
     },
     database: {
-        host: `mongodb://${env['MONGODB_HOST'] || '127.0.0.1'}`,
+        host: env['MONGODB_HOST'] || '127.0.0.1',
         port: env['MONGODB_PORT'] || '27017',
+        username: env['MONGODB_USERNAME'],
+        password: env['MONGODB_PASSWORD'],
         name: env['MONGODB_NAME'] || 'DiscordLaboBotV2'
     },
     commands: {

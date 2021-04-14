@@ -17,3 +17,48 @@
 ## Can
 - Traductions
 - Docker
+
+
+# To deploy in production with auth
+1. Start the docker without users and passwords
+
+2. Connect to the docker DB
+    ```bash
+    docker exec -it image_name bash
+    mongo
+    ```
+
+3. Add users
+
+    - root
+    ```ts
+    > use admin
+    > db.createUser({
+        user: "root",
+        pwd: "root_password",
+        roles: ["root"]
+      });
+    ```
+
+    - server user
+    ```ts
+    > use admin
+    > db.createUser({
+        user: "mongodb",
+        pwd: "password",
+        roles: [{
+            role: "readWrite",
+            db: "db_name"
+        }]
+      });
+    ```
+4. Restart the docker-compose with the auth options
+    - server
+        - environment:
+            - MONGODB_USERNAME
+            - MONGODB_PASSWORD
+    - db  
+        - command: [--auth]
+        - environment:
+            - MONGO_INITDB_ROOT_USERNAME
+            - MONGO_INITDB_ROOT_PASSWORD

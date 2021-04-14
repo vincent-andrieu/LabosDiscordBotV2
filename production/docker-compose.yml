@@ -11,6 +11,8 @@ services:
         build: ./server
         environment:
             DISCORD_BOT_TOKEN: ''
+            MONGODB_USERNAME: mongodb
+            MONGODB_PASSWORD: mongodb_password
         network_mode: "host"
         depends_on:
             - db
@@ -18,12 +20,15 @@ services:
 
     db:
         image: mongo:4.4
+        command: [--auth]
         volumes:
             - mongodb-data:/data/db
         ports:
             - "27017:27017"
         environment:
             MONGO_INITDB_DATABASE: DiscordLaboBotV2
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: root_password
         restart: always
 
 volumes:

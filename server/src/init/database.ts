@@ -6,7 +6,11 @@ export default class DataBase {
 
     public connect(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const uris = serverConfig.database.host.concat(':', serverConfig.database.port, '/', serverConfig.database.name);
+            let uris = `mongodb://${serverConfig.database.host}:${serverConfig.database.port}/${serverConfig.database.name}`;
+
+            if (serverConfig.database.username && serverConfig.database.password) {
+                uris = `mongodb://${serverConfig.database.username}:${serverConfig.database.password}@${serverConfig.database.host}:${serverConfig.database.port}/${serverConfig.database.name}?authSource=admin`;
+            }
             mongoose.connect(uris, {
                 useNewUrlParser: true,
                 useCreateIndex: true,
