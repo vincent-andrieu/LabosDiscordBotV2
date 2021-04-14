@@ -45,7 +45,7 @@
     > use admin
     > db.createUser({
         user: "mongodb",
-        pwd: "password",
+        pwd: "mongodb_password",
         roles: [{
             role: "readWrite",
             db: "db_name"
