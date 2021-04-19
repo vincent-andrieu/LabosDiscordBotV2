@@ -28,5 +28,8 @@ export const GlobalConfig = {
                 ]
             }
         }
+    },
+    locations: {
+        dateFormat: "D MMMM à H:m"
     }
 };
