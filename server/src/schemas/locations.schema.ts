@@ -11,7 +11,7 @@ const locationSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
     name: { type: String, required: true },
     date: { type: Date, required: true },
-    screen: { type: String, required: true }
+    screen: { type: String, required: false }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
