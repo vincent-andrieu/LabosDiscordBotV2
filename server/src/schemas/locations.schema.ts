@@ -1,7 +1,5 @@
 import * as mongoose from 'mongoose';
-import moment from 'moment';
 
-import { GlobalConfig } from '@global/config';
 import { CServer } from '@interfaces/server.class';
 import { CLocation } from '@interfaces/location.class';
 import { ILocation } from '@global/interfaces/locations.interface';
