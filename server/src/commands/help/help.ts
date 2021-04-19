@@ -6,10 +6,11 @@ import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
+import { LocationSchema } from "@schemas/locations.schema";
 import { CommandsList } from "@commands/commands";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
-type CommandType = CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>;
+type CommandType = CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>;
 
 export function help(server: CServer, commandParam?: CommandType | string, userId?: string): Promise<Message | undefined> | undefined {
     let command: CommandType | undefined = commandParam as CommandType;

@@ -26,7 +26,11 @@ export enum ECommand {
     SERVER_SET_URL = 'setURL',
     SERVER_SET_PASSWORD = 'setPassword',
     SERVER_SET_REMINDER = 'setReminder',
-    SERVER_SET_ROLETAG = 'setRole'
+    SERVER_SET_ROLETAG = 'setRole',
+
+    LOC_ADD = 'addLoc',
+    LOC_DEL = 'delLoc',
+    LOC_INFO = 'infoLoc'
 }
 
 export abstract class CCommand<T> {

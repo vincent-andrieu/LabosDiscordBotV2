@@ -17,7 +17,8 @@ export const serverConfig = {
         name: env['MONGODB_NAME'] || 'DiscordLaboBotV2'
     },
     commands: {
-        prefix: "!"
+        prefix: "!",
+        dateFormat: "D/M/YY H:m"
     },
     express: {
         port: Number(env['EXPRESS_PORT']) || 8080

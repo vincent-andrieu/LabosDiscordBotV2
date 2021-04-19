@@ -3,6 +3,7 @@ import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
+import { LocationSchema } from "@schemas/locations.schema";
 
 import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
 import LaboratoryAddLabo from "./laboratory/addLabo";
@@ -24,8 +25,11 @@ import ServerSetUrl from "./server/setUrl";
 import ServerSetPassword from "./server/setPassword";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
+import LocationAddLoc from "./location/addLoc";
+import LocationDelLoc from "./location/delLoc";
+import { serverConfig } from "server.config";
 
-export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema>> = [
+export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
     new LaboratoryAddLabo("Ajoute un laboratoire", "**Nom**, **Drogue**, Screen URL"),
     new LaboratoryDelLabo("Supprime un laboratoire", "**Nom**, Raison"),
@@ -48,5 +52,9 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new ServerSetUrl("Modifier l'URL du site", "**URL**"),
     new ServerSetPassword("Modifier le mot de passe", "**Mot de passe**"),
     new ServerSetReminder("Modifier le rappel d'une production", "**Minutes**"),
-    new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**")
+    new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**"),
+
+    new LocationAddLoc("Ajouter une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**, Screen URL"),
+    new LocationDelLoc("Supprimer une location", "**Nom**, Raison")
+    // new LocationInfoLoc("Affiche la liste des locations", "Nom")
 ];
