@@ -48,7 +48,7 @@ export class LocationSchema {
                             location._id = (newLoc as ILocation)._id;
                             Sockets.server?.emit('location.add', location);
                             const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.ADD, "Location **" + location.name + "** ajoutée", userId)
-                                .setDescription("Le " + location.getHumanizeDate() + "\nDans " + location.getDateDuration());
+                                .setDescription("Le **" + location.getHumanizeDate() + "**\nDans **" + location.getDateDuration() + "**");
                             if (location.screen) {
                                 embedMessage.setImage(location.screen);
                             }
