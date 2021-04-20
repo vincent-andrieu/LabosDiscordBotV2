@@ -33,7 +33,7 @@ export class LocationSchema {
                 return reject("No link to server");
             }
             if (location.date.getTime() <= new Date().getTime()) {
-                reject("La date de la fin de la location doit être dans le futur");
+                return reject("La date de la fin de la location doit être dans le futur");
             }
 
             if (location._id) {
@@ -92,9 +92,7 @@ export class LocationSchema {
                     if (location.screen) {
                         embedMessage.setImage(location.screen);
                     }
-                    if (reason) {
-                        embedMessage.setDescription(reason);
-                    }
+                    embedMessage.addField(location.getHumanizeDate(), reason || "");
                     location.server.defaultChannel?.send(embedMessage);
                     Sockets.server?.emit('location.del', location);
 
@@ -128,6 +126,24 @@ export class LocationSchema {
                         return reject("Aucune location existe sous le nom " + name);
                     }
                     resolve(new CLocation(result as ILocation));
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    public findByName(server: CServer, name: string, ignoreCase?: boolean): Promise<Array<CLocation>> {
+        return new Promise<Array<CLocation>>((resolve, reject) => {
+            const search = ignoreCase ? { $regex: new RegExp(name, 'i') } : name;
+
+            this._model.find({
+                server: server._id,
+                name: search
+            })
+                .then((result: Array<unknown>) => {
+                    if (result.length == 0) {
+                        return reject("Aucune location existe sous le nom " + name);
+                    }
+                    resolve((result as Array<ILocation>).map((loc) => new CLocation(loc)));
                 })
                 .catch((err) => reject(err));
         });

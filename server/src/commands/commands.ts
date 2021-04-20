@@ -4,6 +4,7 @@ import { ProductionSchema } from "@schemas/productions.schema";
 import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
 import { LocationSchema } from "@schemas/locations.schema";
+import { serverConfig } from "../server.config";
 
 import LaboratorySetDefaultLabo from "./laboratory/setDefaultLabo";
 import LaboratoryAddLabo from "./laboratory/addLabo";
@@ -27,7 +28,7 @@ import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
 import LocationAddLoc from "./location/addLoc";
 import LocationDelLoc from "./location/delLoc";
-import { serverConfig } from "server.config";
+import LocationInfoLoc from "./location/infoLoc";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -55,6 +56,6 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**"),
 
     new LocationAddLoc("Ajouter une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**, Screen URL"),
-    new LocationDelLoc("Supprimer une location", "**Nom**, Raison")
-    // new LocationInfoLoc("Affiche la liste des locations", "Nom")
+    new LocationDelLoc("Supprimer une location", "**Nom**, Raison"),
+    new LocationInfoLoc("Affiche la liste des locations", "Nom")
 ];

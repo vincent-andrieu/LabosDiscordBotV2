@@ -20,11 +20,12 @@ export class CLocation extends CServerModel implements ILocation {
 
     public getInfo(embedMessage?: MessageEmbed): string {
         const dateFormat = this.getHumanizeDate();
+        const dateDuration = this.getDateDuration();
 
         if (embedMessage) {
-            embedMessage.addField(this.name, dateFormat, true);
+            embedMessage.addField(this.name, `Le **${dateFormat}**\nDans **${dateDuration}**`, true);
         }
-        return `**${this.name}** => ${dateFormat} (${this.getDateDuration()})`;
+        return `**${this.name}** => ${dateFormat} (${dateDuration})`;
     }
 
     public getHumanizeDate(): string {

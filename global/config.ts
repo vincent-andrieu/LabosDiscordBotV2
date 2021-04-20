@@ -30,6 +30,6 @@ export const GlobalConfig = {
         }
     },
     locations: {
-        dateFormat: "D MMMM à H:m"
+        dateFormat: "D MMMM YYYY à H:m"
     }
 };
