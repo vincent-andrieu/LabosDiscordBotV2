@@ -220,6 +220,7 @@ export class LocationSchema {
             this._model.findByIdAndUpdate(location._id, { $push: { reminders: reminder } })
                 .then(() => {
                     location.reminders.push(reminder);
+                    this.startClock(location, reminder);
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.ADD, "Rappel ajouté à la location **" + location.name + "**", userId)
                         .setDescription(`Pour le **${location.getHumanizeDate(reminder)}**\nDans **${location.getDateDuration(reminder)}**`);
