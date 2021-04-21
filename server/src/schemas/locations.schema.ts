@@ -248,13 +248,13 @@ export class LocationSchema {
     public deleteReminder(location: CLocation, reminder: Date, userId?: string, doesPrintMsg = true): Promise<CLocation> {
         return new Promise<CLocation>((resolve, reject) => {
 
-            const index = location.reminders.findIndex((date) => date.getTime() === reminder.getTime());
-            if (index >= 0) {
-                location.reminders.splice(index, 1);
-            }
-
-            this._model.findByIdAndUpdate(location._id, { reminder: location.reminders })
+            this._model.findByIdAndUpdate(location._id, { $pull: { reminders: reminder.toISOString() } })
                 .then(() => {
+                    const index = location.reminders.findIndex((date) => date.getTime() === reminder.getTime());
+                    if (index >= 0) {
+                        location.reminders.splice(index, 1);
+                    }
+
                     if (doesPrintMsg) {
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Rappel supprimé de la location **" + location.name + "**", userId);
                         if (location.screen) {
