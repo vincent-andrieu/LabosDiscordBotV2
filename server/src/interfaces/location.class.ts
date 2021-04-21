@@ -9,6 +9,7 @@ export class CLocation extends CServerModel implements ILocation {
     name: string;
     date: Date;
     screen?: string;
+    reminders: Array<Date>;
 
     constructor(loc: ILocation) {
         super(loc);
@@ -16,6 +17,7 @@ export class CLocation extends CServerModel implements ILocation {
         this.name = loc.name;
         this.date = loc.date;
         this.screen = loc.screen || "";
+        this.reminders = loc.reminders || [];
     }
 
     public getInfo(embedMessage?: MessageEmbed): string {
@@ -28,11 +30,11 @@ export class CLocation extends CServerModel implements ILocation {
         return `**${this.name}** => ${dateFormat} (${dateDuration})`;
     }
 
-    public getHumanizeDate(): string {
-        return moment(this.date).locale('fr').format(GlobalConfig.locations.dateFormat);
+    public getHumanizeDate(date: Date = this.date): string {
+        return moment(date).locale('fr').format(GlobalConfig.locations.dateFormat);
     }
 
-    public getDateDuration(): string {
-        return moment.duration(moment(this.date).diff(moment(moment.now()))).locale('fr').humanize();
+    public getDateDuration(date: Date = this.date): string {
+        return moment.duration(moment(date).diff(moment(moment.now()))).locale('fr').humanize();
     }
 }

@@ -1,8 +1,10 @@
 import * as mongoose from 'mongoose';
+import { MessageEmbed } from 'discord.js';
+import moment from 'moment';
 
+import { ILocation } from '@global/interfaces/locations.interface';
 import { CServer } from '@interfaces/server.class';
 import { CLocation } from '@interfaces/location.class';
-import { ILocation } from '@global/interfaces/locations.interface';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import Sockets from '../init/sockets';
 import { ServerSchema } from './servers.schema';
@@ -11,7 +13,10 @@ const locationSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
     name: { type: String, required: true },
     date: { type: Date, required: true },
-    screen: { type: String, required: false }
+    screen: { type: String, required: false },
+    reminders: [
+        { type: Date }
+    ]
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -25,6 +30,8 @@ function autoPopulate(this: any, next: any) {
 }
 
 export class LocationSchema {
+    // Schema
+
     private _model = mongoose.model('locations', locationSchema);
 
     public add(location: CLocation, userId?: string): Promise<CLocation> {
@@ -46,6 +53,8 @@ export class LocationSchema {
                     this._model.create(location)
                         .then((newLoc: unknown) => {
                             location._id = (newLoc as ILocation)._id;
+                            this.startClock(location);
+
                             Sockets.server?.emit('location.add', location);
                             const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.ADD, "Location **" + location.name + "** ajoutée", userId)
                                 .setDescription("Le **" + location.getHumanizeDate() + "**\nDans **" + location.getDateDuration() + "**");
@@ -80,7 +89,7 @@ export class LocationSchema {
         });
     }
 
-    public delete(location: CLocation, reason?: string, userId?: string): Promise<number> {
+    public delete(location: CLocation, reason?: string, userId?: string, doesPrintMsg = true): Promise<number> {
         return new Promise<number>((resolve, reject) => {
             this._model.deleteOne({ server: location.server._id, _id: location._id })
                 .then((res) => {
@@ -88,12 +97,14 @@ export class LocationSchema {
                         return reject("La location " + location.name + " n'existe pas");
                     }
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Location **" + location.name + "** supprimée", userId);
-                    if (location.screen) {
-                        embedMessage.setImage(location.screen);
+                    if (doesPrintMsg) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Location **" + location.name + "** supprimée", userId);
+                        if (location.screen) {
+                            embedMessage.setImage(location.screen);
+                        }
+                        embedMessage.addField(location.getHumanizeDate(), reason || "");
+                        location.server.defaultChannel?.send(embedMessage);
                     }
-                    embedMessage.addField(location.getHumanizeDate(), reason || "");
-                    location.server.defaultChannel?.send(embedMessage);
                     Sockets.server?.emit('location.del', location);
 
                     resolve(res.deletedCount);
@@ -110,6 +121,16 @@ export class LocationSchema {
                     .catch((err) => reject(err));
 
             }).catch((err) => reject(err));
+        });
+    }
+
+    public getAll(): Promise<Array<CLocation>> {
+        return new Promise<Array<CLocation>>((resolve, reject) => {
+            this._model.find({})
+                .then((result: Array<unknown>) => {
+                    resolve((result as Array<ILocation>).map((loc) => new CLocation(loc)));
+                })
+                .catch((err) => reject(err));
         });
     }
 
@@ -188,5 +209,125 @@ export class LocationSchema {
                 ).catch((err) => reject(err));
             }).catch((err) => reject(err));
         });
+    }
+
+    public addReminder(location: CLocation, reminder: Date, userId?: string): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            if (reminder.getTime() <= new Date().getTime()) {
+                return reject("La date du rappel doit être dans le futur");
+            }
+            this._model.findByIdAndUpdate(location._id, { $push: { reminders: reminder } })
+                .then(() => {
+                    location.reminders.push(reminder);
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.ADD, "Rappel ajouté à la location **" + location.name + "**", userId)
+                        .setDescription(`Pour le **${location.getHumanizeDate(reminder)}**\nDans **${location.getDateDuration(reminder)}**`);
+                    if (location.screen) {
+                        embedMessage.setThumbnail(location.screen);
+                    }
+                    location.server.defaultChannel?.send(embedMessage);
+
+                    Sockets.server?.emit('location.reminder.add', location);
+                    resolve(location);
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    public addReminderByName(server: CServer, name: string, reminder: Date, userId?: string): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            this.findOneByName(server, name, true).then((location) => {
+                this.addReminder(location, reminder, userId)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err));
+            }).catch((err) => reject(err));
+        });
+    }
+
+    public deleteReminder(location: CLocation, reminder: Date, userId?: string, doesPrintMsg = true): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+
+            const index = location.reminders.findIndex((date) => date.getTime() === reminder.getTime());
+            if (index >= 0) {
+                location.reminders.splice(index, 1);
+            }
+
+            this._model.findByIdAndUpdate(location._id, { reminder: location.reminders })
+                .then(() => {
+                    if (doesPrintMsg) {
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Rappel supprimé de la location **" + location.name + "**", userId);
+                        if (location.screen) {
+                            embedMessage.setThumbnail(location.screen);
+                        }
+                        location.server.defaultChannel?.send(embedMessage);
+                    }
+
+                    Sockets.server?.emit('location.reminder.del', location);
+                    resolve(location);
+                })
+                .catch((err) => reject(err));
+
+        });
+    }
+
+    public deleteReminderByName(server: CServer, name: string, reminder: Date, userId?: string): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            this.findOneByName(server, name, true).then((location) => {
+                this.deleteReminder(location, reminder, userId)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err));
+            }).catch((err) => reject(err));
+        });
+    }
+
+    // Services
+
+    public init(): void {
+        this.getAll()
+            .then((locations: Array<CLocation>) =>
+                locations.forEach((location) => {
+                    this.startClock(location);
+                    location.reminders.forEach((reminder) => this.startClock(location, reminder));
+                })
+            )
+            .catch((err) => console.error(err));
+
+    }
+
+    public startClock(location: CLocation, reminder: Date = location.date): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            setTimeout(() => {
+                this.getById(location).then((loc: CLocation) => {
+                    if (!this.doesReminderExist(loc, reminder)) {
+                        return;
+                    }
+                    let embedMessage: MessageEmbed = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.DEL, "La location est finie");
+                    if (location.date.getTime() !== reminder.getTime()) {
+                        embedMessage = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.INFO, "La location se finie bientôt");
+                        this.deleteReminder(location, reminder, undefined, false);
+                    } else {
+                        this.delete(location, "Location finie", undefined, false);
+                    }
+                    embedMessage.addField(loc.name, `Le **${loc.getHumanizeDate()}**` + (location.date.getTime() >= reminder.getTime() ? `\nDans **${loc.getDateDuration()}**` : ""), true);
+                    if (loc.screen) {
+                        embedMessage.setImage(loc.screen);
+                    }
+                    loc.server.defaultChannel?.send(embedMessage);
+                    resolve(loc);
+                }).catch((err) => reject(err));
+            }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());
+        });
+    }
+
+    private doesReminderExist(location: CLocation, reminder: Date): boolean {
+        if (location.date.getTime() === reminder.getTime()) {
+            return true;
+        }
+        for (const rmder of location.reminders) {
+            if (rmder.getTime() === reminder.getTime()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

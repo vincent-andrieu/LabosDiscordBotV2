@@ -13,22 +13,28 @@ import DiscordBot from "./init/bot";
 import DataBase from "./init/database";
 import ExpressServer from "./init/express";
 import { serverConfig } from "./server.config";
+import { LocationSchema } from "@schemas/locations.schema";
 
 const discordBot = new DiscordBot();
 const database = new DataBase();
 
-discordBot.connect().then((client: Client) => {
-    new ExpressServer(express());
-    startBot(client);
-}).catch((err) => {
-    console.error(err);
-    exit(EXIT_ERROR);
-});
+database.connect()
+    .then(() =>
 
-database.connect().catch((err) => {
-    console.error(err);
-    exit(EXIT_ERROR);
-});
+        discordBot.connect().then((client: Client) => {
+            new LocationSchema().init();
+            new ExpressServer(express());
+            startBot(client);
+        }).catch((err) => {
+            console.error(err);
+            exit(EXIT_ERROR);
+        })
+
+    )
+    .catch((err) => {
+        console.error(err);
+        exit(EXIT_ERROR);
+    });
 
 console.info("PID : " + pid);
 

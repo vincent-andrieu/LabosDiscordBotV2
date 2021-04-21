@@ -4,4 +4,5 @@ export interface ILocation extends IServerModel {
     name: string;
     date: Date;
     screen?: string;
+    reminders?: Array<Date>;
 }

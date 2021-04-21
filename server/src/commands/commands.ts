@@ -26,9 +26,11 @@ import ServerSetUrl from "./server/setUrl";
 import ServerSetPassword from "./server/setPassword";
 import ServerSetReminder from "./server/setReminder";
 import ServerSetRoleTag from "./server/setRoleTag";
-import LocationAddLoc from "./location/addLoc";
-import LocationDelLoc from "./location/delLoc";
-import LocationInfoLoc from "./location/infoLoc";
+import LocationAdd from "./location/addLoc";
+import LocationDel from "./location/delLoc";
+import LocationInfo from "./location/infoLoc";
+import LocationAddReminder from "./location/addLocReminder";
+import LocationDelReminder from "./location/delLocReminder";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -55,7 +57,9 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new ServerSetReminder("Modifier le rappel d'une production", "**Minutes**"),
     new ServerSetRoleTag("Modifier le rôle qui gère les laboratoires", "**Tag du rôle**"),
 
-    new LocationAddLoc("Ajouter une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**, Screen URL"),
-    new LocationDelLoc("Supprimer une location", "**Nom**, Raison"),
-    new LocationInfoLoc("Affiche la liste des locations", "Nom")
+    new LocationAdd("Ajouter une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**, Screen URL"),
+    new LocationDel("Supprimer une location", "**Nom**, Raison"),
+    new LocationInfo("Affiche la liste des locations", "Nom"),
+    new LocationAddReminder("Ajoute un rappel pour une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**"),
+    new LocationDelReminder("Supprime un rappel pour une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**")
 ];
