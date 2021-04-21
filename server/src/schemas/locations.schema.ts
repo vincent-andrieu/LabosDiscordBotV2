@@ -214,8 +214,8 @@ export class LocationSchema {
 
     public addReminder(location: CLocation, reminder: Date, userId?: string): Promise<CLocation> {
         return new Promise<CLocation>((resolve, reject) => {
-            if (reminder.getTime() <= new Date().getTime()) {
-                return reject("La date du rappel doit être dans le futur");
+            if (reminder.getTime() <= new Date().getTime() || reminder.getTime() >= location.date.getTime()) {
+                return reject("La date du rappel doit être entre maintenant et la date de fin de la location");
             }
             this._model.findByIdAndUpdate(location._id, { $push: { reminders: reminder } })
                 .then(() => {
