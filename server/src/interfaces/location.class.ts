@@ -10,6 +10,7 @@ export class CLocation extends CServerModel implements ILocation {
     date: Date;
     screen?: string;
     reminders: Array<Date>;
+    tag: string;
 
     constructor(loc: ILocation) {
         super(loc);
@@ -18,6 +19,7 @@ export class CLocation extends CServerModel implements ILocation {
         this.date = loc.date;
         this.screen = loc.screen || "";
         this.reminders = loc.reminders || [];
+        this.tag = loc.tag || "";
     }
 
     public getInfo(embedMessage?: MessageEmbed): string {

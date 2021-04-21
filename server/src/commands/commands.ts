@@ -31,6 +31,7 @@ import LocationDel from "./location/delLoc";
 import LocationInfo from "./location/infoLoc";
 import LocationAddReminder from "./location/addLocReminder";
 import LocationDelReminder from "./location/delLocReminder";
+import LocationSetTag from "./location/setTag";
 
 export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>> = [
     new LaboratorySetDefaultLabo("Modifier le laboratoire par défaut", "**Nom**"),
@@ -61,5 +62,6 @@ export const CommandsList: Array<CCommand<LaboratorySchema | ProductionSchema | 
     new LocationDel("Supprimer une location", "**Nom**, Raison"),
     new LocationInfo("Affiche la liste des locations", "Nom"),
     new LocationAddReminder("Ajoute un rappel pour une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**"),
-    new LocationDelReminder("Supprime un rappel pour une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**")
+    new LocationDelReminder("Supprime un rappel pour une location", "**Nom**, **Date (" + serverConfig.commands.dateFormat + ")**"),
+    new LocationSetTag("Personne ou rôle à tag pour les rappels", "**Nom**, **Tag**")
 ];

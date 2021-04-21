@@ -32,7 +32,8 @@ export enum ECommand {
     LOC_DEL = 'delLoc',
     LOC_INFO = 'infoLoc',
     LOC_ADD_REMINDER = 'addReminderLoc',
-    LOC_DEL_REMINDER = 'delReminderLoc'
+    LOC_DEL_REMINDER = 'delReminderLoc',
+    LOC_SET_TAG = 'setRoleLoc'
 }
 
 export abstract class CCommand<T> {

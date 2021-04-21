@@ -16,7 +16,8 @@ const locationSchema = new mongoose.Schema({
     screen: { type: String, required: false },
     reminders: [
         { type: Date }
-    ]
+    ],
+    tag: { type: String, required: false }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
@@ -272,8 +273,37 @@ export class LocationSchema {
 
     public deleteReminderByName(server: CServer, name: string, reminder: Date, userId?: string): Promise<CLocation> {
         return new Promise<CLocation>((resolve, reject) => {
-            this.findOneByName(server, name, true).then((location) => {
+            this.findOneByName(server, name, false).then((location) => {
                 this.deleteReminder(location, reminder, userId)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err));
+            }).catch((err) => reject(err));
+        });
+    }
+
+    public setTag(location: CLocation, tag: string, userId?: string): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            this._model.findByIdAndUpdate(location._id, { tag: tag })
+                .then(() => {
+                    location.tag = tag;
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.EDIT, "Le rôle à tag a été modifié", userId)
+                        .setDescription(tag);
+                    if (location.screen) {
+                        embedMessage.setThumbnail(location.screen);
+                    }
+                    location.server.defaultChannel?.send(embedMessage);
+
+                    Sockets.server?.emit('location.tag', location);
+                    resolve(location);
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    public setTagByName(server: CServer, name: string, tag: string, userId?: string): Promise<CLocation> {
+        return new Promise<CLocation>((resolve, reject) => {
+            this.findOneByName(server, name, true).then((location) => {
+                this.setTag(location, tag, userId)
                     .then((result) => resolve(result))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
@@ -312,7 +342,7 @@ export class LocationSchema {
                     if (loc.screen) {
                         embedMessage.setImage(loc.screen);
                     }
-                    loc.server.defaultChannel?.send(embedMessage);
+                    loc.server.defaultChannel?.send({ embed: embedMessage, content: loc.tag });
                     resolve(loc);
                 }).catch((err) => reject(err));
             }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());

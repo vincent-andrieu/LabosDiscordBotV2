@@ -14,7 +14,7 @@ export default class LocationAddLoc extends CCommand<LocationSchema> {
         super(new LocationSchema(), ECommand.LOC_ADD, helpDesc, helpParams);
     }
 
-    private getParamsTemplate(params: Array<string>, server: CServer): CLocation | undefined {
+    private getParamsTemplate(params: Array<string>, server: CServer, guildMember?: GuildMember | null): CLocation | undefined {
         if (params.length < 3) {
             return undefined;
         }
@@ -22,13 +22,14 @@ export default class LocationAddLoc extends CCommand<LocationSchema> {
             server: server,
             name: params[0],
             date: moment(params[1] + " " + params[2], serverConfig.commands.dateFormat).toDate(),
-            screen: params[3]
+            screen: params[3],
+            tag: this.concatLastParams(params, 4) || guildMember?.user.toString()
         });
     }
 
     public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const location: CLocation | undefined = this.getParamsTemplate(params, server);
+            const location: CLocation | undefined = this.getParamsTemplate(params, server, guildMember);
 
             if (!location) {
                 help(server, this, guildMember?.id);
