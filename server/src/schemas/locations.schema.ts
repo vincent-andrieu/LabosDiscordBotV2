@@ -251,7 +251,7 @@ export class LocationSchema {
 
             this._model.findByIdAndUpdate(location._id, { $pull: { reminders: reminder.toISOString() } })
                 .then(() => {
-                    const index = location.reminders.findIndex((date) => date.getTime() === reminder.getTime());
+                    const index = location.reminders.findIndex((date) => new Date(date).getTime() === reminder.getTime());
                     if (index >= 0) {
                         location.reminders.splice(index, 1);
                     }

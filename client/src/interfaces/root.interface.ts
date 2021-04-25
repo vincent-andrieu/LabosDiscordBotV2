@@ -1,4 +1,5 @@
 export enum EPageStatus {
     LABOS = 'labos',
-    STOCKS = "stocks"
+    STOCKS = 'stocks',
+    LOCATIONS = 'locations'
 }

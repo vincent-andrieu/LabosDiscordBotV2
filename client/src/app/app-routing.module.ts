@@ -76,7 +76,6 @@ class DiscordAuthResolver implements Resolve<void> {
 }
 
 const routes: Routes = [
-    // { path: '**', redirectTo: '/' },
     { path: '', component: AuthComponent },
     {
         path: 'auth/discord/redirect',
@@ -96,9 +95,11 @@ const routes: Routes = [
                 redirectTo: 'labos'
             },
             { path: 'labos', component: HomeComponent },
-            { path: 'stocks', component: HomeComponent }
+            { path: 'stocks', component: HomeComponent },
+            { path: 'locations', component: HomeComponent }
         ]
-    }
+    },
+    { path: '**', redirectTo: '/', pathMatch: 'full' }
 ];
 
 @NgModule({

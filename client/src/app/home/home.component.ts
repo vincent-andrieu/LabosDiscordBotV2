@@ -46,7 +46,10 @@ export class HomeComponent {
             this.sidenavStatus = sidenavCookieStatus === 'open';
         }
 
-        this.pageStatus = { index: urlSegments[2].path === EPageStatus.LABOS ? 0 : 1, status: urlSegments[2].path as EPageStatus };
+        this.pageStatus = {
+            index: this._getPageStatusIndex(urlSegments[2].path as EPageStatus),
+            status: urlSegments[2].path as EPageStatus
+        };
 
         _serverService.getServerName().then((name: string | undefined) => {
             if (name) {
@@ -76,6 +79,18 @@ export class HomeComponent {
                 this._updateProductions();
             }
         });
+    }
+
+    private _getPageStatusIndex(ePageStatus: EPageStatus): number {
+        switch (ePageStatus) {
+        case EPageStatus.LABOS:
+            return 0;
+        case EPageStatus.STOCKS:
+            return 1;
+        case EPageStatus.LOCATIONS:
+            return 2;
+        default: return 0;
+        }
     }
 
     private _updateProductions(): void {

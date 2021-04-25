@@ -1,0 +1,10 @@
+@import "~@angular/material/theming";
+
+@mixin locations-list-theme($theme) {
+    $accent: map-get($theme, accent);
+
+    .location-card {
+        box-shadow: 0 0 2px 0px map-get($accent, default) !important;
+    }
+
+}

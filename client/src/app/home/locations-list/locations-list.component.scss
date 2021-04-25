@@ -1,0 +1,42 @@
+.location-card {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    margin-right: 25px;
+    width: 380px;
+}
+
+.location-name {
+    overflow-wrap: anywhere;
+    padding-bottom: 5px;
+}
+
+.location-time-card-subtitle {
+    text-transform: capitalize;
+}
+
+.edit-location-button {
+    position: absolute;
+    right: 20px;
+    top: 16px;
+}
+
+.location-screen {
+    max-height: 350px;
+    object-fit: cover;
+}
+
+.mat-card {
+    border-radius: 7px;
+}
+
+.delete-reminder-button {
+    box-shadow: 0 0;
+}
+
+.mat-column-date {
+    width: fit-content;
+}
+
+.mat-column-actions {
+    max-width: 60px;
+}

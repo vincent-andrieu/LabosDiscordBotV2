@@ -10,6 +10,7 @@ import { ServerHttp } from '@api/server';
 import { LaboratoryHttp } from '@api/laboratory';
 import { StockHttp } from '@api/stock';
 import { ProductionHttp } from '@api/production';
+import { LocationHttp } from '@api/location';
 
 export default class ExpressServer {
 
@@ -36,6 +37,7 @@ export default class ExpressServer {
         new StockHttp(this._app, socketServer);
         new ProductionHttp(this._app, socketServer);
         new ServerHttp(this._app, socketServer);
+        new LocationHttp(this._app, socketServer);
     }
 
 }
