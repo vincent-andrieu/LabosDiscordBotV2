@@ -259,7 +259,8 @@ export class LocationSchema {
                     }
 
                     if (doesPrintMsg) {
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Rappel supprimé de la location **" + location.name + "**", userId);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Rappel supprimé de la location **" + location.name + "**", userId)
+                            .setDescription(`Le **${location.getHumanizeDate(reminder)}**\nDans **${location.getDateDuration(reminder)}**`);
                         if (location.screen) {
                             embedMessage.setThumbnail(location.screen);
                         }
