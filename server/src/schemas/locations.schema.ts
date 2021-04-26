@@ -1,6 +1,7 @@
 import * as mongoose from 'mongoose';
 import { MessageEmbed } from 'discord.js';
 import moment from 'moment';
+import { CronJob } from 'cron';
 
 import { ILocation } from '@global/interfaces/locations.interface';
 import { CServer } from '@interfaces/server.class';
@@ -8,6 +9,7 @@ import { CLocation } from '@interfaces/location.class';
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import Sockets from '../init/sockets';
 import { ServerSchema } from './servers.schema';
+import { serverConfig } from '../server.config';
 
 const locationSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers', required: true },
@@ -314,6 +316,13 @@ export class LocationSchema {
     // Services
 
     public init(): void {
+        this._updateClocks();
+
+        const job = new CronJob(serverConfig.locationsCronUpdate, () => this._updateClocks(), null, true, 'Europe/Paris');
+        job.start();
+    }
+
+    private _updateClocks(): void {
         this.getAll()
             .then((locations: Array<CLocation>) =>
                 locations.forEach((location) => {
@@ -322,32 +331,32 @@ export class LocationSchema {
                 })
             )
             .catch((err) => console.error(err));
-
     }
 
-    public startClock(location: CLocation, reminder: Date = location.date): Promise<CLocation> {
-        return new Promise<CLocation>((resolve, reject) => {
-            setTimeout(() => {
-                this.getById(location).then((loc: CLocation) => {
-                    if (!this.doesReminderExist(loc, reminder)) {
-                        return;
-                    }
-                    let embedMessage: MessageEmbed = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.DEL, "La location est finie");
-                    if (location.date.getTime() !== reminder.getTime()) {
-                        embedMessage = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.INFO, "La location se finie bientôt");
-                        this.deleteReminder(location, reminder, undefined, false);
-                    } else {
-                        this.delete(location, "Location finie", undefined, false);
-                    }
-                    embedMessage.addField(loc.name, `Le **${loc.getHumanizeDate()}**` + (location.date.getTime() >= reminder.getTime() ? `\nDans **${loc.getDateDuration()}**` : ""), true);
-                    if (loc.screen) {
-                        embedMessage.setImage(loc.screen);
-                    }
-                    loc.server.defaultChannel?.send({ embed: embedMessage, content: loc.tag });
-                    resolve(loc);
-                }).catch((err) => reject(err));
-            }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());
-        });
+    public startClock(location: CLocation, reminder: Date = location.date): void {
+        if (moment(reminder).isAfter(moment(moment.now()).add(1, 'day'))) {
+            return;
+        }
+
+        setTimeout(() => {
+            this.getById(location).then((loc: CLocation) => {
+                if (!this.doesReminderExist(loc, reminder)) {
+                    return;
+                }
+                let embedMessage: MessageEmbed = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.DEL, "La location est finie");
+                if (location.date.getTime() !== reminder.getTime()) {
+                    embedMessage = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.INFO, "La location se finie bientôt");
+                    this.deleteReminder(location, reminder, undefined, false);
+                } else {
+                    this.delete(location, "Location finie", undefined, false);
+                }
+                embedMessage.addField(loc.name, `Le **${loc.getHumanizeDate()}**` + (location.date.getTime() >= reminder.getTime() ? `\nDans **${loc.getDateDuration()}**` : ""), true);
+                if (loc.screen) {
+                    embedMessage.setImage(loc.screen);
+                }
+                loc.server.defaultChannel?.send({ embed: embedMessage, content: loc.tag });
+            });
+        }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());
     }
 
     private doesReminderExist(location: CLocation, reminder: Date): boolean {

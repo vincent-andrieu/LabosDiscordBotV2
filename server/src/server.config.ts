@@ -25,5 +25,6 @@ export const serverConfig = {
     },
     socket: {
         port: Number(env['SOCKET_PORT']) || 3000
-    }
+    },
+    locationsCronUpdate: '0 0 5 * * *'
 };
