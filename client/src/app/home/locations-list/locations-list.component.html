@@ -20,7 +20,7 @@
                     Rappel le
                 </mat-header-cell>
                 <mat-cell *matCellDef="let reminder">
-                    <span>{{ location.getHumanizeDate() }}</span>
+                    <span>{{ location.getHumanizeDate(reminder) }}</span>
                 </mat-cell>
             </ng-container>
             <!-- / Date -->
@@ -31,7 +31,7 @@
                     Dans
                 </mat-header-cell>
                 <mat-cell *matCellDef="let reminder">
-                    <span>{{ location.getDateDuration() }}</span>
+                    <span>{{ location.getDateDuration(reminder) }}</span>
                 </mat-cell>
             </ng-container>
             <!-- / Date duration -->
