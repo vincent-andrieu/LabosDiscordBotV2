@@ -61,7 +61,7 @@
                 <mat-label>Ajouter un rappel</mat-label>
                 <input matInput placeholder="Date" [formControl]="locationForms[location._id.toString()]">
             </mat-form-field>
-            <button mat-flat-button [disabled]="!locationForms[location._id.toString()].value" color="primary"
+            <button mat-flat-button [disabled]="!locationForms[location._id.toString()]?.value || true" color="primary"
                     type="submit">Ajouter</button>
         </form>
 
