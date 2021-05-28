@@ -23,7 +23,7 @@ database.connect()
 
         discordBot.connect().then((client: Client) => {
             new LocationSchema().init();
-            new ExpressServer(express());
+            new ExpressServer(express(), client);
             startBot(client);
         }).catch((err) => {
             console.error(err);

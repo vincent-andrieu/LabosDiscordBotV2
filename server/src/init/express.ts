@@ -1,3 +1,4 @@
+import { Client } from 'discord.js';
 import { Express } from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
@@ -14,7 +15,7 @@ import { LocationHttp } from '@api/location';
 
 export default class ExpressServer {
 
-    constructor(private _app: Express) {
+    constructor(private _app: Express, private _client: Client) {
         this._app.use(json({limit: '5mb'}));
         this._app.use(urlencoded({extended: true}));
 
@@ -32,7 +33,7 @@ export default class ExpressServer {
     }
 
     private _init(socketServer: Server): void {
-        new DiscordHttp(this._app, socketServer);
+        new DiscordHttp(this._app, socketServer, this._client);
         new LaboratoryHttp(this._app, socketServer);
         new StockHttp(this._app, socketServer);
         new ProductionHttp(this._app, socketServer);

@@ -3,14 +3,12 @@ import { Server } from 'socket.io';
 
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
-import { DiscordService } from '@services/discord.service';
 import { atob } from '@global/utils';
 
 export class ServerHttp {
 
     private _urlBase = '/server';
     private _serverSchema: ServerSchema;
-    private _discordService = new DiscordService;
 
     constructor(private _app: Express, private _socketServer: Server) {
         this._serverSchema = new ServerSchema();

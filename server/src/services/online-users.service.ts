@@ -2,18 +2,18 @@ import { Guild, GuildMember } from 'discord.js';
 import { Server, Socket } from 'socket.io';
 
 import { atob } from '@global/utils';
-import { OnlineUser } from '@global/interfaces/user.interface';
+import { DiscordUser } from '@global/interfaces/user.interface';
 import DiscordBot from '../init/bot';
 
 export class OnlineUsersService {
-    private _socketsList: { [socketId: string]: { serverId: string, user: OnlineUser | null } } = {};
-    private _onlineUsers: { [serverId: string]: Array<OnlineUser | null> } = {};
+    private _socketsList: { [socketId: string]: { serverId: string, user: DiscordUser | null } } = {};
+    private _onlineUsers: { [serverId: string]: Array<DiscordUser | null> } = {};
 
     constructor(private _io: Server) {}
 
     public updateList(serverId?: string): void {
         if (serverId) {
-            this._io.emit('users.list', <{ serverId: string, list: Array<OnlineUser | null> }>{
+            this._io.emit('users.list', <{ serverId: string, list: Array<DiscordUser | null> }>{
                 serverId: serverId,
                 list: this._onlineUsers[serverId]
             });
@@ -54,7 +54,7 @@ export class OnlineUsersService {
     }
 
     private _addDiscordUser(socket: Socket, guild: Guild, member: GuildMember): void {
-        const onlineUser: OnlineUser = {
+        const onlineUser: DiscordUser = {
             id: member.id,
             name: member.displayName,
             avatar: member.user.displayAvatarURL()

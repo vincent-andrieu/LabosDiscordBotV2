@@ -22,6 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { HomeComponent } from './home.component';
 import { LabosListComponent } from './labos-list/labos-list.component';
@@ -68,7 +69,8 @@ import { EditLocationModalComponent } from './locations-list/edit-location-modal
         MatDialogModule,
         MatTableModule,
         MatSelectModule,
-        MatDatepickerModule
+        MatDatepickerModule,
+        MatAutocompleteModule
     ],
     providers: [
         { provide: LOCALE_ID, useValue: 'fr' },

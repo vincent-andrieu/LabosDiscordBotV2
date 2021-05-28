@@ -1,14 +1,16 @@
+import { Client } from 'discord.js';
 import { Express } from 'express';
 import { Server } from 'socket.io';
 
 import { DiscordService } from '@services/discord.service';
+import { CServer } from '@interfaces/server.class';
 
 export class DiscordHttp {
 
     private _urlBase = '/discord';
-    private _discordService = new DiscordService;
+    private _discordService = new DiscordService(this._client);
 
-    constructor(private _app: Express, private _socketServer: Server) {
+    constructor(private _app: Express, private _socketServer: Server, private _client: Client) {
         this._init();
     }
 
@@ -32,6 +34,13 @@ export class DiscordHttp {
             this._discordService.setToken(code, serverId)
                 .then((userId) => response.send(userId))
                 .catch((err) => response.status(500).send(err));
+        });
+
+        // Get channel users
+        this._app.get(`${this._urlBase}/get/channel/users`, (request, response) => {
+            const server: CServer = new CServer(JSON.parse(request.query.server as string));
+
+            response.send(this._discordService.getChannelUsers(server));
         });
     }
 }

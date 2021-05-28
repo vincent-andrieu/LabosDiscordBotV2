@@ -1,8 +1,10 @@
+import { Client } from 'discord.js';
 import DiscordOauth2 from 'discord-oauth2';
 
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
 import { serverConfig } from '../server.config';
+import { DiscordUser } from '@global/interfaces/user.interface';
 
 export class DiscordService {
     private _serverSchema: ServerSchema = new ServerSchema();
@@ -10,6 +12,8 @@ export class DiscordService {
         clientId: serverConfig.bot.clientId,
         clientSecret: serverConfig.bot.clientSecret
     });
+
+    constructor(private _client: Client) {}
 
     public getAuthUrl(serverId: string, password: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
@@ -62,5 +66,20 @@ export class DiscordService {
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
         });
+    }
+
+    public getChannelUsers(server: CServer): Array<DiscordUser> {
+        if (!server.defaultChannel) {
+            return [];
+        }
+        const result: Array<DiscordUser> = [];
+
+        server.defaultChannel.members.array().forEach((guildMember) => result.push({
+            id: guildMember.id,
+            name: guildMember.displayName,
+            avatar: guildMember.user.displayAvatarURL()
+        }));
+
+        return result;
     }
 }

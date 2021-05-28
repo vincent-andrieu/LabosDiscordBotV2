@@ -1,10 +1,12 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { DiscordUser } from '@global/interfaces/user.interface';
 
 import { CLocation } from '@interfaces/location.class';
 import { EPageStatus } from '@interfaces/root.interface';
 import { CServer } from '@interfaces/server.class';
+import { DiscordService } from '@services/discord.service';
 import { LocationService } from '@services/location.service';
 import { ServerService } from '@services/server.service';
 import { SnackbarService } from '@services/snackbar.service';
@@ -28,6 +30,7 @@ export class EditLocationModalComponent  {
         tag: new FormControl(this.data.location?.tag)
     })
     public today: Date = new Date();
+    public discordUsers: Array<DiscordUser> = [];
 
     constructor(
         private _dialogRef: MatDialogRef<EditLocationModalComponent, void>,
@@ -39,10 +42,16 @@ export class EditLocationModalComponent  {
         },
         private _validatorsService: ValidatorsService,
         private _snackbarService: SnackbarService,
+        private _discordService: DiscordService,
         private _serverService: ServerService,
         private _locationService: LocationService
     ) {
-        this._serverService.getCurrentServer().then((result: CServer) => this.server = result);
+        this._serverService.getCurrentServer().then((result: CServer) => {
+            this.server = result;
+            this._discordService.getChannelUsers(this.server).then((discordUsers: Array<DiscordUser>) =>
+                this.discordUsers = discordUsers
+            );
+        });
     }
 
     public saveLocation(): void {
