@@ -75,6 +75,10 @@ export class LocationSchema {
 
     public edit(location: CLocation, userId?: string): Promise<CLocation> {
         return new Promise<CLocation>((resolve, reject) => {
+            if (!location._id) {
+                return reject("Location without ID");
+            }
+
             this._model.findByIdAndUpdate(location._id, location)
                 .then(() => {
                     this.getById(location).then((editedLoc: CLocation) => {
