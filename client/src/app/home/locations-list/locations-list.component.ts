@@ -9,8 +9,8 @@ import { CLocation } from '@interfaces/location.class';
 import { ServerService } from '@services/server.service';
 import { LocationService } from '@services/location.service';
 import { ConfirmModalComponent } from '@shared/confirm-modal/confirm-modal.component';
-import { EditLocationModalComponent } from './edit-location-modal/edit-location-modal.component';
 import { EPageStatus } from '@interfaces/root.interface';
+import { EditLocationModalComponent } from '@shared/edit-location-modal/edit-location-modal.component';
 
 @Component({
     selector: 'app-locations-list',
