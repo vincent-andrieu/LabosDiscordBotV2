@@ -36,7 +36,8 @@
             <mat-label>Tag</mat-label>
             <input matInput placeholder="Tag" type="text" formControlName="tag" [matAutocomplete]="auto">
             <mat-autocomplete #auto="matAutocomplete">
-                <mat-option *ngFor="let user of discordUsers" [value]="'<@' + user.id + '>'">
+                <mat-option *ngFor="let user of discordUsers" [ngStyle]="{'color': user.color}"
+                            [value]="'<@' + user.id + '>'">
                     {{ user.name }}
                 </mat-option>
             </mat-autocomplete>

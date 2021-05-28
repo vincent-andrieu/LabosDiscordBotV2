@@ -73,6 +73,21 @@ export class ServerService {
         });
     }
 
+    public setRoleTag(roleTag: string): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
+            this._http.post<IServer>(`${this._serverUrl}/setRoleTag`, {
+                userId: this._discordService.getUserId(),
+                serverId: this._router.parseUrl(this._router.url).root.children.primary.segments[0].path,
+                roleTag: roleTag
+            }).subscribe((result: IServer) =>
+                resolve(new CServer(result))
+            , (err: HttpErrorResponse) => {
+                this._snackbarService.openError(err);
+                reject(err);
+            });
+        });
+    }
+
     public getCurrentServer(): Promise<CServer> {
         return new Promise<CServer>((resolve, reject) => {
             this._http.get<IServer>(`${this._serverUrl}/get`, {

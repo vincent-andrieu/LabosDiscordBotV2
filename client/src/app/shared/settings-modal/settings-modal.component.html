@@ -2,6 +2,7 @@
 
 <form [formGroup]="form" (ngSubmit)="saveSettings()">
     <mat-dialog-content *ngIf="server" fxLayout="column" fxLayoutGap="20px">
+
         <mat-form-field color="accent" fxFlex>
             <mat-label>Rappel des productions</mat-label>
             <input matInput placeholder="Rappel" [min]="0" [max]="59" type="number" autocomplete="off"
@@ -10,6 +11,29 @@
                 Ce champ est obligatoire (0 pour le supprimer)
             </mat-error>
         </mat-form-field>
+
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Tag</mat-label>
+            <input matInput placeholder="Tag" type="text" formControlName="tag"
+                   [matAutocomplete]="roleTagAutoCompletion">
+            <mat-autocomplete #roleTagAutoCompletion="matAutocomplete">
+                <mat-optgroup label="Roles">
+                    <mat-option *ngFor="let role of discordRoles" [ngStyle]="{'color': role.color}"
+                                [value]="'<@&' + role.id + '>'">
+                        {{ role.name }}
+                    </mat-option>
+                </mat-optgroup>
+
+                <mat-optgroup label="Utilisateurs">
+                    <mat-option *ngFor="let user of discordUsers" [ngStyle]="{'color': user.color}"
+                                [value]="'<@' + user.id + '>'">
+                        {{ user.name }}
+                    </mat-option>
+                </mat-optgroup>
+
+            </mat-autocomplete>
+        </mat-form-field>
+
         <button *ngIf="server.url && !discordUserId" mat-flat-button color="accent" type="button"
                 (click)="discordService.redirectToAuth()">
             Associer mon compte Discord
@@ -23,6 +47,7 @@
     <mat-dialog-actions align="end">
         <button mat-button mat-dialog-close color="warn">Annuler</button>
         <button mat-flat-button color="primary" type="submit"
-                [disabled]="form.invalid || form.pristine || server?.reminder === form.controls.reminder.value">Modifier</button>
+                [disabled]="form.invalid || form.pristine
+                || (server?.reminder === form.controls.reminder.value && this.server?.roleTag === this.form.controls.tag.value)">Modifier</button>
     </mat-dialog-actions>
 </form>

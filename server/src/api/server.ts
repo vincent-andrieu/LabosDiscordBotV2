@@ -38,6 +38,17 @@ export class ServerHttp {
             }).catch((err) => response.send(err));
         });
 
+        // Set role tag
+        this._app.post(`${this._urlBase}/setRoleTag`, (request, response) => {
+            const userId: string = request.body.userId;
+            const serverId: string = request.body.serverId;
+            const roleTag: string = request.body.roleTag;
+
+            this._serverSchema.setRoleTagFromId(serverId, roleTag, atob(userId)).then((editedServer: CServer) => {
+                response.send(editedServer);
+            }).catch((err) => response.send(err));
+        });
+
         // Get server
         this._app.get(`${this._urlBase}/get`, (request, response) => {
             const serverId: string = request.query.serverId as string;

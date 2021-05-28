@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { DiscordUser } from '@global/interfaces/user.interface';
+import { DiscordUser } from '@global/interfaces/discord.interface';
 
 import { CLocation } from '@interfaces/location.class';
 import { EPageStatus } from '@interfaces/root.interface';

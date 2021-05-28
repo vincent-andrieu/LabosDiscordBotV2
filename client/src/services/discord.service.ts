@@ -5,7 +5,7 @@ import { CookieService } from 'ngx-cookie';
 
 import { environment } from '@environment';
 import { btoa } from '@global/utils';
-import { DiscordUser } from '@global/interfaces/user.interface';
+import { DiscordRole, DiscordUser } from '@global/interfaces/discord.interface';
 import { CServer } from '@interfaces/server.class';
 import { SnackbarService } from './snackbar.service';
 
@@ -68,6 +68,22 @@ export class DiscordService {
     public remove(): void {
         this._cookieService.remove(environment.cookiesName.discordUserId);
         this._snackbarService.open("Compte discord dissocié");
+    }
+
+    public getRoles(server: CServer): Promise<Array<DiscordRole>> {
+        return new Promise<Array<DiscordRole>>((resolve, reject) => {
+            this._http.get<Array<DiscordRole>>(`${this._serverUrl}/get/roles`, {
+                params: {
+                    server: JSON.stringify(server)
+                }
+            }).subscribe((roles: Array<DiscordRole>) => {
+                resolve(roles);
+            },
+            (err) => {
+                this._snackbarService.openError(err);
+                reject();
+            });
+        });
     }
 
     public getChannelUsers(server: CServer): Promise<Array<DiscordUser>> {

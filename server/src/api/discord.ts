@@ -36,6 +36,13 @@ export class DiscordHttp {
                 .catch((err) => response.status(500).send(err));
         });
 
+        // Get channel roles
+        this._app.get(`${this._urlBase}/get/roles`, (request, response) => {
+            const server: CServer = new CServer(JSON.parse(request.query.server as string));
+
+            response.send(this._discordService.getRoles(server));
+        });
+
         // Get channel users
         this._app.get(`${this._urlBase}/get/channel/users`, (request, response) => {
             const server: CServer = new CServer(JSON.parse(request.query.server as string));

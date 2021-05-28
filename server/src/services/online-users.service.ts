@@ -2,7 +2,7 @@ import { Guild, GuildMember } from 'discord.js';
 import { Server, Socket } from 'socket.io';
 
 import { atob } from '@global/utils';
-import { DiscordUser } from '@global/interfaces/user.interface';
+import { DiscordUser } from '@global/interfaces/discord.interface';
 import DiscordBot from '../init/bot';
 
 export class OnlineUsersService {
@@ -57,7 +57,8 @@ export class OnlineUsersService {
         const onlineUser: DiscordUser = {
             id: member.id,
             name: member.displayName,
-            avatar: member.user.displayAvatarURL()
+            avatar: member.user.displayAvatarURL(),
+            color: member.displayHexColor
         };
 
         if (!this._onlineUsers[guild.id]) {

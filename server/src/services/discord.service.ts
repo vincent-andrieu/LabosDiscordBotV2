@@ -1,10 +1,10 @@
-import { Client } from 'discord.js';
+import { Client, Role } from 'discord.js';
 import DiscordOauth2 from 'discord-oauth2';
 
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
 import { serverConfig } from '../server.config';
-import { DiscordUser } from '@global/interfaces/user.interface';
+import { DiscordRole, DiscordUser } from '@global/interfaces/discord.interface';
 
 export class DiscordService {
     private _serverSchema: ServerSchema = new ServerSchema();
@@ -68,6 +68,21 @@ export class DiscordService {
         });
     }
 
+    public getRoles(server: CServer): Array<DiscordRole> {
+        if (!server.defaultChannel) {
+            return [];
+        }
+        const result: Array<DiscordRole> = [];
+
+        server.defaultChannel.guild.roles.cache.forEach((role: Role) => result.push({
+            id: role.id,
+            name: role.name,
+            color: role.hexColor
+        }));
+
+        return result;
+    }
+
     public getChannelUsers(server: CServer): Array<DiscordUser> {
         if (!server.defaultChannel) {
             return [];
@@ -77,7 +92,8 @@ export class DiscordService {
         server.defaultChannel.members.array().forEach((guildMember) => result.push({
             id: guildMember.id,
             name: guildMember.displayName,
-            avatar: guildMember.user.displayAvatarURL()
+            avatar: guildMember.user.displayAvatarURL(),
+            color: guildMember.displayHexColor
         }));
 
         return result;

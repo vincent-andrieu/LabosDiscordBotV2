@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
-import { DiscordUser } from '@global/interfaces/user.interface';
+import { DiscordUser } from '@global/interfaces/discord.interface';
 import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
 import { CServer } from '@interfaces/server.class';

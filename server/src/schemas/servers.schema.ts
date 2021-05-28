@@ -302,8 +302,8 @@ export class ServerSchema {
         });
     }
 
-    public setRoleTag(server: CServer, roleTag?: string, userId?: string): Promise<void> {
-        return new Promise<void>((resolve, reject) => {
+    public setRoleTag(server: CServer, roleTag?: string, userId?: string): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
 
             if (server.roleTag === roleTag) {
                 return reject("Ce rôle est déjà défini");
@@ -331,9 +331,19 @@ export class ServerSchema {
                         server.defaultChannel?.send(embedMessage);
                     }
 
-                    resolve();
+                    resolve(server);
                 })
                 .catch((err) => reject(err));
+        });
+    }
+
+    public setRoleTagFromId(serverId: string, roleTag: string, userId?: string): Promise<CServer> {
+        return new Promise<CServer>((resolve, reject) => {
+            this.getById(serverId).then((server: CServer) =>
+                this.setRoleTag(server, roleTag, userId)
+                    .then((result) => resolve(result))
+                    .catch((err) => reject(err))
+            ).catch((err) => reject(err));
         });
     }
 }
