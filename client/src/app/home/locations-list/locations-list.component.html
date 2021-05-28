@@ -55,6 +55,16 @@
             </mat-row>
         </mat-table>
 
+        <form *ngIf="location._id" (ngSubmit)="addReminder(location)"
+              fxLayoutAlign="space-around center" fxLayoutGap="20px">
+            <mat-form-field color="accent" fxFlex>
+                <mat-label>Ajouter un rappel</mat-label>
+                <input matInput placeholder="Date" [formControl]="locationForms[location._id.toString()]">
+            </mat-form-field>
+            <button mat-flat-button [disabled]="!locationForms[location._id.toString()].value" color="primary"
+                    type="submit">Ajouter</button>
+        </form>
+
     </mat-card-content>
     <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
         <button mat-icon-button color="warn" (click)="deleteLocation(location)">

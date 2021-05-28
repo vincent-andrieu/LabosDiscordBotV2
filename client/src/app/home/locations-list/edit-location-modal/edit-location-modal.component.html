@@ -1,0 +1,48 @@
+<div mat-dialog-title>
+    <span *ngIf="data.isCreate">Ajouter une location</span>
+    <span *ngIf="!data.isCreate">Modifier la location {{ data.location?.name }}</span>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="saveLocation()">
+    <mat-dialog-content fxLayout="column" fxLayoutGap="20px">
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Nom</mat-label>
+            <input matInput placeholder="Nom" type="text" formControlName="name" cdkFocusInitial required>
+            <mat-hint>Sans espaces</mat-hint>
+            <mat-error *ngIf="form.controls.name.hasError('required')">Veuillez remplir ce champ</mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('spaces')">
+                Un nom ne doit pas contenir d'espaces
+            </mat-error>
+            <mat-error *ngIf="form.controls.name.hasError('locationExist')">
+                Une location existe déjà sous ce nom
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Date</mat-label>
+            <input matInput [ngxMatDatetimePicker]="datePicker" [min]="today" formControlName="date" required>
+            <ngx-mat-datetime-picker #datePicker [showSeconds]="false"></ngx-mat-datetime-picker>
+            <mat-datepicker-toggle matSuffix [for]="$any(datePicker)">
+                <mat-icon>today</mat-icon>
+            </mat-datepicker-toggle>
+        </mat-form-field>
+
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Screen</mat-label>
+            <input matInput placeholder="URL" type="url" formControlName="screen">
+        </mat-form-field>
+
+        <mat-form-field color="accent" fxFlex>
+            <mat-label>Tag</mat-label>
+            <input matInput placeholder="Tag" type="text" formControlName="tag">
+        </mat-form-field>
+
+        <img class="location-screen" [src]="form.controls.screen.value" fxFlexAlign="center">
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close color="warn">Annuler</button>
+        <button mat-flat-button mat-dialog-close type="submit" color="primary"
+                [disabled]="form.invalid">{{ data.isCreate ? "Ajouter" : "Modifier" }}</button>
+    </mat-dialog-actions>
+</form>

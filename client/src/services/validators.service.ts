@@ -5,6 +5,7 @@ import { isADrug, isADrugOrStuff } from "@global/utils";
 import { EPageStatus } from '@interfaces/root.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
+import { CLocation } from '@interfaces/location.class';
 
 
 @Injectable({
@@ -25,7 +26,7 @@ export class ValidatorsService {
         };
     }
 
-    public doesAlreadyExistValidator(pageStatus: EPageStatus, areaList: Array<CLaboratory | CStock> | undefined, areaName?: string): ValidatorFn {
+    public doesAlreadyExistValidator(pageStatus: EPageStatus, areaList: Array<CLaboratory | CStock | CLocation> | undefined, areaName?: string): ValidatorFn {
         return (control: AbstractControl): ValidationErrors | null => {
             const controlValue: string = control.value.toLowerCase().trim();
             const value = areaList?.find((value) => value.name.toLowerCase() === controlValue);
@@ -33,8 +34,10 @@ export class ValidatorsService {
             if (areaList === undefined || (value && (!areaName || value.name.toLowerCase() !== areaName.toLowerCase()))) {
                 if (pageStatus === EPageStatus.LABOS) {
                     return { 'laboExist': true };
-                } else {
+                } else if (pageStatus === EPageStatus.STOCKS) {
                     return { 'stockExist': true };
+                } else if (pageStatus === EPageStatus.LOCATIONS) {
+                    return { 'locationExist': true };
                 }
             }
             return null;

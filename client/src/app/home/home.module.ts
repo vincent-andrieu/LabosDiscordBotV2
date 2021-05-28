@@ -1,9 +1,12 @@
-import { NgModule } from '@angular/core';
+import { LOCALE_ID, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
+
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -18,6 +21,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { HomeComponent } from './home.component';
 import { LabosListComponent } from './labos-list/labos-list.component';
@@ -26,6 +30,7 @@ import { SidenavComponent } from './sidenav/sidenav.component';
 import { LaboStocksListModalComponent } from './labos-list/labo-stocks-list-modal/labo-stocks-list-modal.component';
 import { OnlineUsersListComponent } from './sidenav/online-users-list/online-users-list.component';
 import { LocationsListComponent } from './locations-list/locations-list.component';
+import { EditLocationModalComponent } from './locations-list/edit-location-modal/edit-location-modal.component';
 
 @NgModule({
     declarations: [
@@ -35,7 +40,8 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
         SidenavComponent,
         LaboStocksListModalComponent,
         OnlineUsersListComponent,
-        LocationsListComponent
+        LocationsListComponent,
+        EditLocationModalComponent
     ],
     imports: [
         CommonModule,
@@ -43,6 +49,10 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
         FlexLayoutModule,
         FormsModule,
         ReactiveFormsModule,
+
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule,
 
         MatSidenavModule,
         MatTabsModule,
@@ -57,7 +67,12 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
         MatExpansionModule,
         MatDialogModule,
         MatTableModule,
-        MatSelectModule
+        MatSelectModule,
+        MatDatepickerModule
+    ],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'fr' },
+        { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
     ]
 })
 export class HomeModule {}
