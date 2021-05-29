@@ -25,7 +25,7 @@ export class LocationHttp {
 
             this._locationSchema.add(new CLocation(location), atob(userId)).then((newLocation: CLocation) => {
                 response.send(newLocation);
-            }).catch((err) => response.send(err));
+            }).catch((err) => response.status(500).send(err));
         });
 
         // Delete location
