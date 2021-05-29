@@ -23,6 +23,7 @@ export class LocationsListComponent {
     public locationForms: { [locId: string]: FormControl } = {};
     public dateFormat = GlobalConfig.locations.dateFormat;
     public isLoading = true;
+    public today: Date = new Date();
 
     constructor(
         private _dialog: MatDialog,

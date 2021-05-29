@@ -12,7 +12,7 @@
     <img *ngIf="location.screen" mat-card-image class="location-screen" [src]="location.screen">
     <mat-card-content fxLayoutGap="15px">
 
-        <mat-table *ngIf="location.reminders.length > 0" [dataSource]="location.reminders">
+        <mat-table *ngIf="location.reminders.length > 0" [dataSource]="location.reminders" class="reminders-list">
 
             <!-- Date -->
             <ng-container matColumnDef="date">
@@ -57,11 +57,16 @@
 
         <form *ngIf="location._id && location._id.toString()" (ngSubmit)="addReminder(location)"
               fxLayoutAlign="space-around center" fxLayoutGap="20px">
-            <mat-form-field color="accent" fxFlex>
+            <mat-form-field class="add-reminder-form" fxFlex>
                 <mat-label>Ajouter un rappel</mat-label>
-                <input matInput placeholder="Date" [formControl]="locationForms[location._id.toString()]">
+                <input matInput placeholder="Date" [ngxMatDatetimePicker]="datePicker" [min]="today"
+                       [formControl]="locationForms[location._id.toString()]">
+                <ngx-mat-datetime-picker #datePicker [showSeconds]="false"></ngx-mat-datetime-picker>
+                <mat-datepicker-toggle matSuffix [for]="$any(datePicker)">
+                    <mat-icon>today</mat-icon>
+                </mat-datepicker-toggle>
             </mat-form-field>
-            <button mat-flat-button [disabled]="!locationForms[location._id.toString()]?.value || true" color="primary"
+            <button mat-flat-button [disabled]="!locationForms[location._id.toString()]?.value" color="primary"
                     type="submit">Ajouter</button>
         </form>
 

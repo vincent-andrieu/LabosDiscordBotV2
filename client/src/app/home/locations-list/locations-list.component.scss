@@ -38,5 +38,13 @@
 }
 
 .mat-column-actions {
-    max-width: 60px;
+    max-width: 30px;
+}
+
+.reminders-list {
+    padding-bottom: 20px;
+}
+
+.add-reminder-form ::ng-deep .mat-form-field-wrapper {
+    padding-bottom: 0;
 }

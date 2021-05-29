@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgxMatDatetimePickerModule, NgxMatNativeDateModule, NgxMatTimepickerModule } from '@angular-material-components/datetime-picker';
 
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -20,6 +21,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 import { HomeComponent } from './home.component';
 import { LabosListComponent } from './labos-list/labos-list.component';
@@ -46,6 +48,10 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
         FormsModule,
         ReactiveFormsModule,
 
+        NgxMatDatetimePickerModule,
+        NgxMatTimepickerModule,
+        NgxMatNativeDateModule,
+
         MatSidenavModule,
         MatTabsModule,
         MatBadgeModule,
@@ -59,7 +65,12 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
         MatExpansionModule,
         MatDialogModule,
         MatTableModule,
-        MatSelectModule
+        MatSelectModule,
+        MatDatepickerModule
+    ],
+    providers: [
+        { provide: LOCALE_ID, useValue: 'fr' },
+        { provide: MAT_DATE_LOCALE, useValue: 'fr-FR' }
     ]
 })
 export class HomeModule {}
