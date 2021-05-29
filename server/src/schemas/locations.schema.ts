@@ -82,13 +82,14 @@ export class LocationSchema {
             this._model.findByIdAndUpdate(location._id, location)
                 .then(() => {
                     this.getById(location).then((editedLoc: CLocation) => {
+                        this.startClock(editedLoc);
                         Sockets.server?.emit('location.edit', editedLoc);
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.EDIT, "Location **" + editedLoc.name + "** modifiée", userId)
-                            .setDescription("Le " + location.getHumanizeDate() + "\nDans " + location.getDateDuration());
-                        if (location.screen) {
-                            embedMessage.setImage(location.screen);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(editedLoc.server, EEmbedMsgColors.EDIT, "Location **" + editedLoc.name + "** modifiée", userId)
+                            .setDescription("Le " + editedLoc.getHumanizeDate() + "\nDans " + editedLoc.getDateDuration());
+                        if (editedLoc.screen) {
+                            embedMessage.setImage(editedLoc.screen);
                         }
-                        location.server.defaultChannel?.send(embedMessage);
+                        editedLoc.server.defaultChannel?.send(embedMessage);
                         resolve(editedLoc);
                     });
                 })
@@ -351,12 +352,12 @@ export class LocationSchema {
                 }
                 let embedMessage: MessageEmbed = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.DEL, "La location est finie");
                 if (location.date.getTime() !== reminder.getTime()) {
-                    embedMessage = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.INFO, "La location se finie bientôt");
+                    embedMessage = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.INFO, "La location se finie dans **" + loc.getDateDuration() + "**");
                     this.deleteReminder(location, reminder, undefined, false);
                 } else {
                     this.delete(location, "Location finie", undefined, false);
                 }
-                embedMessage.addField(loc.name, `Le **${loc.getHumanizeDate()}**` + (location.date.getTime() >= reminder.getTime() ? `\nDans **${loc.getDateDuration()}**` : ""), true);
+                embedMessage.addField("**" + loc.name + "**", `Le **${loc.getHumanizeDate()}**`, true);
                 if (loc.screen) {
                     embedMessage.setImage(loc.screen);
                 }
