@@ -36,7 +36,6 @@
             border-style: hidden;
         }
         border: solid map-get($accent, default);
-        border-width: 1px unset 3px 0;
         border-left-width: 0;
     }
 }
