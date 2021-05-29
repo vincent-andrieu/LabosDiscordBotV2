@@ -55,7 +55,7 @@
             </mat-row>
         </mat-table>
 
-        <form *ngIf="location._id" (ngSubmit)="addReminder(location)"
+        <form *ngIf="location._id && location._id.toString()" (ngSubmit)="addReminder(location)"
               fxLayoutAlign="space-around center" fxLayoutGap="20px">
             <mat-form-field color="accent" fxFlex>
                 <mat-label>Ajouter un rappel</mat-label>
