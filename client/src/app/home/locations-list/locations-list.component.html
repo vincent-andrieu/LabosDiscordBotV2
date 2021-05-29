@@ -59,7 +59,8 @@
               fxLayoutAlign="space-around center" fxLayoutGap="20px">
             <mat-form-field class="add-reminder-form" fxFlex>
                 <mat-label>Ajouter un rappel</mat-label>
-                <input matInput placeholder="Date" [ngxMatDatetimePicker]="datePicker" [min]="today"
+                <input matInput placeholder="Date" [ngxMatDatetimePicker]="datePicker"
+                       [min]="today" [max]="location.date"
                        [formControl]="locationForms[location._id.toString()]">
                 <ngx-mat-datetime-picker #datePicker [showSeconds]="false"></ngx-mat-datetime-picker>
                 <mat-datepicker-toggle matSuffix [for]="$any(datePicker)">
