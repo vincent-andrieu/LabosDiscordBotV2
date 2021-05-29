@@ -100,6 +100,7 @@ export class LocationsListComponent {
                 this.locations.forEach((loc: CLocation) => {
                     if (loc._id) {
                         this.locationForms[loc._id.toString()] = new FormControl();
+                        loc.reminders.sort((a: Date, b: Date) => new Date(a).getTime() - new Date(b).getTime());
                     }
                 });
                 this.isLoading = false;
