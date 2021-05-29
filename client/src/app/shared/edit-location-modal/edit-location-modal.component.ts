@@ -23,7 +23,7 @@ export class EditLocationModalComponent  {
         name: new FormControl(this.data.location?.name || "", [
             Validators.required,
             this._validatorsService.doesHaveSpacesValidator(),
-            this._validatorsService.doesAlreadyExistValidator(this.data.pageStatus, this.data.list, this.data.location?.name)
+            this._validatorsService.doesAlreadyExistValidator(EPageStatus.LOCATIONS, this.data.list, this.data.location?.name)
         ]),
         date: new FormControl(this.data.location?.date, [Validators.required]),
         screen: new FormControl(this.data.location?.screen),
@@ -37,8 +37,7 @@ export class EditLocationModalComponent  {
         @Inject(MAT_DIALOG_DATA) public data: {
             isCreate: boolean,
             location?: CLocation,
-            list: Array<CLocation>,
-            pageStatus: EPageStatus
+            list: Array<CLocation>
         },
         private _validatorsService: ValidatorsService,
         private _snackbarService: SnackbarService,

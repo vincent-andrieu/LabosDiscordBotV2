@@ -110,8 +110,7 @@ export class LocationsListComponent {
             data: {
                 isCreate: false,
                 location: location,
-                list: this.locations,
-                pageStatus: EPageStatus.LOCATIONS
+                list: this.locations
             }
         });
     }

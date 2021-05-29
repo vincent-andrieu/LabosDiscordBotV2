@@ -3,11 +3,14 @@ import { MatDialog } from '@angular/material/dialog';
 
 import { LaboratoryService } from '@services/laboratory.service';
 import { StockService } from '@services/stock.service';
+import { LocationService } from '@services/location.service';
 import { EPageStatus } from '@interfaces/root.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
+import { CLocation } from '@interfaces/location.class';
 import { CreateAreaModalComponent } from '@shared/create-area-modal/create-area-modal.component';
 import { SettingsModalComponent } from '@shared/settings-modal/settings-modal.component';
+import { EditLocationModalComponent } from '@shared/edit-location-modal/edit-location-modal.component';
 
 @Component({
     selector: 'app-sidenav',
@@ -22,7 +25,8 @@ export class SidenavComponent {
     constructor(
         private _dialog: MatDialog,
         private _laboratoryService: LaboratoryService,
-        private _stockService: StockService
+        private _stockService: StockService,
+        private _locationService: LocationService
     ) {}
 
     public openSettingsModal(): void {
@@ -32,6 +36,19 @@ export class SidenavComponent {
     }
 
     public addAreaModal(): void {
+        if (this.pageStatus === EPageStatus.LOCATIONS) {
+            this._locationService.get().then((result: Array<CLocation>) =>
+                this._dialog.open(EditLocationModalComponent, {
+                    minWidth: '40%',
+                    data: {
+                        isCreate: true,
+                        list: result
+                    }
+                })
+            );
+            return;
+        }
+
         const pageStatusService = this.pageStatus === EPageStatus.LABOS ? this._laboratoryService : this._stockService;
 
         pageStatusService.get().then((result: Array<CLaboratory | CStock>) =>
