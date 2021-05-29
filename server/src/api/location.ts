@@ -35,7 +35,7 @@ export class LocationHttp {
 
             this._locationSchema.delete(new CLocation(location), undefined, atob(userId)).then(() => {
                 response.send(location);
-            }).catch((err) => response.send(err));
+            }).catch((err) => response.status(500).send(err));
         });
 
         // Edit location
