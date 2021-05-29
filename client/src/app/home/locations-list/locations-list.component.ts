@@ -33,8 +33,9 @@ export class LocationsListComponent {
         this._updateLocations();
 
         _socket.on(`location.add`, (location: ILocation) => {
-            if ((location.server._id || location.server) === this._serverService.getCurrentServerId()) {
+            if (location._id && (location.server._id || location.server) === this._serverService.getCurrentServerId()) {
                 this.locations.push(new CLocation(location));
+                this.locationForms[location._id.toString()] = new FormControl();
             }
         });
 
