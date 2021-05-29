@@ -105,11 +105,12 @@ export class LocationSchema {
                     }
 
                     if (doesPrintMsg) {
-                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Location **" + location.name + "** supprimée", userId);
+                        const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.DEL, "Location **" + location.name + "** supprimée", userId)
+                            .setDescription(reason || "")
+                            .addField("Le **" + location.getHumanizeDate() + "**", "Dans **" + location.getDateDuration() + "**");
                         if (location.screen) {
                             embedMessage.setImage(location.screen);
                         }
-                        embedMessage.addField(location.getHumanizeDate(), reason || "");
                         location.server.defaultChannel?.send(embedMessage);
                     }
                     Sockets.server?.emit('location.del', location);
