@@ -85,7 +85,7 @@ export class LocationSchema {
                         this.startClock(editedLoc);
                         Sockets.server?.emit('location.edit', editedLoc);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(editedLoc.server, EEmbedMsgColors.EDIT, "Location **" + editedLoc.name + "** modifiée", userId)
-                            .setDescription("Le " + editedLoc.getHumanizeDate() + "\nDans " + editedLoc.getDateDuration());
+                            .setDescription("Le **" + editedLoc.getHumanizeDate() + "**\nDans **" + editedLoc.getDateDuration() + "**");
                         if (editedLoc.screen) {
                             embedMessage.setImage(editedLoc.screen);
                         }
