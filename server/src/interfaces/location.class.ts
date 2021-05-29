@@ -16,7 +16,7 @@ export class CLocation extends CServerModel implements ILocation {
         super(loc);
 
         this.name = loc.name;
-        this.date = loc.date;
+        this.date = new Date(loc.date);
         this.screen = loc.screen || "";
         this.reminders = loc.reminders || [];
         this.tag = loc.tag || "";
