@@ -1,8 +1,9 @@
 import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ILaboratory } from '@global/interfaces/laboratory.interface';
 
+import { EDrugsList, EStuffList } from '@global/interfaces/drug-stuff.interface';
+import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { EPageStatus } from '@interfaces/root.interface';
 import { CStock } from '@interfaces/stock.class';
@@ -17,6 +18,8 @@ import { ValidatorsService } from '@services/validators.service';
 })
 export class EditAreaModalComponent {
     public ePageStatus = EPageStatus;
+    public eDrugList = EDrugsList;
+    public eStuffList = EStuffList;
     public form = new FormGroup({
         name: new FormControl(this.data.area.name, [
             Validators.required,

@@ -25,17 +25,17 @@
             <mat-label>Drogue</mat-label>
             <mat-select formControlName="drug" required>
                 <mat-optgroup label="Drogues">
-                    <mat-option value="coke">Coke</mat-option>
-                    <mat-option value="meth">Meth</mat-option>
-                    <mat-option value="weed">Weed</mat-option>
+                    <mat-option [value]="eDrugList.COKE">Coke</mat-option>
+                    <mat-option [value]="eDrugList.METH">Meth</mat-option>
+                    <mat-option [value]="eDrugList.WEED">Weed</mat-option>
                 </mat-optgroup>
                 <mat-optgroup *ngIf="data.pageStatus === ePageStatus.STOCKS" label="Matières premières">
-                    <mat-option value="coca">Coca</mat-option>
-                    <mat-option value="acide">Acide</mat-option>
-                    <mat-option value="methy">Methylamine</mat-option>
-                    <mat-option value="phosphore">Phosphore</mat-option>
-                    <mat-option value="cannabis">Cannabis</mat-option>
-                    <mat-option value="terre">Terre</mat-option>
+                    <mat-option [value]="eStuffList.COCA">Coca</mat-option>
+                    <mat-option [value]="eStuffList.ACIDE">Acide</mat-option>
+                    <mat-option [value]="eStuffList.METHY">Methylamine</mat-option>
+                    <mat-option [value]="eStuffList.PHOSPHORE">Phosphore</mat-option>
+                    <mat-option [value]="eStuffList.PLANT">Plant</mat-option>
+                    <mat-option [value]="eStuffList.TERRE">Terre</mat-option>
                 </mat-optgroup>
             </mat-select>
             <mat-error *ngIf="form.controls.drug.hasError('drugOrStuff')">

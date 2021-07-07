@@ -23,7 +23,7 @@ export const GlobalConfig = {
             [EDrugsList.WEED]: {
                 table: 6,
                 recipe : [
-                    { name: EStuffList.CANNABIS, quantity: 150, needAll: false },
+                    { name: EStuffList.PLANT, quantity: 150, needAll: false },
                     { name: EStuffList.TERRE, quantity: 72, needAll: true }
                 ]
             }

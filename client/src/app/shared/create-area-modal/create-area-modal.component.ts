@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+import { EDrugsList, EStuffList } from '@global/interfaces/drug-stuff.interface';
 import { ValidatorsService } from '@services/validators.service';
 import { ServerService } from '@services/server.service';
 import { LaboratoryService } from '@services/laboratory.service';
@@ -32,6 +33,8 @@ export class CreateAreaModalComponent {
     });
     public server?: CServer;
     public ePageStatus = EPageStatus;
+    public eDrugList = EDrugsList;
+    public eStuffList = EStuffList;
 
     constructor(
         private _dialogRef: MatDialogRef<CreateAreaModalComponent, void>,

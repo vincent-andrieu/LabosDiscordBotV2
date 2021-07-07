@@ -15,7 +15,7 @@ export enum EStuffList {
     ACIDE = 'acide',
     METHY = 'methy',
     PHOSPHORE = 'phosphore',
-    CANNABIS = 'cannabis',
+    PLANT = 'plant',
     TERRE = 'terre'
 }
 
@@ -24,6 +24,6 @@ export const EVStuffList = {
     ACIDE: 'acide',
     METHY: 'methy',
     PHOSPHORE: 'phosphore',
-    CANNABIS: 'cannabis',
+    PLANT: 'plant',
     TERRE: 'terre'
 };
