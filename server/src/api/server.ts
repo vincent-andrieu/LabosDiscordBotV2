@@ -30,7 +30,7 @@ export class ServerHttp {
                 new DiscordService(this._client).isUserInServer(serverId, atob(userId) || '')
             ])
                 .then((result) => {
-                    response.send(result[0] && result[1]);
+                    response.send(userId ? result[0] && result[1] : result[0]);
                 }).catch((err) => response.status(500).send(err));
         });
 
