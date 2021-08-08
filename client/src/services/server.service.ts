@@ -34,12 +34,13 @@ export class ServerService {
         });
     }
 
-    public login(serverId: string, serverPassword: string): Promise<boolean> {
+    public login(serverId: string, serverPassword: string, userId = this._discordService.getUserId()): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this._http.get<boolean>(`${this._serverUrl}/login`, {
                 params: {
                     serverId: serverId,
-                    password: serverPassword
+                    password: serverPassword,
+                    userId: userId || ''
                 }
             }).subscribe((isValid: boolean) => {
                 if (isValid) {

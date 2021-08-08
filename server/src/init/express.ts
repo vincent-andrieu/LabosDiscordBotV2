@@ -37,7 +37,7 @@ export default class ExpressServer {
         new LaboratoryHttp(this._app, socketServer);
         new StockHttp(this._app, socketServer);
         new ProductionHttp(this._app, socketServer);
-        new ServerHttp(this._app, socketServer);
+        new ServerHttp(this._app, socketServer, this._client);
         new LocationHttp(this._app, socketServer);
     }
 

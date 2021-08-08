@@ -1,10 +1,11 @@
 import { Client, Role } from 'discord.js';
 import DiscordOauth2 from 'discord-oauth2';
 
+import { DiscordRole, DiscordUser } from '@global/interfaces/discord.interface';
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
 import { serverConfig } from '../server.config';
-import { DiscordRole, DiscordUser } from '@global/interfaces/discord.interface';
+import DiscordBot from '../init/bot';
 
 export class DiscordService {
     private _serverSchema: ServerSchema = new ServerSchema();
@@ -97,5 +98,22 @@ export class DiscordService {
         }));
 
         return result;
+    }
+
+    public isUserInServer(serverId: string, userId: string): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            if (!serverId || !userId) {
+                return resolve(false);
+            }
+
+            const guild = DiscordBot.getServerFromId(serverId);
+
+            if (!guild) {
+                return resolve(false);
+            }
+            guild.members.fetch(userId)
+                .then((guildMember) => resolve(!!guildMember))
+                .catch(() => resolve(false));
+        });
     }
 }

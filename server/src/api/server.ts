@@ -1,16 +1,18 @@
+import { Client } from 'discord.js';
 import { Express } from 'express';
 import { Server } from 'socket.io';
 
+import { atob } from '@global/utils';
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
-import { atob } from '@global/utils';
+import { DiscordService } from '@services/discord.service';
 
 export class ServerHttp {
 
     private _urlBase = '/server';
     private _serverSchema: ServerSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
+    constructor(private _app: Express, private _socketServer: Server, private _client: Client) {
         this._serverSchema = new ServerSchema();
         this._init();
     }
@@ -21,10 +23,15 @@ export class ServerHttp {
         this._app.get(`${this._urlBase}/login`, (request, response) => {
             const serverId: string = request.query.serverId as string;
             const password: string = request.query.password as string;
+            const userId: string = request.query.userId as string;
 
-            this._serverSchema.login(serverId, password).then((result: boolean) => {
-                response.send(result);
-            }).catch((err) => response.send(err));
+            Promise.all([
+                this._serverSchema.login(serverId, password),
+                new DiscordService(this._client).isUserInServer(serverId, atob(userId) || '')
+            ])
+                .then((result) => {
+                    response.send(result[0] && result[1]);
+                }).catch((err) => response.status(500).send(err));
         });
 
         // Set reminder
