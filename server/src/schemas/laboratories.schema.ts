@@ -368,4 +368,13 @@ export class LaboratorySchema {
 
         });
     }
+
+    public delStocks(stock: CStock): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            this._model.updateMany({ server: stock.server._id }, { $pull: { stocks: stock._id } })
+                .then(() => resolve())
+                .catch((err) => reject(err));
+
+        });
+    }
 }

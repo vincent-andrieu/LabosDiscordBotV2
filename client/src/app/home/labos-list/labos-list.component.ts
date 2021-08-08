@@ -8,6 +8,7 @@ import { GlobalConfig } from '@global/config';
 import { IServer } from '@global/interfaces/server.interface';
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
 import { IProductions } from '@global/interfaces/production.interface';
+import { IStock } from '@global/interfaces/stock.interface';
 import { LaboratoryService } from '@services/laboratory.service';
 import { ProductionService } from '@services/production.service';
 import { ServerService } from '@services/server.service';
@@ -134,6 +135,14 @@ export class LabosListComponent {
                     foundProd.quantity = prod.quantity || 0;
                     foundProd.finishDate = prod.finishDate;
                 }
+            }
+        });
+
+        _socket.on(`stock.del`, (stock: IStock) => {
+            if (stock.server._id === this._serverService.getCurrentServerId()) {
+                this.laboratories.forEach((labo) =>
+                    labo.stocks.remove((stockElem) => stockElem._id?.toString() === stock._id?.toString())
+                );
             }
         });
     }

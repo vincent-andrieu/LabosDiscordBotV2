@@ -9,6 +9,7 @@ import { CStock } from "@interfaces/stock.class";
 import DiscordBot, { EEmbedMsgColors } from '../init/bot';
 import Sockets from '../init/sockets';
 import { ServerSchema } from './servers.schema';
+import { LaboratorySchema } from './laboratories.schema';
 
 const stockSchema = new mongoose.Schema({
     server: { type: String, ref: 'servers' },
@@ -169,26 +170,29 @@ export class StockSchema {
 
     public delete(stock: CStock, reason?: string, userId?: string): Promise<number> {
         return new Promise<number>((resolve, reject) => {
-            this._model.deleteOne({ server: stock.server._id, _id: stock._id })
-                .then((res) => {
-                    if (!res.deletedCount || res.deletedCount <= 0) {
-                        return reject("L'entrepôt " + stock.name + " n'existe pas");
-                    }
 
-                    const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Entrepôt supprimé", userId);
-                    if (reason) {
-                        embedMessage.setDescription(reason);
-                    }
-                    embedMessage.addField("**" + stock.name + "**", stock.quantity.toString() + " kg de " + stock.drug);
-                    if (stock.screen) {
-                        embedMessage.setImage(stock.screen);
-                    }
-                    stock.server.defaultChannel?.send(embedMessage);
+            Promise.all([
+                this._model.deleteOne({ server: stock.server._id, _id: stock._id }),
+                new LaboratorySchema().delStocks(stock)
+            ]).then((res) => {
+                if (!res[0].deletedCount || res[0].deletedCount <= 0) {
+                    return reject("L'entrepôt " + stock.name + " n'existe pas");
+                }
 
-                    Sockets.server?.emit('stock.del', stock);
+                const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.DEL, "Entrepôt supprimé", userId);
+                if (reason) {
+                    embedMessage.setDescription(reason);
+                }
+                embedMessage.addField("**" + stock.name + "**", stock.quantity.toString() + " kg de " + stock.drug);
+                if (stock.screen) {
+                    embedMessage.setImage(stock.screen);
+                }
+                stock.server.defaultChannel?.send(embedMessage);
 
-                    resolve(res.deletedCount);
-                })
+                Sockets.server?.emit('stock.del', stock);
+
+                resolve(res[0].deletedCount);
+            })
                 .catch((err) => reject(err));
         });
     }
