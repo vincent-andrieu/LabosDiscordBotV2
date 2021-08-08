@@ -47,7 +47,11 @@ export class OnlineUsersService {
                     return this._addUnknownUser(socket, guild);
                 }
                 this._addDiscordUser(socket, guild, member);
-            });
+            })
+                .catch(() => {
+                    console.warn(`User (${userId}) isn't in the guild`);
+                    this._addUnknownUser(socket, guild);
+                });
         } else {
             this._addDiscordUser(socket, guild, member);
         }
