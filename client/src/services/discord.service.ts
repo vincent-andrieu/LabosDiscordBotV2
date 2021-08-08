@@ -38,13 +38,14 @@ export class DiscordService {
 
     public setToken(code: string, serverId: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            this._http.get<string>(`${this._serverUrl}/set`, {
+            this._http.get(`${this._serverUrl}/set`, {
                 params: {
                     serverId: serverId,
                     code: code
-                }
+                },
+                responseType: 'text'
             }).subscribe((userId: string) => {
-                this._setUserIdCookie(userId.toString());
+                this._setUserIdCookie(userId);
                 resolve();
             },
             (err) => {

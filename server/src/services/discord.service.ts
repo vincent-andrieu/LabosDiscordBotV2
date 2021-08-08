@@ -55,7 +55,7 @@ export class DiscordService {
                     .then((token) => {
                         this._discordOAuth.getUser(token.access_token)
                             .then((user) => {
-                                resolve(user.id);
+                                resolve(user.id.toString());
                                 this._discordOAuth.revokeToken(
                                     token.access_token,
                                     Buffer.from(`${serverConfig.bot.clientId}:${serverConfig.bot.clientSecret}`).toString("base64")
