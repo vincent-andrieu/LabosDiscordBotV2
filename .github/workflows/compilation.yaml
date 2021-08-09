@@ -1,0 +1,31 @@
+name: Check compilation
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  client:
+    runs-on: ubuntu-20.04
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Run
+      - name: Run compilation
+        working-directory: client
+        run: npm run deploy
+
+  server:
+    runs-on: ubuntu-20.04
+    steps:
+      # Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Run
+      - name: Run compilation
+        working-directory: server
+        run: npm run deploy
