@@ -347,7 +347,7 @@ export class LocationSchema {
 
         setTimeout(() => {
             this.getById(location).then((loc: CLocation) => {
-                if (!this.doesReminderExist(loc, reminder)) {
+                if (!this._doesReminderExist(loc, reminder)) {
                     return;
                 }
                 let embedMessage: MessageEmbed = DiscordBot.getDefaultEmbedMsg(loc.server, EEmbedMsgColors.DEL, "La location est finie");
@@ -366,7 +366,7 @@ export class LocationSchema {
         }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());
     }
 
-    private doesReminderExist(location: CLocation, reminder: Date): boolean {
+    private _doesReminderExist(location: CLocation, reminder: Date): boolean {
         if (location.date.getTime() === reminder.getTime()) {
             return true;
         }
