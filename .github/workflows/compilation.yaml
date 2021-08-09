@@ -20,8 +20,7 @@ jobs:
 
       # Run
       - name: Run compilation
-        working-directory: client
-        run: npm run deploy
+        run: npm i && npm run deploy --prefix client
 
   server:
     runs-on: ubuntu-20.04
@@ -37,5 +36,4 @@ jobs:
 
       # Run
       - name: Run compilation
-        working-directory: server
-        run: npm run deploy
+        run: npm i && npm run deploy --prefix server
