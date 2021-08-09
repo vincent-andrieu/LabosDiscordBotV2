@@ -8,11 +8,19 @@ on:
 jobs:
   client:
     runs-on: ubuntu-20.04
-    container: mongo-express:1.0.0-alpha.4
+    strategy:
+      matrix:
+        mongodb-version: ['4.4.0']
     steps:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
+
+      # Install
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.6.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       # Run
       - name: Run compilation
@@ -21,11 +29,19 @@ jobs:
 
   server:
     runs-on: ubuntu-20.04
-    container: mongo-express:1.0.0-alpha.4
+    strategy:
+      matrix:
+        mongodb-version: ['4.4.0']
     steps:
       # Checkout code
       - name: Checkout code
         uses: actions/checkout@v2
+
+      # Install
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.6.0
+        with:
+          mongodb-version: ${{ matrix.mongodb-version }}
 
       # Run
       - name: Run compilation
