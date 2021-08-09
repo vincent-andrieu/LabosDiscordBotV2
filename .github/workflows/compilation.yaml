@@ -7,7 +7,7 @@ on:
 
 jobs:
   client:
-    runs-on: ubuntu-20.04
+    container: mongo:4.4
     steps:
       # Checkout code
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
         run: npm run deploy
 
   server:
-    runs-on: ubuntu-20.04
+    container: mongo:4.4
     steps:
       # Checkout code
       - name: Checkout code
