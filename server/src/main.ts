@@ -7,30 +7,23 @@ import { EXIT_ERROR } from "@global/utils";
 import { CServer } from "@interfaces/server.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { ServerSchema } from "@schemas/servers.schema";
+import { LocationSchema } from "@schemas/locations.schema";
 import { CommandsList } from "@commands/commands";
 import { help } from "@commands/help/help";
 import DiscordBot from "./init/bot";
 import DataBase from "./init/database";
 import ExpressServer from "./init/express";
 import { serverConfig } from "./server.config";
-import { LocationSchema } from "@schemas/locations.schema";
 
-const discordBot = new DiscordBot();
-const database = new DataBase();
-
-database.connect()
-    .then(() =>
-
-        discordBot.connect().then((client: Client) => {
-            new LocationSchema().init();
-            new ExpressServer(express(), client);
-            startBot(client);
-        }).catch((err) => {
-            console.error(err);
-            exit(EXIT_ERROR);
-        })
-
-    )
+Promise.all([
+    DataBase.connect(),
+    new DiscordBot().connect()
+])
+    .then((result) => {
+        new LocationSchema().init();
+        new ExpressServer(express(), result[1]);
+        startBot(result[1]);
+    })
     .catch((err) => {
         console.error(err);
         exit(EXIT_ERROR);

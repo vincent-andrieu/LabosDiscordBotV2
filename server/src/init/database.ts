@@ -2,9 +2,9 @@ import mongoose = require('mongoose');
 
 import { serverConfig } from "../server.config";
 
-export default class DataBase {
+export default {
 
-    public connect(): Promise<void> {
+    connect(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             let uris = `mongodb://${serverConfig.database.host}:${serverConfig.database.port}/${serverConfig.database.name}`;
 
@@ -30,4 +30,4 @@ export default class DataBase {
             });
         });
     }
-}
+};
