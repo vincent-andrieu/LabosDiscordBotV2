@@ -2,7 +2,7 @@ export interface DiscordUser {
     id: string;
     name: string;
     avatar: string;
-    color: string;
+    color?: string;
 }
 
 export interface DiscordRole {

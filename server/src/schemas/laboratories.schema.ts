@@ -231,6 +231,10 @@ export class LaboratorySchema {
         });
     }
 
+    public async deleteByServer(server: CServer): Promise<void> {
+        await this._model.deleteMany({ server: server._id });
+    }
+
     /**
      * Set default laboratory by name and checking if it exist
      * @param  {CServer} server

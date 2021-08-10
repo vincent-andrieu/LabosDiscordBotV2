@@ -7,7 +7,6 @@ export interface IServer {
     _id: string;
     url?: string;
     password?: string;
-    //activity: string;
     defaultLabo?: ILaboratory | string;
     defaultChannel: TextChannel | undefined | string;
     reminder?: number;

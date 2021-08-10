@@ -133,6 +133,10 @@ export class LocationSchema {
         });
     }
 
+    public async deleteByServer(server: CServer): Promise<void> {
+        await this._model.deleteMany({ server: server._id });
+    }
+
     public getAll(): Promise<Array<CLocation>> {
         return new Promise<Array<CLocation>>((resolve, reject) => {
             this._model.find({})

@@ -207,6 +207,10 @@ export class StockSchema {
         });
     }
 
+    public async deleteByServer(server: CServer): Promise<void> {
+        await this._model.deleteMany({ server: server._id });
+    }
+
     public addStockQty(stock: CStock, quantity: number, reason?: string, userId?: string, doesPrintMsg = true): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 

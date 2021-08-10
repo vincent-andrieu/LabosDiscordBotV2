@@ -56,6 +56,10 @@ export class ServerSchema {
         });
     }
 
+    public async delete(server: CServer): Promise<void> {
+        this._model.findOneAndDelete({ _id: server._id, password: server.password });
+    }
+
     /**
      * Auto convert defaultLabo & defaultChannel to their id
      * @param  {CServer} server
@@ -75,6 +79,12 @@ export class ServerSchema {
                 .catch((err) => reject(err));
 
         });
+    }
+
+    public async getAll(): Promise<Array<CServer>> {
+        const result = await this._model.find({}) as Array<unknown> as Array<IServer>;
+
+        return result.map((server) => new CServer(server));
     }
 
     public getById(id: string): Promise<CServer> {

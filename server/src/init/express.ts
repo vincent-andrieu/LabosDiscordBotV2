@@ -7,6 +7,7 @@ import { Server } from 'socket.io';
 import { serverConfig } from '../server.config';
 import Sockets from '../init/sockets';
 import { DiscordHttp } from '@api/discord';
+import { AdminHttp } from '@api/admin';
 import { ServerHttp } from '@api/server';
 import { LaboratoryHttp } from '@api/laboratory';
 import { StockHttp } from '@api/stock';
@@ -33,6 +34,7 @@ export default class ExpressServer {
     }
 
     private _init(socketServer: Server): void {
+        new AdminHttp(this._app, socketServer);
         new DiscordHttp(this._app, socketServer, this._client);
         new LaboratoryHttp(this._app, socketServer);
         new StockHttp(this._app, socketServer);

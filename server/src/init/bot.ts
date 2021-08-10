@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 
 import { CServer } from "@interfaces/server.class";
 import { serverConfig } from "../server.config";
+import { DiscordUser } from "@global/interfaces/discord.interface";
 
 export enum EEmbedMsgColors {
     ADD = '#00ff00',
@@ -22,21 +23,20 @@ export default class DiscordBot {
 
             client.on('error', console.error);
             client.on('warn', console.warn);
-            client.login(this.getBotToken());
+            client.login(this._getBotToken());
 
             client.on('ready', () => {
                 console.info("Bot ready !");
                 if (!client.user) {
                     reject("Bot user is null");
                 }
-                // client.user?.setActivity(BotConfig.bot.activity);
                 DiscordBot.client = client;
                 resolve(client);
             });
         });
     }
 
-    private getBotToken(): string {
+    private _getBotToken(): string {
         return env[serverConfig.bot.token.env] ||  readFileSync(serverConfig.bot.token.file, 'utf-8');
     }
 
@@ -50,6 +50,19 @@ export default class DiscordBot {
 
     public static getMemberFromGuild(guild: Guild, memberId: string): GuildMember | undefined {
         return guild.members.cache.get(memberId);
+    }
+
+    public static getDiscordUserFromId(userId: string): DiscordUser | undefined {
+        const user = this.client.users.cache.get(userId);
+
+        if (!user) {
+            return undefined;
+        }
+        return {
+            id: user.id,
+            name: user.username,
+            avatar: user.displayAvatarURL()
+        };
     }
 
     public static getGuildUsernameFromId(guild: Guild | undefined, userId: string): string {
@@ -81,5 +94,11 @@ export default class DiscordBot {
 
     public static putError(channel: TextChannel, msg: string): Promise<Message> {
         return channel.send("```diff\n- Erreur : " + msg + "\n```");
+    }
+
+    public static async leaveGuild(server: CServer): Promise<Guild> {
+        const guild = await this.client.guilds.fetch(server._id);
+
+        return guild.leave();
     }
 }

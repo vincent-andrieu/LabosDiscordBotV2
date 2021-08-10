@@ -327,6 +327,10 @@ export class ProductionSchema {
         });
     }
 
+    public async deleteByServer(server: CServer): Promise<void> {
+        await this._model.deleteMany({ server: server._id });
+    }
+
     public addStockQty(prod: CProductions, quantity: number): Promise<CProductions> {
         return new Promise<CProductions>((resolve, reject) => {
 
