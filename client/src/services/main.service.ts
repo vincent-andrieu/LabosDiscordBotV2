@@ -15,8 +15,8 @@ export class MainService<C, I> {
     protected _snackbarService: SnackbarService = this._injector.get(SnackbarService);
     protected _router: Router = this._injector.get(Router);
 
-    constructor(readonly _serverUrlBase: string, private _ctor: Type<C>, protected _injector: Injector) {
-        this._serverUrl = `${environment.server.url}/${_serverUrlBase}`;
+    constructor(readonly serverUrlBase: string, private _ctor: Type<C>, protected _injector: Injector) {
+        this._serverUrl = `${environment.server.url}/${serverUrlBase}`;
     }
 
     public add(param: C): Promise<C> {
