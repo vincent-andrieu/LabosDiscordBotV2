@@ -4,7 +4,6 @@ import { Socket } from 'ngx-socket-io';
 import { DiscordUser } from '@global/interfaces/discord.interface';
 import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
-import { CServer } from '@interfaces/server.class';
 
 @Component({
     selector: 'app-online-users-list',
@@ -15,7 +14,7 @@ export class OnlineUsersListComponent {
     public userList: Array<DiscordUser | null> = [];
     public serverAvatar?: string;
 
-    constructor(private _socket: Socket, private _discordService: DiscordService, private _serverService: ServerService) {
+    constructor(_socket: Socket, private _discordService: DiscordService, private _serverService: ServerService) {
 
         this._serverService.getServerAvatar().then((avatar) => this.serverAvatar = avatar);
 
