@@ -24,7 +24,6 @@
         "@angular/platform-browser": "~11.2.1",
         "@angular/platform-browser-dynamic": "~11.2.1",
         "@angular/router": "~11.2.1",
-        "class-transformer": "^0.3.1",
         "discord.js": "^12.5.1",
         "moment": "^2.29.1",
         "ngx-cookie": "^5.0.1",

@@ -1,6 +1,5 @@
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injector } from "@angular/core";
-import { ClassType } from 'class-transformer/ClassTransformer';
+import { Injector, Type } from "@angular/core";
 
 import { environment } from "@environment";
 import { SnackbarService } from "./snackbar.service";
@@ -16,7 +15,7 @@ export class MainService<C, I> {
     protected _snackbarService: SnackbarService = this._injector.get(SnackbarService);
     protected _router: Router = this._injector.get(Router);
 
-    constructor(private _serverUrlBase: string, private _ctor: ClassType<C>, protected _injector: Injector) {
+    constructor(readonly _serverUrlBase: string, private _ctor: Type<C>, protected _injector: Injector) {
         this._serverUrl = `${environment.server.url}/${_serverUrlBase}`;
     }
 
