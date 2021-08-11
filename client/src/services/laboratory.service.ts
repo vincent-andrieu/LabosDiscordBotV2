@@ -16,7 +16,7 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
     constructor(
         protected _injector: Injector,
         protected _http: HttpClient,
-        private _socket: Socket,
+        _socket: Socket,
         private _serverService: ServerService
     ) {
         super('labo', CLaboratory, _injector);
