@@ -8,6 +8,7 @@ import { StockSchema } from "@schemas/stocks.schema";
 import { ServerSchema } from "@schemas/servers.schema";
 import { LocationSchema } from "@schemas/locations.schema";
 import { CommandsList } from "@commands/commands";
+import { serverConfig } from "server.config";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
 
 type CommandType = CCommand<LaboratorySchema | ProductionSchema | StockSchema | ServerSchema | LocationSchema>;
@@ -24,6 +25,7 @@ export function help(server: CServer, commandParam?: CommandType | string, userI
     }
     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, "HELP", userId);
 
+    embedMessage.setDescription(`Chaque commande commence par **${serverConfig.commands.prefix}** et n'est pas sensible aux majuscules/minuscules.`);
     CommandsList.forEach((cmd) => cmd.getHelp(embedMessage));
     return server.defaultChannel?.send(embedMessage);
 }
