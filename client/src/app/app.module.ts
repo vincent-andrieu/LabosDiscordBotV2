@@ -10,6 +10,8 @@ import { SocketIoConfig, SocketIoModule } from 'ngx-socket-io';
 
 import { MatFormFieldModule, MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatSnackBarModule, MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 import { environment } from '@environment';
 import { AppRoutingModule } from './app-routing.module';
@@ -17,13 +19,15 @@ import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthComponent } from './auth/auth.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 
 const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {} };
 
 @NgModule({
     declarations: [
         AppComponent,
-        AuthComponent
+        AuthComponent,
+        AdminPanelComponent
     ],
     imports: [
         BrowserModule,
@@ -39,6 +43,8 @@ const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {}
         ReactiveFormsModule,
         MatFormFieldModule,
         MatSnackBarModule,
+        MatButtonModule,
+        MatIconModule,
 
         HomeModule,
         SharedModule

@@ -6,9 +6,11 @@ import { Socket } from 'ngx-socket-io';
 import { DiscordService } from '@services/discord.service';
 import { SnackbarService } from '@services/snackbar.service';
 import { ServerService } from '@services/server.service';
+import { AdminService } from '@services/admin.service';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
 import { HomeComponent } from './home/home.component';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 
 @Injectable()
 class AuthGuard implements CanActivate {
@@ -25,6 +27,28 @@ class AuthGuard implements CanActivate {
                 this._snackbarService.openCustomError("Server ID ou password invalid");
                 return this._router.parseUrl(`${serverId}`);
             }
+        });
+    }
+}
+
+@Injectable()
+class AdminGuard implements CanActivate {
+    constructor(
+        private _router: Router,
+        private _snackbarService: SnackbarService,
+        private _adminService: AdminService
+    ) {}
+
+    canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+        return new Promise<boolean | UrlTree>((resolve, reject) => {
+            this._adminService.onInit$.subscribe(() => {
+                if (this._adminService.isAdmin) {
+                    resolve(true);
+                } else {
+                    this._snackbarService.openCustomError("Permission denied");
+                    resolve(this._router.parseUrl("/"));
+                }
+            }, (err) => reject(err));
         });
     }
 }
@@ -84,6 +108,7 @@ const routes: Routes = [
             discordAuth: DiscordAuthResolver
         }
     },
+    { path: 'admin', component: AdminPanelComponent, canActivate: [AdminGuard] },
     { path: ':serverId', component: AuthComponent },
     {
         path: ':serverId/:password',
@@ -105,6 +130,6 @@ const routes: Routes = [
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
-    providers: [AuthGuard, DiscordAuthResolver]
+    providers: [AuthGuard, AdminGuard, DiscordAuthResolver]
 })
 export class AppRoutingModule {}

@@ -6,6 +6,7 @@ import { Socket } from 'ngx-socket-io';
 import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
 import { SnackbarService } from '@services/snackbar.service';
+import { AdminService } from '@services/admin.service';
 
 @Component({
     selector: 'app-auth',
@@ -21,7 +22,8 @@ export class AuthComponent {
         private _socket: Socket,
         private _discordService: DiscordService,
         private _serverService: ServerService,
-        private _snackbarService: SnackbarService
+        private _snackbarService: SnackbarService,
+        private _adminService: AdminService
     ) {
         setTimeout(() => {
             if (this._router.url.substr(1).includes("/")) {
@@ -32,6 +34,10 @@ export class AuthComponent {
             this.loginForm.setControl('password', new FormControl("", Validators.required));
             this.isInit = true;
         }, 0);
+    }
+
+    public get isAdmin(): boolean {
+        return this._adminService.isAdmin;
     }
 
     public login(): void {
@@ -50,6 +56,10 @@ export class AuthComponent {
                 this._snackbarService.openCustomError("Server ID ou password invalid");
             }
         });
+    }
+
+    public openAdminPanel(): void {
+        this._router.navigateByUrl("/admin");
     }
 
 }

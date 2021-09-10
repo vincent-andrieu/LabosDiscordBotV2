@@ -2,14 +2,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Socket } from 'ngx-socket-io';
+import { Observable, Subject } from 'rxjs';
 
 import { environment } from '@environment';
 import { ERole, IUser } from '@global/interfaces/user.interface';
 import { IServer } from '@global/interfaces/server.interface';
+import { CServer } from '@interfaces/server.class';
 import { SnackbarService } from './snackbar.service';
 import { DiscordService } from './discord.service';
 import { ServerService } from './server.service';
-import { CServer } from '@interfaces/server.class';
 
 @Injectable({
     providedIn: 'root'
@@ -17,6 +18,7 @@ import { CServer } from '@interfaces/server.class';
 export class AdminService {
     private _serverUrl = `${environment.server.url}/admin`;
     private _user?: IUser;
+    private _onInit: Subject<void> = new Subject<void>();
 
     constructor(
         private _http: HttpClient,
@@ -34,8 +36,11 @@ export class AdminService {
                     userId: userId
                 }
             }).subscribe(
-                (result: IUser) => this._user = result,
-                (err: HttpErrorResponse) => console.error(err)
+                (result: IUser) => {
+                    this._user = result;
+                    this._onInit.next();
+                },
+                (err: HttpErrorResponse) => this._snackbarService.openError(err)
             );
         }
 
@@ -44,6 +49,10 @@ export class AdminService {
                 this._router.navigate([server._id]);
             }
         });
+    }
+
+    public get onInit$(): Observable<void> {
+        return this._onInit.asObservable();
     }
 
     public get isAdmin(): boolean {

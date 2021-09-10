@@ -5,7 +5,7 @@ import { CUser } from '@interfaces/user.class';
 import DiscordBot from '../init/bot';
 
 const userSchema = new mongoose.Schema({
-    discordUser: { type: String, required: true },
+    _id: { type: String, required: true },
     role: { type: String, required: true }
 }, {
     toObject: { virtuals: true },
@@ -27,12 +27,22 @@ export class UserSchema {
         await this._model.findByIdAndUpdate(user._id, user);
     }
 
-    public async getById(id: string): Promise<CUser> {
-        const result: IUser | undefined = await this._model.findById(id) as unknown as IUser | undefined;
+    /**
+     * Return undefined if the user doesn't exist.
+     *
+     * @param  {string} id
+     * @returns Promise
+     */
+    public getById(id: string): Promise<CUser | undefined> {
+        return new Promise<CUser | undefined>((resolve) => {
+            this._model.findById(id).then((result) => {
 
-        if (!result) {
-            throw "Le user (" + id.toString() + ") n'existe pas";
-        }
-        return new CUser(result);
+                if (!result) {
+                    resolve(undefined);
+                    return;
+                }
+                resolve(new CUser(result as unknown as IUser));
+            }).catch(() => resolve(undefined));
+        });
     }
 }

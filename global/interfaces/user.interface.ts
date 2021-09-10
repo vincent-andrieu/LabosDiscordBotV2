@@ -1,8 +1,5 @@
-import { IModel } from "./database.interface";
-import { DiscordUser } from "./discord.interface";
-
-export interface IUser extends IModel {
-    discordUser: DiscordUser | string | undefined;
+export interface IUser {
+    _id: string;
     role: ERole;
 }
 

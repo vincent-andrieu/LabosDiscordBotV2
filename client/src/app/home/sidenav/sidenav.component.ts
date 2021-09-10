@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 import { LaboratoryService } from '@services/laboratory.service';
 import { StockService } from '@services/stock.service';
 import { LocationService } from '@services/location.service';
+import { AdminService } from '@services/admin.service';
 import { EPageStatus } from '@interfaces/root.interface';
 import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
@@ -23,11 +25,17 @@ export class SidenavComponent {
     public ePageStatus = EPageStatus;
 
     constructor(
+        private _router: Router,
         private _dialog: MatDialog,
         private _laboratoryService: LaboratoryService,
         private _stockService: StockService,
-        private _locationService: LocationService
+        private _locationService: LocationService,
+        private _adminService: AdminService
     ) {}
+
+    public get isAdmin(): boolean {
+        return this._adminService.isAdmin;
+    }
 
     public openSettingsModal(): void {
         this._dialog.open(SettingsModalComponent, {

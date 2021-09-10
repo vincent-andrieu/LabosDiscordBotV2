@@ -86,7 +86,7 @@ export class AdminHttp {
      * @returns Promise
      */
     private async _isAdmin(userId: string): Promise<CUser | undefined> {
-        const user: CUser = await this._usersSchema.getById(atob(userId) || '');
+        const user: CUser | undefined = await this._usersSchema.getById(atob(userId) || '');
 
         if (!user || user.role !== ERole.ADMIN) {
             return undefined;
