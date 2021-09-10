@@ -40,16 +40,24 @@ class AdminGuard implements CanActivate {
     ) {}
 
     canActivate(): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-        return new Promise<boolean | UrlTree>((resolve, reject) => {
-            this._adminService.onInit$.subscribe(() => {
-                if (this._adminService.isAdmin) {
-                    resolve(true);
-                } else {
-                    this._snackbarService.openCustomError("Permission denied");
-                    resolve(this._router.parseUrl("/"));
-                }
-            }, (err) => reject(err));
-        });
+        if (this._adminService.isInit) {
+            return this._getRedirection();
+        } else {
+            return new Promise<boolean | UrlTree>((resolve, reject) => {
+                this._adminService.onInit$.subscribe(() =>
+                    resolve(this._getRedirection())
+                , (err) => reject(err));
+            });
+        }
+    }
+
+    private _getRedirection(): boolean | UrlTree {
+        if (this._adminService.isAdmin) {
+            return true;
+        } else {
+            this._snackbarService.openCustomError("Permission denied");
+            return this._router.parseUrl("/");
+        }
     }
 }
 
