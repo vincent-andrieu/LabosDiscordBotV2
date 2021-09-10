@@ -23,6 +23,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 
+import { AppRoutingModule } from 'app/app-routing.module';
 import { HomeComponent } from './home.component';
 import { LabosListComponent } from './labos-list/labos-list.component';
 import { StocksListComponent } from './stocks-list/stocks-list.component';
@@ -43,6 +44,7 @@ import { LocationsListComponent } from './locations-list/locations-list.componen
     ],
     imports: [
         CommonModule,
+        AppRoutingModule,
         BrowserAnimationsModule,
         FlexLayoutModule,
         FormsModule,

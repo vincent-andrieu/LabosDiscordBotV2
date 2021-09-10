@@ -17,7 +17,7 @@ import { ServerService } from './server.service';
 })
 export class AdminService {
     private _serverUrl = `${environment.server.url}/admin`;
-    private _user?: IUser;
+    private _user?: IUser | null;
     private _onInit: Subject<void> = new Subject<void>();
 
     constructor(
@@ -37,7 +37,7 @@ export class AdminService {
                 }
             }).subscribe(
                 (result: IUser) => {
-                    this._user = result;
+                    this._user = result || null;
                     this._onInit.next();
                 },
                 (err: HttpErrorResponse) => this._snackbarService.openError(err)
@@ -53,6 +53,10 @@ export class AdminService {
 
     public get onInit$(): Observable<void> {
         return this._onInit.asObservable();
+    }
+
+    public get isInit(): boolean {
+        return this._user !== undefined;
     }
 
     public get isAdmin(): boolean {

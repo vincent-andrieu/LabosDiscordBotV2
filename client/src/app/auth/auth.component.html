@@ -1,3 +1,7 @@
+<button *ngIf="isAdmin" mat-icon-button class="admin-panel-button" color="accent" routerLink="admin">
+    <mat-icon>verified_user</mat-icon>
+</button>
+
 <form *ngIf="isInit" class="login-form-box" [formGroup]="loginForm" fxLayout="column" fxLayoutAlign="center center"
       (ngSubmit)="login()" fxFill>
 

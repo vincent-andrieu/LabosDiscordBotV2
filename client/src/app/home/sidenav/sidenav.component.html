@@ -6,6 +6,10 @@
     <button class="setting-icon" mat-icon-button (click)="openSettingsModal()">
         <mat-icon>settings</mat-icon>
     </button>
+
+    <button *ngIf="isAdmin" mat-icon-button class="admin-panel-button" routerLink="/admin">
+        <mat-icon>verified_user</mat-icon>
+    </button>
 </div>
 
 <div fxLayout="column" fxFlex>

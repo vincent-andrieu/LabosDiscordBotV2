@@ -46,7 +46,7 @@ export class AuthComponent {
 
         this._serverService.login(serverId, password).then((result) => {
             if (result) {
-                this._router.navigate([serverId, password, 'labos'])
+                this._router.navigate([serverId, password])
                     .then(() => this._socket.emit('users.getId.callback', serverId, this._discordService.getUserId()))
                     .catch((err) => {
                         console.error(err);
@@ -56,10 +56,6 @@ export class AuthComponent {
                 this._snackbarService.openCustomError("Server ID ou password invalid");
             }
         });
-    }
-
-    public openAdminPanel(): void {
-        this._router.navigateByUrl("/admin");
     }
 
 }
