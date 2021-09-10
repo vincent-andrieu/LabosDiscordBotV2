@@ -120,7 +120,7 @@ export class HomeComponent {
     public onTabChange(tab: MatTabChangeEvent): void {
         this.pageStatus = { index: tab.index, status: (tab.tab.ariaLabel as EPageStatus) };
         const urlSegments = this._router.parseUrl(this._router.url).root.children.primary.segments;
-        this._location.go(`${urlSegments[0].path}/${urlSegments[1].path}/${this.pageStatus.status}`);
+        this._location.replaceState(`${urlSegments[0].path}/${urlSegments[1].path}/${this.pageStatus.status}`);
     }
 
 }
