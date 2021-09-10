@@ -57,7 +57,8 @@ export class ServerSchema {
     }
 
     public async delete(server: CServer): Promise<void> {
-        this._model.findOneAndDelete({ _id: server._id, password: server.password });
+        await this._model.findOneAndDelete({ _id: server._id, password: server.password });
+        Sockets.server?.emit('server.delete', server);
     }
 
     /**
