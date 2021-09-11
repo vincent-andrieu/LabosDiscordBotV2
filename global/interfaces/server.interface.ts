@@ -6,7 +6,9 @@ import { ILaboratory } from "./laboratory.interface";
 export interface IServer {
     _id: string;
     url?: string;
+    name?: string;
     password?: string;
+    screen?: string;
     defaultLabo?: ILaboratory | string;
     defaultChannel: TextChannel | undefined | string;
     reminder?: number;

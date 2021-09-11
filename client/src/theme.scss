@@ -3,6 +3,7 @@
 // Import custom themes
 @import "./app/app.theme.scss";
 @import "./app/auth/auth.theme.scss";
+@import "./app/admin-panel/admin-panel.theme.scss";
 @import "./app/home/home.theme.scss";
 @import "./app/home/sidenav/sidenav.theme.scss";
 @import "./app/home/sidenav/online-users-list/online-users-list.theme.scss";
@@ -29,6 +30,7 @@ $theme: mat-dark-theme($primary, $accent);
 // Include theme styles for your custom components.
 @include app-theme($theme);
 @include auth-theme($theme);
+@include admin-panel-theme($theme);
 @include toolbar-theme($theme);
 @include sidenav-theme($theme);
 @include online-users-list-theme($theme);

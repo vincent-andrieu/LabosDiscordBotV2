@@ -49,7 +49,7 @@ export class AdminHttp {
             if (!await this._isAdmin(userId)) {
                 return response.status(403).send();
             }
-            response.send(this._serverSchema.getAll());
+            response.send(await this._serverSchema.getAll());
         });
 
         // Delete server

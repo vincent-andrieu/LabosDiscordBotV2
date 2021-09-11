@@ -1,0 +1,9 @@
+@import "~@angular/material/theming";
+
+@mixin admin-panel-theme($theme) {
+    $accent: map-get($theme, accent);
+
+    .server-card {
+        box-shadow: 0 0 3px 1px map-get($accent, default) !important;
+    }
+}

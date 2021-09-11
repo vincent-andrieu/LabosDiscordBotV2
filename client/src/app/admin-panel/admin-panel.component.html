@@ -1,1 +1,23 @@
-<p>admin-panel works!</p>
+<div fxLayout="row wrap" fxLayoutAlign="space-evenly center" fxFill>
+    <mat-card *ngFor="let server of servers" class="server-card">
+        <mat-card-header>
+            <mat-card-title class="server-name">{{ server.name }}</mat-card-title>
+            <mat-card-subtitle>{{ server._id }}</mat-card-subtitle>
+        </mat-card-header>
+        <img mat-card-image class="server-screen" [src]="server.screen">
+        <mat-card-content fxLayoutGap="15px">
+
+        </mat-card-content>
+        <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
+            <button mat-icon-button color="warn" (click)="deleteServer(server)">
+                <mat-icon>delete</mat-icon>
+            </button>
+        </mat-card-actions>
+    </mat-card>
+
+    <!-- Spinner -->
+    <div *ngIf="isLoading" fxLayoutAlign="start stretch" fxFlex>
+        <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+    </div>
+    <!-- / Spinner -->
+</div>

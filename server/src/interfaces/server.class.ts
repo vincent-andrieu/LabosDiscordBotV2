@@ -9,8 +9,9 @@ export class CServer implements IServer {
     _id: string;
     guild: Guild | undefined;
     url?: string;
+    name?: string;
     password: string;
-    //activity: string;
+    screen?: string;
     defaultLabo?: ILaboratory;
     defaultChannel: TextChannel | undefined;
     reminder?: number;
@@ -22,8 +23,9 @@ export class CServer implements IServer {
             this.guild = DiscordBot.getServerFromId(server._id.toString());
         }
         this.url = server.url;
+        this.name = server.name || this.guild?.name;
         this.password = server.password || "password";
-        //this.activity = server.activity;
+        this.screen = server.screen || this.guild?.iconURL() || undefined;
         if (typeof server.defaultLabo === 'object') {
             this.defaultLabo = server.defaultLabo;
         }

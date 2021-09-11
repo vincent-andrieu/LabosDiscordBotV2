@@ -17,17 +17,16 @@ import { environment } from '@environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeModule } from './home/home.module';
+import { AdminPanelModule } from './admin-panel/admin-panel.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthComponent } from './auth/auth.component';
-import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 
 const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {} };
 
 @NgModule({
     declarations: [
         AppComponent,
-        AuthComponent,
-        AdminPanelComponent
+        AuthComponent
     ],
     imports: [
         BrowserModule,
@@ -47,6 +46,7 @@ const socketConfig: SocketIoConfig = { url: environment.sockets.url, options: {}
         MatIconModule,
 
         HomeModule,
+        AdminPanelModule,
         SharedModule
     ],
     bootstrap: [AppComponent],

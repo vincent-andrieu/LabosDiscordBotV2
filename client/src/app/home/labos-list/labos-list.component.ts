@@ -39,7 +39,7 @@ export class LabosListComponent {
         private _laboratoryService: LaboratoryService,
         private _productionService: ProductionService,
         private _serverService: ServerService,
-        private _socket: Socket
+        _socket: Socket
     ) {
         this._updateLaboratories();
         this._updateProductions();
