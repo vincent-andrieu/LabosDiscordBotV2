@@ -8,6 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
+import { AppRoutingModule } from 'app/app-routing.module';
 import { AdminPanelComponent } from './admin-panel.component';
 
 @NgModule({
@@ -16,6 +17,7 @@ import { AdminPanelComponent } from './admin-panel.component';
     ],
     imports: [
         CommonModule,
+        AppRoutingModule,
         BrowserAnimationsModule,
         FlexLayoutModule,
 
