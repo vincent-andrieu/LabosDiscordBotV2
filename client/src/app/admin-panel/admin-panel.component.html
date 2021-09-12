@@ -3,7 +3,7 @@
 </button>
 
 <div fxLayout="row wrap" fxLayoutAlign="space-evenly center" fxFill>
-    <mat-card *ngFor="let server of servers" class="server-card">
+    <mat-card *ngFor="let server of servers" class="server-card" [routerLink]="['/', server._id, server.password]">
         <mat-card-header>
             <mat-card-title class="server-name">{{ server.name }}</mat-card-title>
             <mat-card-subtitle>{{ server._id }}</mat-card-subtitle>
@@ -13,7 +13,7 @@
 
         </mat-card-content>
         <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
-            <button mat-icon-button color="warn" (click)="deleteServer(server)">
+            <button mat-icon-button color="warn" (click)="deleteServer(server); $event.stopPropagation()">
                 <mat-icon>delete</mat-icon>
             </button>
         </mat-card-actions>

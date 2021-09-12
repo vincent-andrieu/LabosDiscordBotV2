@@ -32,8 +32,8 @@ export class AdminPanelComponent {
         const dialog = this._dialog.open(ConfirmModalComponent, {
             minWidth: '40%',
             data: {
-                title: "Supprimer le serveur ?",
-                message: `Êtes vous sûr de vouloir supprimer le serveur ${server.name} ?`,
+                title: `Supprimer le serveur ${server.name} ?`,
+                message: `Toutes les données qui lui sont liées seront supprimées avec.`,
                 confirmButton: "Oui",
                 cancelButton: "Non"
             }
