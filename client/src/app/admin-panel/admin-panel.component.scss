@@ -5,10 +5,16 @@
 }
 
 .server-card {
+
     margin-top: 15px;
     margin-bottom: 15px;
     margin-right: 25px;
     width: 330px;
+    transition: transform .2s;
+}
+
+.server-card:hover {
+    transform: scale(1.03);
 }
 
 .server-name {
@@ -17,4 +23,14 @@
 
 .server-screen {
     max-height: 330px;
+    animation: zoom-in .5s ease-out;
+}
+
+@keyframes zoom-in {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1, 1);
+    }
 }

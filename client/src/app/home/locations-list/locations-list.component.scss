@@ -3,6 +3,11 @@
     margin-bottom: 15px;
     margin-right: 25px;
     width: 380px;
+    transition: transform .2s;
+}
+
+.location-card:hover {
+    transform: scale(1.03);
 }
 
 .location-name {
