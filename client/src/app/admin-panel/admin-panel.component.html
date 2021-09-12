@@ -20,8 +20,8 @@
     </mat-card>
 
     <!-- Spinner -->
-    <div *ngIf="isLoading" fxLayoutAlign="start stretch" fxFlex>
-        <mat-progress-bar mode="indeterminate" color="primary"></mat-progress-bar>
+    <div *ngIf="isLoading">
+        <mat-progress-spinner mode="indeterminate" color="primary"></mat-progress-spinner>
     </div>
     <!-- / Spinner -->
 </div>

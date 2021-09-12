@@ -6,7 +6,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { AppRoutingModule } from 'app/app-routing.module';
 import { AdminPanelComponent } from './admin-panel.component';
@@ -24,7 +24,7 @@ import { AdminPanelComponent } from './admin-panel.component';
         MatButtonModule,
         MatIconModule,
         MatCardModule,
-        MatProgressBarModule
+        MatProgressSpinnerModule
     ]
 })
 export class AdminPanelModule { }
