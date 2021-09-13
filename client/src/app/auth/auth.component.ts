@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Socket } from 'ngx-socket-io';
 
-import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
 import { SnackbarService } from '@services/snackbar.service';
 import { AdminService } from '@services/admin.service';
@@ -19,8 +17,6 @@ export class AuthComponent {
 
     constructor(
         private _router: Router,
-        private _socket: Socket,
-        private _discordService: DiscordService,
         private _serverService: ServerService,
         private _snackbarService: SnackbarService,
         private _adminService: AdminService
@@ -47,7 +43,6 @@ export class AuthComponent {
         this._serverService.login(serverId, password).then((result) => {
             if (result) {
                 this._router.navigate([serverId, password])
-                    .then(() => this._socket.emit('users.getId.callback', serverId, this._discordService.getUserId()))
                     .catch((err) => {
                         console.error(err);
                         this._snackbarService.openCustomError("Impossible d'accéder à l'URL");

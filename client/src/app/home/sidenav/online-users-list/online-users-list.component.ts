@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { Socket } from 'ngx-socket-io';
 
 import { DiscordUser } from '@global/interfaces/discord.interface';
-import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
 
 @Component({
@@ -14,7 +13,7 @@ export class OnlineUsersListComponent {
     public userList: Array<DiscordUser | null> = [];
     public serverAvatar?: string;
 
-    constructor(_socket: Socket, private _discordService: DiscordService, private _serverService: ServerService) {
+    constructor(_socket: Socket, private _serverService: ServerService) {
 
         this._serverService.getServerAvatar().then((avatar) => this.serverAvatar = avatar);
 
@@ -23,10 +22,6 @@ export class OnlineUsersListComponent {
                 this.userList = onlineUsers.list;
                 this._removeDuplicateMembers();
             }
-        });
-
-        _socket.on('users.getId', () => {
-            _socket.emit('users.getId.callback', this._serverService.getCurrentServerId(), this._discordService.getUserId());
         });
     }
 

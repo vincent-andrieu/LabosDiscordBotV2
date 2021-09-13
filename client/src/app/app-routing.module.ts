@@ -14,14 +14,23 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 
 @Injectable()
 class AuthGuard implements CanActivate {
-    constructor(private _router: Router, private _serverService: ServerService, private _snackbarService: SnackbarService) {}
+    constructor(
+        private _socket: Socket,
+        private _router: Router,
+        private _serverService: ServerService,
+        private _discordService: DiscordService,
+        private _snackbarService: SnackbarService
+    ) {}
 
-    canActivate(route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    canActivate(
+        route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
         const password: string = route.params.password;
         const serverId: string = route.params.serverId;
 
         return this._serverService.login(serverId, password).then((result) => {
             if (result) {
+                this._socket.emit('users.login', serverId, this._discordService.getUserId());
+
                 return true;
             } else {
                 this._snackbarService.openCustomError("Server ID ou password invalid");
@@ -82,8 +91,7 @@ class DiscordAuthResolver implements Resolve<void> {
                     this._discordService.setToken(code, states.serverId)
                         .then(() => {
                             this._snackbarService.open("Compte discord associé");
-                            this._router.navigate([states.serverId, states.password])
-                                .then(() => this._socket.emit('users.getId.callback', states.serverId, this._discordService.getUserId()));
+                            this._router.navigate([states.serverId, states.password]);
                         }).catch((err) => {
                             this._snackbarService.openError(err);
                             this._router.navigate([states.serverId, states.password]);

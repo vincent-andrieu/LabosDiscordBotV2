@@ -23,9 +23,7 @@ export class OnlineUsersService {
     }
 
     public userConnection(socket: Socket): void {
-        socket.emit('users.getId');
-
-        socket.on('users.getId.callback', (serverId: string, userId: string | undefined) => {
+        socket.on('users.login', (serverId: string, userId: string | undefined) => {
             this._addUser(socket, serverId, atob(userId));
         });
     }
@@ -77,8 +75,10 @@ export class OnlineUsersService {
         if (!this._onlineUsers[guild.id]) {
             this._onlineUsers[guild.id] = [];
         }
-        this._onlineUsers[guild.id].push(null);
-        this._socketsList[socket.id] = { serverId: guild.id, user: null };
+        if (!this._socketsList[socket.id]) {
+            this._onlineUsers[guild.id].push(null);
+            this._socketsList[socket.id] = { serverId: guild.id, user: null };
+        }
         this.updateList(guild.id);
     }
 
