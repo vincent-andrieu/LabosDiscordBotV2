@@ -104,7 +104,10 @@ export class ServerService {
         });
     }
 
-    public getCurrentServerId(): string {
+    public getCurrentServerId(): string | undefined {
+        if (!this._serverId || !this._router.url.includes(this._serverId)) {
+            return undefined;
+        }
         return this._serverId;
     }
 
