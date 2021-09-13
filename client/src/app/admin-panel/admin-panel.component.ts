@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Location } from '@angular/common';
 
 import { AdminService } from '@services/admin.service';
 import { SnackbarService } from '@services/snackbar.service';
@@ -16,6 +18,7 @@ export class AdminPanelComponent {
     public isLoading = true;
 
     constructor(
+        private _location: Location,
         private _dialog: MatDialog,
         private _snackbarService: SnackbarService,
         private _adminService: AdminService
@@ -25,7 +28,14 @@ export class AdminPanelComponent {
                 this.servers = result;
                 this.isLoading = false;
             })
-            .catch((err) => this._snackbarService.openError(err));
+            .catch((err: HttpErrorResponse | string) => {
+                if (typeof err === 'string') {
+                    this._snackbarService.openCustomError(err);
+                    this._location.back();
+                } else {
+                    this._snackbarService.openError(err);
+                }
+            });
     }
 
     public deleteServer(server: CServer): void {
