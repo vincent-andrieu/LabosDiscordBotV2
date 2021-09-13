@@ -5,12 +5,12 @@
 }
 
 .server-card {
-
     margin-top: 15px;
     margin-bottom: 15px;
     margin-right: 25px;
     width: 330px;
     transition: transform .2s;
+    cursor: pointer;
 }
 
 .server-card:hover {
