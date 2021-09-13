@@ -9,9 +9,9 @@
             <mat-card-subtitle>{{ server._id }}</mat-card-subtitle>
         </mat-card-header>
         <img mat-card-image class="server-screen" [src]="server.screen">
-        <mat-card-content fxLayoutGap="15px">
+        <!-- <mat-card-content fxLayoutGap="15px">
 
-        </mat-card-content>
+        </mat-card-content> -->
         <mat-card-actions fxLayout="row" fxLayoutAlign="end center">
             <button mat-icon-button color="warn" (click)="deleteServer(server); $event.stopPropagation()">
                 <mat-icon>delete</mat-icon>
