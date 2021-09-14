@@ -6,11 +6,12 @@ import { EDrugsList, EStuffList } from "@global/interfaces/drug-stuff.interface"
 import { StockSchema } from "@schemas/stocks.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class StockAddStockLoc extends CCommand<StockSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new StockSchema(), ECommand.STOCK_ADD_LOC, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new StockSchema(socketService), ECommand.STOCK_ADD_LOC, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, server: CServer): CStock | undefined {
@@ -30,7 +31,7 @@ export default class StockAddStockLoc extends CCommand<StockSchema> {
             const stock: CStock | undefined = this.getParamsTemplate(params, server);
 
             if (!stock) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(stock, guildMember?.id)

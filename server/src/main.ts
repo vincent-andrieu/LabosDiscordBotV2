@@ -8,11 +8,12 @@ import { CServer } from "@interfaces/server.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { ServerSchema } from "@schemas/servers.schema";
 import { LocationSchema } from "@schemas/locations.schema";
-import { CommandsList } from "@commands/commands";
+import getCommandsList from "@commands/commands";
 import { help } from "@commands/help/help";
 import DiscordBot from "./init/bot";
 import DataBase from "./init/database";
 import ExpressServer from "./init/express";
+import Sockets from "./init/sockets";
 import { serverConfig } from "./server.config";
 
 Promise.all([
@@ -20,9 +21,10 @@ Promise.all([
     new DiscordBot().connect()
 ])
     .then((result) => {
-        new LocationSchema().init();
-        new ExpressServer(express(), result[1]);
-        startBot(result[1]);
+        new ExpressServer(express(), result[1]).connect().then((socketService) => {
+            new LocationSchema(socketService).init();
+            startBot(result[1], socketService);
+        });
     })
     .catch((err) => {
         console.error(err);
@@ -31,7 +33,8 @@ Promise.all([
 
 console.info("PID : " + pid);
 
-function startBot(client: Client) {
+function startBot(client: Client, socketService: Sockets) {
+    const commandsList = getCommandsList(socketService);
 
     client.on('message', (message: Message) => {
         if (message.author.id === client.user?.id || !message.content.startsWith(serverConfig.commands.prefix)) {
@@ -39,13 +42,13 @@ function startBot(client: Client) {
         }
 
         const msgElems: Array<string> = message.content.substr(1).split(" ");
-        new ServerSchema().createOrGet(message.channel as TextChannel)
+        new ServerSchema(socketService).createOrGet(message.channel as TextChannel)
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
                     message.delete();
-                    return help(server, msgElems[1], message.member?.id || message.author.id);
+                    return help(server, msgElems[1], commandsList, message.member?.id || message.author.id);
                 }
-                const cmdFunc = CommandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
+                const cmdFunc = commandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
                 if (cmdFunc) {
                     message.delete();
                     msgElems.splice(0, 1);
@@ -67,7 +70,7 @@ function startBot(client: Client) {
             return;
         }
 
-        new ProductionSchema().finishProd(messageReaction.message.id, user.id).catch((err) => {
+        new ProductionSchema(socketService).finishProd(messageReaction.message.id, user.id).catch((err) => {
             if (!err) {
                 return;
             }
@@ -75,7 +78,7 @@ function startBot(client: Client) {
                 const serverId: string | undefined = messageReaction.message.guild?.id;
 
                 if (serverId) {
-                    new ServerSchema().getById(serverId).then((server: CServer) => {
+                    new ServerSchema(socketService).getById(serverId).then((server: CServer) => {
                         DiscordBot.putError(server.defaultChannel || messageReaction.message.channel as TextChannel, err).catch(() => console.error(err));
                     }).catch(() => console.error(err));
                 } else {

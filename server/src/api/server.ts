@@ -1,19 +1,19 @@
 import { Client } from 'discord.js';
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
 import { DiscordService } from '@services/discord.service';
+import Sockets from 'init/sockets';
 
 export class ServerHttp {
 
     private _urlBase = '/server';
     private _serverSchema: ServerSchema;
 
-    constructor(private _app: Express, private _socketServer: Server, private _client: Client) {
-        this._serverSchema = new ServerSchema();
+    constructor(private _app: Express, private _socketService: Sockets, private _client: Client) {
+        this._serverSchema = new ServerSchema(_socketService);
         this._init();
     }
 
@@ -27,7 +27,7 @@ export class ServerHttp {
 
             Promise.all([
                 this._serverSchema.login(serverId, password),
-                new DiscordService(this._client).isUserInServer(serverId, atob(userId) || '')
+                new DiscordService(this._client, this._socketService).isUserInServer(serverId, atob(userId) || '')
             ])
                 .then((result) => {
                     response.send(userId ? result[0] && result[1] : result[0]);

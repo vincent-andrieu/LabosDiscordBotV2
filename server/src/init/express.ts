@@ -16,31 +16,39 @@ import { LocationHttp } from '@api/location';
 
 export default class ExpressServer {
 
-    constructor(private _app: Express, private _client: Client) {
-        this._app.use(json({limit: '5mb'}));
-        this._app.use(urlencoded({extended: true}));
+    constructor(private _app: Express, private _client: Client) {}
 
-        this._app.use(cors());
-        this._app.use(function(request, result, next) {
-            result.setHeader('Access-Control-Allow-Origin', '*');
-            next();
-        });
+    public connect(): Promise<Sockets> {
+        return new Promise<Sockets>((resolve) => {
+            this._app.use(json({ limit: '5mb' }));
+            this._app.use(urlencoded({ extended: true }));
 
-        this._app.listen(serverConfig.express.port, () => {
-            console.info(`App listening on port ${serverConfig.express.port} !`);
+            this._app.use(cors());
+            this._app.use(function (request, result, next) {
+                result.setHeader('Access-Control-Allow-Origin', '*');
+                next();
+            });
 
-            new Sockets(this._app).connect().then((socketServer: Server) => this._init(socketServer));
+            this._app.listen(serverConfig.express.port, () => {
+                console.info(`App listening on port ${serverConfig.express.port} !`);
+
+                const socketsService = new Sockets(this._app);
+                socketsService.connect().then(() => {
+                    this._init(socketsService);
+                    resolve(socketsService);
+                });
+            });
         });
     }
 
-    private _init(socketServer: Server): void {
-        new AdminHttp(this._app, socketServer);
-        new DiscordHttp(this._app, socketServer, this._client);
-        new LaboratoryHttp(this._app, socketServer);
-        new StockHttp(this._app, socketServer);
-        new ProductionHttp(this._app, socketServer);
-        new ServerHttp(this._app, socketServer, this._client);
-        new LocationHttp(this._app, socketServer);
+    private _init(socketService: Sockets): void {
+        new AdminHttp(this._app, socketService);
+        new DiscordHttp(this._app, socketService, this._client);
+        new LaboratoryHttp(this._app, socketService);
+        new StockHttp(this._app, socketService);
+        new ProductionHttp(this._app, socketService);
+        new ServerHttp(this._app, socketService, this._client);
+        new LocationHttp(this._app, socketService);
     }
 
 }

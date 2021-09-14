@@ -1,18 +1,18 @@
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { ProductionSchema } from '@schemas/productions.schema';
 import { IProdFinish } from '@global/interfaces/production.interface';
 import { CProductions } from '@interfaces/production.class';
+import Sockets from 'init/sockets';
 
 export class ProductionHttp {
 
     private _urlBase = '/prod';
     private _productionSchema: ProductionSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
-        this._productionSchema = new ProductionSchema();
+    constructor(private _app: Express, _socketService: Sockets) {
+        this._productionSchema = new ProductionSchema(_socketService);
         this._init();
     }
 

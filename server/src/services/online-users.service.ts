@@ -1,26 +1,45 @@
 import { Guild, GuildMember } from 'discord.js';
-import { Server, Socket } from 'socket.io';
+import { Socket } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { DiscordUser } from '@global/interfaces/discord.interface';
 import DiscordBot from '../init/bot';
 
 export class OnlineUsersService {
-    private _socketsList: { [socketId: string]: { serverId: string, user: DiscordUser | null } } = {};
+    private _socketsList: { [socketId: string]: { socket: Socket, serverId: string, user: DiscordUser | null } } = {};
     private _onlineUsers: { [serverId: string]: Array<DiscordUser | null> } = {};
 
-    constructor(private _io: Server) {}
-
-    public updateList(serverId?: string): void {
+    public emit<T>(event: string, serverId?: string, data?: T): void {
         if (serverId) {
-            this._io.emit('users.list', <{ serverId: string, list: Array<DiscordUser | null> }>{
-                serverId: serverId,
-                list: this._onlineUsers[serverId]
-            });
+            Object.keys(this._socketsList)
+                .filter((socketId: string) => this._socketsList[socketId].serverId === serverId)
+                .forEach((socketId) =>
+                    this._socketsList[socketId].socket.emit(event, data)
+                );
         } else {
-            Object.keys(this._onlineUsers).forEach((serverId: string) => this.updateList(serverId));
+            Object.keys(this._onlineUsers).forEach((elemServerId: string) => this._updateList(elemServerId));
         }
     }
+
+    //
+    // Update
+    //
+
+    private _updateList(serverId?: string): void {
+        if (serverId) {
+            Object.keys(this._socketsList)
+                .filter((socketId: string) => this._socketsList[socketId].serverId === serverId)
+                .forEach((socketId) =>
+                    this._socketsList[socketId].socket.emit('users.list', this._onlineUsers[serverId])
+                );
+        } else {
+            Object.keys(this._onlineUsers).forEach((serverId: string) => this._updateList(serverId));
+        }
+    }
+
+    //
+    // Connection
+    //
 
     public userConnection(socket: Socket): void {
         socket.on('users.login', (serverId: string, userId: string | undefined) => {
@@ -67,8 +86,8 @@ export class OnlineUsersService {
             this._onlineUsers[guild.id] = [];
         }
         this._onlineUsers[guild.id].push(onlineUser);
-        this._socketsList[socket.id] = { serverId: guild.id, user: onlineUser };
-        this.updateList(guild.id);
+        this._socketsList[socket.id] = { socket: socket, serverId: guild.id, user: onlineUser };
+        this._updateList(guild.id);
     }
 
     private _addUnknownUser(socket: Socket, guild: Guild): void {
@@ -77,17 +96,21 @@ export class OnlineUsersService {
         }
         if (!this._socketsList[socket.id]) {
             this._onlineUsers[guild.id].push(null);
-            this._socketsList[socket.id] = { serverId: guild.id, user: null };
+            this._socketsList[socket.id] = { socket: socket, serverId: guild.id, user: null };
         }
-        this.updateList(guild.id);
+        this._updateList(guild.id);
     }
+
+    //
+    // Disconnection
+    //
 
     public removeUser(socket: Socket): void {
         const user = this._socketsList[socket.id];
 
         if (user) {
             this._onlineUsers[user.serverId].remove((member) => member === user.user);
-            this.updateList(user.serverId);
+            this._updateList(user.serverId);
             delete this._socketsList[socket.id];
         }
     }

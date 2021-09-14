@@ -4,11 +4,12 @@ import { CCommand, ECommand } from "@interfaces/command.class";
 import { LocationSchema } from "@schemas/locations.schema";
 import { CServer } from "@interfaces/server.class";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class LocationSetTag extends CCommand<LocationSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LocationSchema(), ECommand.LOC_SET_TAG, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LocationSchema(socketService), ECommand.LOC_SET_TAG, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): {
@@ -32,7 +33,7 @@ export default class LocationSetTag extends CCommand<LocationSchema> {
             } | undefined = this.getParamsTemplate(params);
 
             if (!values) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setTagByName(server, values.name, values.tag, guildMember?.id)

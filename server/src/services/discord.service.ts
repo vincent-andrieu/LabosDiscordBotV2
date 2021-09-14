@@ -6,15 +6,16 @@ import { ServerSchema } from '@schemas/servers.schema';
 import { CServer } from '@interfaces/server.class';
 import { serverConfig } from '../server.config';
 import DiscordBot from '../init/bot';
+import Sockets from 'init/sockets';
 
 export class DiscordService {
-    private _serverSchema: ServerSchema = new ServerSchema();
+    private _serverSchema: ServerSchema = new ServerSchema(this._socketService);
     private _discordOAuth = new DiscordOauth2({
         clientId: serverConfig.bot.clientId,
         clientSecret: serverConfig.bot.clientSecret
     });
 
-    constructor(private _client: Client) {}
+    constructor(private _client: Client, private _socketService: Sockets) {}
 
     public getAuthUrl(serverId: string, password: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {

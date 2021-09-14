@@ -5,11 +5,12 @@ import { CProductions } from "@interfaces/production.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
+import Sockets from "init/sockets";
 
 export default class ProductionInfoProd extends CCommand<ProductionSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new ProductionSchema(), ECommand.PROD_INFO, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new ProductionSchema(socketService), ECommand.PROD_INFO, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {

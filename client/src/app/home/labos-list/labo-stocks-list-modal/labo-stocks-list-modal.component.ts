@@ -27,64 +27,51 @@ export class LaboStocksListModalComponent {
     constructor(
         private _dialogRef: MatDialogRef<LaboStocksListModalComponent, void>,
         @Inject(MAT_DIALOG_DATA) public laboratory: CLaboratory,
-        private _serverService: ServerService,
         private _laboratoryService: LaboratoryService,
         private _stockService: StockService,
-        private _socket: Socket
+        _socket: Socket
     ) {
         this.laboratory.stocks.sort((first: CStock, second: CStock) => first.name.localeCompare(second.name));
         this._updateLaboDrugStocks();
 
         _socket.on(`labo.del`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                if (this.laboratory._id === labo._id) {
-                    this._dialogRef.close();
-                }
+            if (this.laboratory._id === labo._id) {
+                this._dialogRef.close();
             }
         });
 
         _socket.on(`labo.edit`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                if (this.laboratory._id === labo._id) {
-                    this.laboratory.server = new CServer(labo.server);
-                    this.laboratory.name = labo.name;
-                    this.laboratory.drug = labo.drug;
-                    this.laboratory.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                    this.laboratory.quantity = labo.quantity || 0;
-                    this.laboratory.screen = labo.screen;
-                }
+            if (this.laboratory._id === labo._id) {
+                this.laboratory.server = new CServer(labo.server);
+                this.laboratory.name = labo.name;
+                this.laboratory.drug = labo.drug;
+                this.laboratory.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
+                this.laboratory.quantity = labo.quantity || 0;
+                this.laboratory.screen = labo.screen;
             }
         });
 
-        _socket.on(`labo.addStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._updateLaboDrugStocks();
-            }
+        _socket.on(`labo.addStock`, () => {
+            this._updateLaboDrugStocks();
         });
 
-        _socket.on(`labo.delStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._updateLaboDrugStocks();
-            }
+        _socket.on(`labo.delStock`, () => {
+            this._updateLaboDrugStocks();
         });
 
-        _socket.on(`stock.del`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
-                this._updateLaboDrugStocks();
-            }
+        _socket.on(`stock.del`, () => {
+            this._updateLaboDrugStocks();
         });
 
-        _socket.on(`stock.edit`, (stock: IStock) => {
-            if ((stock.server._id || stock.server) === this._serverService.getCurrentServerId()) {
-                const foundStock = this.laboDrugStocks.find((stockElem) => stockElem._id === stock._id);
+        _socket.on(`stock.edit`, (stockObj: { stock: IStock, doesPrintMsg: boolean }) => {
+            const foundStock = this.laboDrugStocks.find((stockElem) => stockElem._id === stockObj.stock._id);
 
-                if (foundStock) {
-                    foundStock.server = new CServer(stock.server);
-                    foundStock.name = stock.name;
-                    foundStock.drug = stock.drug;
-                    foundStock.quantity = stock.quantity || 0;
-                    foundStock.screen = stock.screen;
-                }
+            if (foundStock) {
+                foundStock.server = new CServer(stockObj.stock.server);
+                foundStock.name = stockObj.stock.name;
+                foundStock.drug = stockObj.stock.drug;
+                foundStock.quantity = stockObj.stock.quantity || 0;
+                foundStock.screen = stockObj.stock.screen;
             }
         });
     }

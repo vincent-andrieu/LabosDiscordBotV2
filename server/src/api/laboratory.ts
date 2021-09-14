@@ -1,5 +1,4 @@
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { ILaboratory } from '@global/interfaces/laboratory.interface';
@@ -7,16 +6,15 @@ import { CLaboratory } from '@interfaces/laboratory.class';
 import { CStock } from '@interfaces/stock.class';
 import { LaboratorySchema } from '@schemas/laboratories.schema';
 import { ServerSchema } from '@schemas/servers.schema';
+import Sockets from 'init/sockets';
 
 export class LaboratoryHttp {
 
     private _urlBase = '/labo';
     private _laboratorySchema: LaboratorySchema;
-    private _serverSchema: ServerSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
-        this._laboratorySchema = new LaboratorySchema();
-        this._serverSchema = new ServerSchema();
+    constructor(private _app: Express, private _socketService: Sockets) {
+        this._laboratorySchema = new LaboratorySchema(_socketService);
         this._init();
     }
 
@@ -88,7 +86,7 @@ export class LaboratoryHttp {
             const userId: string = request.query.userId as string;
             const labo: CLaboratory = new CLaboratory(request.body.labo);
 
-            new ServerSchema().forceSetDefaultLabo(labo, atob(userId)).then(() => {
+            new ServerSchema(this._socketService).forceSetDefaultLabo(labo, atob(userId)).then(() => {
                 response.send(labo);
             }).catch((err) => response.send(err));
         });

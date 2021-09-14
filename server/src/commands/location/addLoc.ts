@@ -7,11 +7,12 @@ import { CServer } from "@interfaces/server.class";
 import { CLocation } from "@interfaces/location.class";
 import { help } from "@commands/help/help";
 import { serverConfig } from "../../server.config";
+import Sockets from "init/sockets";
 
 export default class LocationAddLoc extends CCommand<LocationSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LocationSchema(), ECommand.LOC_ADD, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LocationSchema(socketService), ECommand.LOC_ADD, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, server: CServer, guildMember?: GuildMember | null): CLocation | undefined {
@@ -32,7 +33,7 @@ export default class LocationAddLoc extends CCommand<LocationSchema> {
             const location: CLocation | undefined = this.getParamsTemplate(params, server, guildMember);
 
             if (!location) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(location, guildMember?.id)

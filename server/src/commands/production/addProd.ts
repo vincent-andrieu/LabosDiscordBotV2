@@ -7,11 +7,12 @@ import { ProductionSchema } from "@schemas/productions.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class ProductionAddProd extends CCommand<ProductionSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new ProductionSchema(), ECommand.PROD_ADD, helpDesc, helpParams);
+    constructor(private _socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new ProductionSchema(_socketService), ECommand.PROD_ADD, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, labo: CLaboratory): CProductions | undefined {
@@ -31,7 +32,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
     public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             if (params.length < 1) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this.getLabo(server, params[1])
@@ -39,7 +40,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
                     const prod: CProductions | undefined = this.getParamsTemplate(params, labo);
 
                     if (!prod) {
-                        help(server, this, guildMember?.id);
+                        help(server, this, undefined, guildMember?.id);
                         return reject("Paramètres de la commande invalide");
                     }
                     this._schema.add(prod, guildMember?.id)
@@ -54,7 +55,7 @@ export default class ProductionAddProd extends CCommand<ProductionSchema> {
         if (server.defaultLabo) {
             return new Promise((resolve) => resolve(server.defaultLabo as CLaboratory));
         }
-        return new LaboratorySchema().findOneByName(server, laboName, true);
+        return new LaboratorySchema(this._socketService).findOneByName(server, laboName, true);
     }
 
 }

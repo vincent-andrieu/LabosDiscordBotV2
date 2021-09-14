@@ -66,10 +66,10 @@ export class HomeComponent {
             }
         });
 
-        _socket.on(`prod.del`, (prod: IProductions | IServer) => {
-            if ((prod as IProductions)?.server._id === this._serverService.getCurrentServerId()) {
-                this._productions.remove((prodElem) => prodElem._id === prod._id);
-            } else if (prod._id === this._serverService.getCurrentServerId()) {
+        _socket.on(`prod.del`, (prodObj: { prod: IProductions | IServer, doesPrintMsg: boolean}) => {
+            if ((prodObj.prod as IProductions)?.server._id === this._serverService.getCurrentServerId()) {
+                this._productions.remove((prodElem) => prodElem._id === prodObj.prod._id);
+            } else if (prodObj.prod._id === this._serverService.getCurrentServerId()) {
                 this._updateProductions();
             }
         });

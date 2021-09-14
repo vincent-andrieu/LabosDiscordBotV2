@@ -1,5 +1,4 @@
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { ERole } from '@global/interfaces/user.interface';
@@ -12,6 +11,7 @@ import { CUser } from '@interfaces/user.class';
 import { UserSchema } from '../schemas/users.schema';
 import { CServer } from '@interfaces/server.class';
 import DiscordBot from 'init/bot';
+import Sockets from 'init/sockets';
 
 export class AdminHttp {
 
@@ -23,13 +23,13 @@ export class AdminHttp {
     private _stockSchema: StockSchema;
     private _locationSchema: LocationSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
+    constructor(private _app: Express, private _socketService: Sockets) {
         this._usersSchema = new UserSchema();
-        this._serverSchema = new ServerSchema();
-        this._laboratorySchema = new LaboratorySchema();
-        this._productionSchema = new ProductionSchema();
-        this._stockSchema = new StockSchema();
-        this._locationSchema = new LocationSchema();
+        this._serverSchema = new ServerSchema(_socketService);
+        this._laboratorySchema = new LaboratorySchema(_socketService);
+        this._productionSchema = new ProductionSchema(_socketService);
+        this._stockSchema = new StockSchema(_socketService);
+        this._locationSchema = new LocationSchema(_socketService);
         this._init();
     }
 
@@ -71,7 +71,7 @@ export class AdminHttp {
             ])
                 .then(() => {
                     response.send();
-                    this._socketServer.emit('admin.server.del', server);
+                    this._socketService.emit('admin.server.del', server._id, server);
                 })
                 .catch((err) => response.status(500).send(err));
         });

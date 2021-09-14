@@ -6,35 +6,50 @@ import { OnlineUsersService } from '@services/online-users.service';
 import { serverConfig } from "../server.config";
 
 export default class Sockets {
-    public static server: socketIo.Server | undefined = undefined;
+    private _server?: socketIo.Server;
+    private _onlineUsersService?: OnlineUsersService;
 
-    constructor(private app: Express) {}
+    constructor(private _app: Express) {}
 
-    public connect(): Promise<socketIo.Server> {
-        return new Promise<socketIo.Server>((resolve) => {
-            const server = http.createServer(this.app);
-            const io = socketIo(server);
+    //
+    // Setup
+    //
+
+    public connect(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            const server = http.createServer(this._app);
+            this._server = socketIo(server);
 
             server.listen(serverConfig.socket.port, undefined, undefined, () => {
                 console.info(`Sockets are listening on port ${serverConfig.socket.port} !`);
 
-                this._userConnectionEvent(io);
+                this._userConnectionEvent();
 
-                Sockets.server = io;
-                resolve(io);
+                resolve();
             });
         });
     }
 
-    private _userConnectionEvent(io: socketIo.Server): void {
-        const onlineUsersService = new OnlineUsersService(io);
+    private _userConnectionEvent(): void {
+        if (!this._server) {
+            throw Error("Undefined socket server");
+        }
+        this._onlineUsersService = new OnlineUsersService();
 
-        io.on('connection', (socket: Socket) => {
-            onlineUsersService.userConnection(socket);
+        this._server.on('connection', (socket: Socket) => {
+            this._onlineUsersService?.userConnection(socket);
 
             socket.on('disconnect', () => {
-                onlineUsersService.removeUser(socket);
+                this._onlineUsersService?.removeUser(socket);
             });
         });
+    }
+
+    //
+    // Public
+    //
+
+    public emit<T>(event: string, serverId?: string, data?: T): void {
+        return this._onlineUsersService?.emit(event, serverId, data);
     }
 }

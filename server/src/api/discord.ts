@@ -1,16 +1,16 @@
 import { Client } from 'discord.js';
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { DiscordService } from '@services/discord.service';
 import { CServer } from '@interfaces/server.class';
+import Sockets from 'init/sockets';
 
 export class DiscordHttp {
 
     private _urlBase = '/discord';
-    private _discordService = new DiscordService(this._client);
+    private _discordService = new DiscordService(this._client, this._socketService);
 
-    constructor(private _app: Express, private _socketServer: Server, private _client: Client) {
+    constructor(private _app: Express, private _socketService: Sockets, private _client: Client) {
         this._init();
     }
 

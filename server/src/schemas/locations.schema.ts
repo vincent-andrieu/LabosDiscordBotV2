@@ -33,9 +33,9 @@ function autoPopulate(this: any, next: any) {
 }
 
 export class LocationSchema {
-    // Schema
-
     private _model = mongoose.model('locations', locationSchema);
+
+    constructor(private _socketService: Sockets) {}
 
     public add(location: CLocation, userId?: string): Promise<CLocation> {
         return new Promise<CLocation>((resolve, reject) => {
@@ -58,7 +58,7 @@ export class LocationSchema {
                             location._id = (newLoc as ILocation)._id;
                             this.startClock(location);
 
-                            Sockets.server?.emit('location.add', location);
+                            this._socketService.emit('location.add', location.server._id, location);
                             const embedMessage = DiscordBot.getDefaultEmbedMsg(location.server, EEmbedMsgColors.ADD, "Location **" + location.name + "** ajoutée", userId)
                                 .setDescription("Le **" + location.getHumanizeDate() + "**\nDans **" + location.getDateDuration() + "**");
                             if (location.screen) {
@@ -83,7 +83,7 @@ export class LocationSchema {
                 .then(() => {
                     this.getById(location).then((editedLoc: CLocation) => {
                         this.startClock(editedLoc);
-                        Sockets.server?.emit('location.edit', editedLoc);
+                        this._socketService.emit('location.edit', location.server._id, editedLoc);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(editedLoc.server, EEmbedMsgColors.EDIT, "Location **" + editedLoc.name + "** modifiée", userId)
                             .setDescription("Le **" + editedLoc.getHumanizeDate() + "**\nDans **" + editedLoc.getDateDuration() + "**");
                         if (editedLoc.screen) {
@@ -114,7 +114,7 @@ export class LocationSchema {
                         }
                         location.server.defaultChannel?.send(embedMessage);
                     }
-                    Sockets.server?.emit('location.del', location);
+                    this._socketService.emit('location.del', location.server._id, location);
 
                     resolve(res.deletedCount);
                 })
@@ -216,7 +216,7 @@ export class LocationSchema {
 
     public getByServerId(serverId: string): Promise<Array<CLocation>> {
         return new Promise<Array<CLocation>>((resolve, reject) => {
-            new ServerSchema().getById(serverId).then((server) => {
+            new ServerSchema(this._socketService).getById(serverId).then((server) => {
                 this.getByServer(server).then((result) =>
                     resolve(result)
                 ).catch((err) => reject(err));
@@ -241,7 +241,7 @@ export class LocationSchema {
                     }
                     location.server.defaultChannel?.send(embedMessage);
 
-                    Sockets.server?.emit('location.reminder.add', location);
+                    this._socketService.emit('location.reminder.add', location.server._id, location);
                     resolve(location);
                 })
                 .catch((err) => reject(err));
@@ -277,7 +277,7 @@ export class LocationSchema {
                         location.server.defaultChannel?.send(embedMessage);
                     }
 
-                    Sockets.server?.emit('location.reminder.del', location);
+                    this._socketService.emit('location.reminder.del', location.server._id, location);
                     resolve(location);
                 })
                 .catch((err) => reject(err));
@@ -307,7 +307,7 @@ export class LocationSchema {
                     }
                     location.server.defaultChannel?.send(embedMessage);
 
-                    Sockets.server?.emit('location.tag', location);
+                    this._socketService.emit('location.tag', location.server._id, location);
                     resolve(location);
                 })
                 .catch((err) => reject(err));

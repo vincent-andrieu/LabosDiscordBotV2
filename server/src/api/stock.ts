@@ -1,17 +1,17 @@
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { StockSchema } from '@schemas/stocks.schema';
 import { CStock } from '@interfaces/stock.class';
+import Sockets from 'init/sockets';
 
 export class StockHttp {
 
     private _urlBase = '/stock';
     private _stockSchema: StockSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
-        this._stockSchema = new StockSchema();
+    constructor(private _app: Express, _socketService: Sockets) {
+        this._stockSchema = new StockSchema(_socketService);
         this._init();
     }
 

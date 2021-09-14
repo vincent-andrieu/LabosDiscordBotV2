@@ -4,11 +4,12 @@ import { CServer } from "@interfaces/server.class";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { StockSchema } from "@schemas/stocks.schema";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class StockDelStock extends CCommand<StockSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new StockSchema(), ECommand.STOCK_DEL, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new StockSchema(socketService), ECommand.STOCK_DEL, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): { name: string, quantity: number, reason?: string } | undefined {
@@ -28,7 +29,7 @@ export default class StockDelStock extends CCommand<StockSchema> {
             const paramsValues: { name: string, quantity: number, reason?: string } | undefined = this.getParamsTemplate(params);
 
             if (!paramsValues) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.removeStockQtyByName(server, paramsValues.name, paramsValues.quantity, paramsValues.reason, guildMember?.id)

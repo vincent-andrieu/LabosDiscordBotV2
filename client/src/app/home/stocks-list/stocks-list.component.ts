@@ -43,17 +43,15 @@ export class StocksListComponent {
             }
         });
 
-        _socket.on(`stock.edit`, (stock: IStock) => {
-            if ((stock.server._id || stock.server) === this._serverService.getCurrentServerId()) {
-                const foundStock = this.stocks.find((stockElem) => stockElem._id === stock._id);
+        _socket.on(`stock.edit`, (stockObj: { stock: IStock, doesPrintMsg: boolean }) => {
+            const foundStock = this.stocks.find((stockElem) => stockElem._id === stockObj.stock._id);
 
-                if (foundStock) {
-                    foundStock.server = new CServer(stock.server);
-                    foundStock.name = stock.name;
-                    foundStock.drug = stock.drug;
-                    foundStock.quantity = stock.quantity || 0;
-                    foundStock.screen = stock.screen;
-                }
+            if (foundStock) {
+                foundStock.server = new CServer(stockObj.stock.server);
+                foundStock.name = stockObj.stock.name;
+                foundStock.drug = stockObj.stock.drug;
+                foundStock.quantity = stockObj.stock.quantity || 0;
+                foundStock.screen = stockObj.stock.screen;
             }
         });
     }

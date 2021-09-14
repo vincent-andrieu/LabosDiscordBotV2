@@ -5,11 +5,12 @@ import { CStock } from "@interfaces/stock.class";
 import { StockSchema } from "@schemas/stocks.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
+import Sockets from "init/sockets";
 
 export default class StockInfoStock extends CCommand<StockSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new StockSchema(), ECommand.STOCK_INFO, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new StockSchema(socketService), ECommand.STOCK_INFO, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {

@@ -3,11 +3,12 @@ import { GuildMember } from "discord.js";
 import { CServer } from "@interfaces/server.class";
 import { ServerSchema } from "@schemas/servers.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
+import Sockets from "init/sockets";
 
 export default class ServerSetRoleTag extends CCommand<ServerSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new ServerSchema(), ECommand.SERVER_SET_ROLETAG, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new ServerSchema(socketService), ECommand.SERVER_SET_ROLETAG, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {

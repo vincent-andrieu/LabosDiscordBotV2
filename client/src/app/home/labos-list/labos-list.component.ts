@@ -69,10 +69,8 @@ export class LabosListComponent {
             }
         });
 
-        _socket.on(`prod.del`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this.productions.remove((prodElem) => prod._id === prodElem._id);
-            }
+        _socket.on(`prod.del`, (prod: { prod: IProductions, doesPrintMsg: boolean }) => {
+            this.productions.remove((prodElem) => prod.prod._id === prodElem._id);
         });
 
         _socket.on(`labo.edit`, (labo: ILaboratory) => {

@@ -17,20 +17,16 @@ export class StockService extends MainService<CStock, IStock> {
         super('stock', CStock, _injector);
 
         _socket.on(`stock.add`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Entrepôt ${stock.name} ajouté`);
-            }
+            this._snackbarService.open(`Entrepôt ${stock.name} ajouté`);
         });
 
         _socket.on(`stock.del`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Entrepôt ${stock.name} supprimé`);
-            }
+            this._snackbarService.open(`Entrepôt ${stock.name} supprimé`);
         });
 
-        _socket.on(`stock.edit`, (stock: IStock, doesPrintMsg = true) => {
-            if (doesPrintMsg && stock.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Entrepôt ${stock.name} modifié`);
+        _socket.on(`stock.edit`, (stockObj: { stock: IStock, doesPrintMsg: boolean }) => {
+            if (stockObj.doesPrintMsg) {
+                this._snackbarService.open(`Entrepôt ${stockObj.stock.name} modifié`);
             }
         });
     }

@@ -5,11 +5,12 @@ import { CLaboratory } from "@interfaces/laboratory.class";
 import { ProductionSchema } from "@schemas/productions.schema";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
+import Sockets from "init/sockets";
 
 export default class ProductionDelProd extends CCommand<ProductionSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new ProductionSchema(), ECommand.PROD_DEL, helpDesc, helpParams);
+    constructor(private _socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new ProductionSchema(_socketService), ECommand.PROD_DEL, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): { laboName: string | undefined, reason: string | undefined } {
@@ -34,7 +35,7 @@ export default class ProductionDelProd extends CCommand<ProductionSchema> {
         if (server.defaultLabo && !laboName) {
             return new Promise((resolve) => resolve(server.defaultLabo as CLaboratory));
         }
-        return new LaboratorySchema().findOneByName(server, laboName as string, true);
+        return new LaboratorySchema(this._socketService).findOneByName(server, laboName as string, true);
     }
 
 }

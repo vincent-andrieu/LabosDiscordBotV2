@@ -4,11 +4,12 @@ import { GuildMember } from "discord.js";
 import { CServer } from "@interfaces/server.class";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class ServerSetPassword extends CCommand<ServerSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new ServerSchema(), ECommand.SERVER_SET_PASSWORD, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new ServerSchema(socketService), ECommand.SERVER_SET_PASSWORD, helpDesc, helpParams);
     }
 
     private _getParamsTemplate(params: Array<string>): string | undefined {
@@ -23,7 +24,7 @@ export default class ServerSetPassword extends CCommand<ServerSchema> {
             const password: string | undefined = this._getParamsTemplate(params);
 
             if (!password) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.setPassword(server, password, guildMember?.id)

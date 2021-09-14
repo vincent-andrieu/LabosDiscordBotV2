@@ -5,11 +5,12 @@ import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { CLaboratory } from "@interfaces/laboratory.class";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
+import Sockets from "init/sockets";
 
 export default class LaboratoryInfoLabo extends CCommand<LaboratorySchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LaboratorySchema(), ECommand.LABO_INFO, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LaboratorySchema(socketService), ECommand.LABO_INFO, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {

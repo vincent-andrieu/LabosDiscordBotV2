@@ -25,6 +25,8 @@ const serverSchema = new mongoose.Schema({
 export class ServerSchema {
     private _model = mongoose.model('servers', serverSchema);
 
+    constructor(private _socketService: Sockets) {}
+
     public login(serverId: string, password: string): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             this._model.find({ _id: serverId, password: password }).then((result: Array<unknown>) => {
@@ -58,7 +60,7 @@ export class ServerSchema {
 
     public async delete(server: CServer): Promise<void> {
         await this._model.findOneAndDelete({ _id: server._id, password: server.password });
-        Sockets.server?.emit('server.delete', server);
+        this._socketService.emit('server.delete', server._id, server);
     }
 
     /**
@@ -158,7 +160,7 @@ export class ServerSchema {
                         embedMessage.setDescription("**" + labo.name + "**");
                         server.defaultChannel?.send(embedMessage);
 
-                        Sockets.server?.emit('labo.default', labo);
+                        this._socketService.emit('labo.default', labo.server._id, labo);
                         resolve(labo);
                     })
                     .catch((err) => reject(err));
@@ -249,7 +251,7 @@ export class ServerSchema {
             server.password = password;
             this.edit(server).then(() => {
                 const socketServer = { _id: server._id };
-                Sockets.server?.emit('server.password', socketServer);
+                this._socketService.emit('server.password', server._id, socketServer);
                 server = new CServer(server);
 
                 const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau mot de passe", userId);
@@ -296,7 +298,7 @@ export class ServerSchema {
                         server.defaultChannel?.send(embedMessage);
                     }
 
-                    Sockets.server?.emit('server.reminder', server);
+                    this._socketService.emit('server.reminder', server._id, server);
                     resolve(server);
                 })
                 .catch((err) => reject(err));

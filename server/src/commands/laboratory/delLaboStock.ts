@@ -4,11 +4,12 @@ import { CServer } from "@interfaces/server.class";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { help } from "@commands/help/help";
+import Sockets from "init/sockets";
 
 export default class LaboratoryDelLaboStock extends CCommand<LaboratorySchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LaboratorySchema(), ECommand.LABO_DEL_STOCK, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LaboratorySchema(socketService), ECommand.LABO_DEL_STOCK, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): { laboName: string, stockName: string } | undefined {
@@ -23,7 +24,7 @@ export default class LaboratoryDelLaboStock extends CCommand<LaboratorySchema> {
             const names: { laboName: string, stockName: string } | undefined = this.getParamsTemplate(params);
 
             if (!names) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.delLaboStockByNames(server, names.laboName, names.stockName, guildMember?.id)

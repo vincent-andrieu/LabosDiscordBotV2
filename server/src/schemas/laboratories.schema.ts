@@ -39,6 +39,8 @@ function autoPopulate(this: any, next: any) {
 export class LaboratorySchema {
     private _model = mongoose.model('laboratories', laboSchema);
 
+    constructor(private _socketService: Sockets) {}
+
     public add(labo: CLaboratory, userId?: string): Promise<CLaboratory> {
         return new Promise<CLaboratory>((resolve, reject) => {
 
@@ -64,7 +66,7 @@ export class LaboratorySchema {
                 this._model.create(labo)
                     .then((newLabo: unknown) => {
                         labo._id = (newLabo as ILaboratory)._id;
-                        Sockets.server?.emit('labo.add', labo);
+                        this._socketService.emit('labo.add', labo.server._id, labo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.ADD, "Laboratoire ajouté", userId)
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
@@ -84,7 +86,7 @@ export class LaboratorySchema {
             this._model.findByIdAndUpdate(labo._id, labo)
                 .then(() => {
                     this.getById(labo).then((editedLabo: CLaboratory) => {
-                        Sockets.server?.emit('labo.edit', editedLabo);
+                        this._socketService.emit('labo.edit', labo.server._id, editedLabo);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(labo.server, EEmbedMsgColors.EDIT, "Laboratoire modifié", userId)
                             .setDescription("Nom : **" + labo.name + "**\nDrogue : **" + labo.drug + "**");
                         if (labo.screen) {
@@ -183,7 +185,7 @@ export class LaboratorySchema {
 
     public getByServerId(serverId: string): Promise<Array<CLaboratory>> {
         return new Promise<Array<CLaboratory>>((resolve, reject) => {
-            new ServerSchema().getById(serverId).then((server) => {
+            new ServerSchema(this._socketService).getById(serverId).then((server) => {
                 this.getByServer(server).then((result) =>
                     resolve(result)
                 ).catch((err) => reject(err));
@@ -200,7 +202,7 @@ export class LaboratorySchema {
                     }
 
                     if (labo.server.defaultLabo?._id?.toString() === labo._id?.toString()) {
-                        new ServerSchema().deleteDefaultLabo(labo.server);
+                        new ServerSchema(this._socketService).deleteDefaultLabo(labo.server);
                     }
 
                     labo.server = new CServer(labo.server);
@@ -213,7 +215,7 @@ export class LaboratorySchema {
                     }
                     labo.server.defaultChannel?.send(embedMessage);
 
-                    Sockets.server?.emit('labo.del', labo);
+                    this._socketService.emit('labo.del', labo.server._id, labo);
                     resolve(res.deletedCount);
                 })
                 .catch((err) => reject(err));
@@ -249,7 +251,7 @@ export class LaboratorySchema {
                     return reject("Aucun laboratoire existe sous le nom " + name);
                 }
 
-                new ServerSchema().forceSetDefaultLabo(labo, userId)
+                new ServerSchema(this._socketService).forceSetDefaultLabo(labo, userId)
                     .then((newDefaultLabo: CLaboratory) => resolve(newDefaultLabo))
                     .catch((err) => reject(err));
             }).catch((err) => reject(err));
@@ -276,7 +278,7 @@ export class LaboratorySchema {
                     return reject("Le laboratoire " + labo.name + " est déjà relié à l'entrepôt " + stock.name);
                 }
 
-                new StockSchema().getById(stock).then((crtStock) => {
+                new StockSchema(this._socketService).getById(stock).then((crtStock) => {
 
                     // Check if a stock of this drug already exist
                     const stockAlreadyExist = crtLabo.stocks.find((stockIndex) => stockIndex.drug === crtStock.drug);
@@ -299,7 +301,7 @@ export class LaboratorySchema {
                             crtLabo.server.defaultChannel?.send(embedMessage);
 
                             this._model.findById(crtLabo._id).populate('stocks').then((editedLabo: unknown) => {
-                                Sockets.server?.emit('labo.addStock', editedLabo);
+                                this._socketService.emit('labo.addStock', crtLabo.server._id, editedLabo);
                                 resolve(new CLaboratory(editedLabo as ILaboratory));
                             }).catch((err) => reject(err));
                         })
@@ -316,7 +318,7 @@ export class LaboratorySchema {
 
             Promise.all([
                 this.findOneByName(server, laboName, true),
-                new StockSchema().findOneByName(server, stockName, true)
+                new StockSchema(this._socketService).findOneByName(server, stockName, true)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.addLaboStock(result[0], result[1], userId)
@@ -347,7 +349,7 @@ export class LaboratorySchema {
                     labo.server.defaultChannel?.send(embedMessage);
 
                     this.getById(labo).then((deletedLabo: CLaboratory) => {
-                        Sockets.server?.emit('labo.delStock', deletedLabo);
+                        this._socketService.emit('labo.delStock', labo.server._id, deletedLabo);
                         resolve(deletedLabo);
                     }).catch((err) => reject((err)));
                 })
@@ -361,7 +363,7 @@ export class LaboratorySchema {
 
             Promise.all([
                 this.findOneByName(server, laboName),
-                new StockSchema().findOneByName(server, stockName)
+                new StockSchema(this._socketService).findOneByName(server, stockName)
             ]).then((result: [CLaboratory, CStock]) => {
 
                 this.delLaboStock(result[0], result[1], userId)

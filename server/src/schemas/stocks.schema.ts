@@ -32,6 +32,8 @@ function autoPopulate(this: any, next: any) {
 export class StockSchema {
     private _model = mongoose.model('stocks', stockSchema);
 
+    constructor(private _socketService: Sockets) {}
+
     public add(stock: CStock, userId?: string): Promise<CStock> {
         return new Promise<CStock>((resolve, reject) => {
 
@@ -57,7 +59,7 @@ export class StockSchema {
                 this._model.create(stock)
                     .then((newStock: unknown) => {
                         stock._id = (newStock as IStock)._id;
-                        Sockets.server?.emit('stock.add', stock);
+                        this._socketService.emit('stock.add', stock.server._id, stock);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(stock.server, EEmbedMsgColors.ADD, "Entrepôt ajouté", userId)
                             .setDescription("Nom : **" + stock.name + "**\nDrogue : **" + stock.drug + "**");
                         if (stock.screen) {
@@ -77,7 +79,7 @@ export class StockSchema {
             this._model.findByIdAndUpdate(stock._id, stock)
                 .then(() => {
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock);
+                        this._socketService.emit('stock.edit', editedStock.server._id, { stock: editedStock });
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(editedStock.server, EEmbedMsgColors.EDIT, "Entrepôt modifié", userId)
                             .setDescription("Nom : **" + editedStock.name + "**\nDrogue : **" + editedStock.drug + "**");
                         if (editedStock.screen) {
@@ -160,7 +162,7 @@ export class StockSchema {
 
     public getByServerId(serverId: string): Promise<Array<CStock>> {
         return new Promise<Array<CStock>>((resolve, reject) => {
-            new ServerSchema().getById(serverId).then((server) => {
+            new ServerSchema(this._socketService).getById(serverId).then((server) => {
                 this.getByServer(server).then((result) =>
                     resolve(result)
                 ).catch((err) => reject(err));
@@ -173,7 +175,7 @@ export class StockSchema {
 
             Promise.all([
                 this._model.deleteOne({ server: stock.server._id, _id: stock._id }),
-                new LaboratorySchema().delStocks(stock)
+                new LaboratorySchema(this._socketService).delStocks(stock)
             ]).then((res) => {
                 if (!res[0].deletedCount || res[0].deletedCount <= 0) {
                     return reject("L'entrepôt " + stock.name + " n'existe pas");
@@ -189,7 +191,7 @@ export class StockSchema {
                 }
                 stock.server.defaultChannel?.send(embedMessage);
 
-                Sockets.server?.emit('stock.del', stock);
+                this._socketService.emit('stock.del', stock.server._id, stock);
 
                 resolve(res[0].deletedCount);
             })
@@ -235,7 +237,7 @@ export class StockSchema {
                     }
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock, doesPrintMsg);
+                        this._socketService.emit('stock.edit', editedStock.server._id, { stock: editedStock, doesPrintMsg });
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -279,7 +281,7 @@ export class StockSchema {
                     }
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock, doesPrintMsg);
+                        this._socketService.emit('stock.edit', editedStock.server._id, { stock: editedStock, doesPrintMsg });
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })
@@ -323,7 +325,7 @@ export class StockSchema {
                     stock.server.defaultChannel?.send(embedMessage);
 
                     this.getById(stock).then((editedStock: CStock) => {
-                        Sockets.server?.emit('stock.edit', editedStock);
+                        this._socketService.emit('stock.edit', editedStock.server._id, { stock: editedStock });
                         resolve(editedStock);
                     }).catch((err) => reject(err));
                 })

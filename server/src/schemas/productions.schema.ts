@@ -35,10 +35,12 @@ export class ProductionSchema {
     private _model = mongoose.model('productions', prodSchema);
     private static finishProdReactions: Array<{ msgId: string, prod: CProductions }> = [];
 
+    constructor(private _socketService: Sockets) {}
+
     public add(prod: CProductions, userId?: string): Promise<void> {
         return new Promise<void>((resolve, reject) => {
 
-            new LaboratorySchema().getById(prod.labo).then((labo: CLaboratory) => {
+            new LaboratorySchema(this._socketService).getById(prod.labo).then((labo: CLaboratory) => {
                 prod.labo = labo;
                 if (labo.stocks.length == 0) {
                     return reject("Aucun entrepôt n'a été relié au laboratoire " + prod.labo.name);
@@ -72,7 +74,7 @@ export class ProductionSchema {
                     return reject("Aucun entrepôt de " + labo.drug + " a été assigné au laboratoire " + labo.name);
                 }
 
-                new StockSchema().removeProdStock(labo, prod.quantity, userId, false).then(() => {
+                new StockSchema(this._socketService).removeProdStock(labo, prod.quantity, userId, false).then(() => {
                     const tempLabo = prod.labo;
                     prod.labo = labo._id as unknown as CLaboratory;
                     delete prod._id;
@@ -81,9 +83,7 @@ export class ProductionSchema {
                             prod._id = (prodAdded as IProductions)._id;
                             prod.finishDate = (prodAdded as IProductions).finishDate;
                             prod.labo = tempLabo;
-                            if (Sockets.server) {
-                                Sockets.server.emit('prod.add', prod);
-                            }
+                            this._socketService.emit('prod.add', prod.server._id, prod);
                             this.addProdProcess(prod, userId);
                             resolve();
                         })
@@ -105,9 +105,7 @@ export class ProductionSchema {
 
                 setTimeout(() => {
                     this.getById(prod).then((readyProd: CProductions) => {
-                        if (Sockets.server) {
-                            Sockets.server.emit('prod.finish', readyProd);
-                        }
+                        this._socketService.emit('prod.finish', readyProd.server._id, readyProd);
                         const finishProdEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.ADD, "Production du laboratoire **" + prod.labo.name + "** prête", userId)
                             .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
                         if (prod.labo.screen) {
@@ -126,7 +124,7 @@ export class ProductionSchema {
                     setTimeout(() => {
                         this.getById(prod).then((readyProd: CProductions) => {
                             if (readyProd.server.reminder && readyProd.server.reminder > 0) {
-                                Sockets.server?.emit('prod.reminder', readyProd);
+                                this._socketService.emit('prod.reminder', readyProd.server._id, readyProd);
                                 const finishAlertEmbedMsg = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.INFO, "Production du laboratoire **" + prod.labo.name + "** prête dans " + prod.server.reminder?.toString() + " minutes", userId)
                                     .setDescription("**" + readyProd.quantity + " kg** de **" + readyProd.labo.drug + "**");
                                 if (readyProd.labo.screen) {
@@ -147,7 +145,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, prod)
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        Sockets.server?.emit('prod.edit', editedProd);
+                        this._socketService.emit('prod.edit', editedProd.server._id, editedProd);
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(editedProd.server, EEmbedMsgColors.EDIT, "Production du laboratoire **" + editedProd.labo.name + "** a été modifiée", userId)
                             .setDescription("**" + editedProd.quantity + " kg** de **" + editedProd.labo.drug + "**");
                         if (editedProd.labo.screen) {
@@ -172,7 +170,7 @@ export class ProductionSchema {
     public findByName(server: CServer, laboName: string, ignoreCase?: boolean): Promise<Array<CProductions>> {
         return new Promise<Array<CProductions>>((resolve, reject) => {
 
-            new LaboratorySchema().findByName(server, laboName, ignoreCase)
+            new LaboratorySchema(this._socketService).findByName(server, laboName, ignoreCase)
                 .then((labos) =>
                     this._model.find({ labo: { $in: labos.map((labo) => labo._id) } }).populate({
                         path: 'labo',
@@ -252,7 +250,7 @@ export class ProductionSchema {
 
     public getByServerId(serverId: string): Promise<Array<CProductions>> {
         return new Promise<Array<CProductions>>((resolve, reject) => {
-            new ServerSchema().getById(serverId).then((server) => {
+            new ServerSchema(this._socketService).getById(serverId).then((server) => {
                 this.getByServer(server).then((result) =>
                     resolve(result)
                 ).catch((err) => reject(err));
@@ -268,7 +266,7 @@ export class ProductionSchema {
                     if (!res.deletedCount ||  res.deletedCount <= 0) {
                         return reject("La production du laboratoire " + prod.labo.name + " n'existe pas");
                     }
-                    Sockets.server?.emit('prod.del', prod, doesPrintMsg);
+                    this._socketService.emit('prod.del', prod.server._id, { prod, doesPrintMsg });
 
                     if (doesPrintMsg) {
                         const embedMessage = DiscordBot.getDefaultEmbedMsg(prod.server, EEmbedMsgColors.DEL, "Production du laboratoire **" + prod.labo.name + "** supprimée", userId);
@@ -303,9 +301,7 @@ export class ProductionSchema {
                     if (!res.deletedCount || res.deletedCount <= 0) {
                         return reject("Aucune production n'est en cours dans le laboratoire " + laboProdName);
                     }
-                    if (Sockets.server) {
-                        Sockets.server.emit('prod.del', laboProd.server);
-                    }
+                    this._socketService.emit('prod.del', laboProd.server._id, { prod: laboProd.server });
 
                     const embedMsgTitle = res.deletedCount > 1
                         ? res.deletedCount.toString() + " productions ont été supprimées du laboratoire **" + laboProdName + "**"
@@ -338,7 +334,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, { $inc: { quantity: quantity } })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        Sockets.server?.emit('prod.edit', editedProd);
+                        this._socketService.emit('prod.edit', editedProd.server._id, editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));
@@ -355,7 +351,7 @@ export class ProductionSchema {
             this._model.findOneAndUpdate({ _id: prod._id, quantity: { $gte: quantity } }, { $inc: { quantity: -quantity } })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        Sockets.server?.emit('prod.edit', editedProd);
+                        this._socketService.emit('prod.edit', editedProd.server._id, editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));
@@ -371,7 +367,7 @@ export class ProductionSchema {
             this._model.findByIdAndUpdate(prod._id, { quantity: quantity })
                 .then(() => {
                     this.getById(prod).then((editedProd: CProductions) => {
-                        Sockets.server?.emit('prod.edit', editedProd);
+                        this._socketService.emit('prod.edit', editedProd.server._id, editedProd);
                         resolve(editedProd);
                     }
                     ).catch((err) => reject(err));
@@ -489,7 +485,7 @@ export class ProductionSchema {
                         const prodFinish = result[0];
 
                         prodFinish.server = new CServer(prodFinish.server);
-                        new StockSchema().addStockQty(new CStock(prodFinish.stock), prodFinish.quantity || 0, "Production terminée", userId, false).then((addedStock) =>
+                        new StockSchema(this._socketService).addStockQty(new CStock(prodFinish.stock), prodFinish.quantity || 0, "Production terminée", userId, false).then((addedStock) =>
 
                             this.deleteById(prodFinish as unknown as CProductions, "Production terminée", userId, false)
                                 .then(() => {

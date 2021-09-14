@@ -6,12 +6,12 @@ import { EDrugsList } from "@global/interfaces/drug-stuff.interface";
 import { LaboratorySchema } from "@schemas/laboratories.schema";
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { help } from "@commands/help/help";
-import DiscordBot from "../../init/bot";
+import Sockets from "init/sockets";
 
 export default class LaboratoryAddLabo extends CCommand<LaboratorySchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LaboratorySchema(), ECommand.LABO_ADD, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LaboratorySchema(socketService), ECommand.LABO_ADD, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>, server: CServer): CLaboratory | undefined {
@@ -31,7 +31,7 @@ export default class LaboratoryAddLabo extends CCommand<LaboratorySchema> {
             const labo: CLaboratory | undefined = this.getParamsTemplate(params, server);
 
             if (!labo) {
-                help(server, this, guildMember?.id);
+                help(server, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(labo, guildMember?.id)

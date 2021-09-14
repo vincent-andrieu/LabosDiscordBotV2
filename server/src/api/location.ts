@@ -1,18 +1,18 @@
 import { Express } from 'express';
-import { Server } from 'socket.io';
 
 import { atob } from '@global/utils';
 import { ILocation } from '@global/interfaces/locations.interface';
 import { CLocation } from '@interfaces/location.class';
 import { LocationSchema } from '@schemas/locations.schema';
+import Sockets from 'init/sockets';
 
 export class LocationHttp {
 
     private _urlBase = '/location';
     private _locationSchema: LocationSchema;
 
-    constructor(private _app: Express, private _socketServer: Server) {
-        this._locationSchema = new LocationSchema();
+    constructor(private _app: Express, _socketService: Sockets) {
+        this._locationSchema = new LocationSchema(_socketService);
         this._init();
     }
 

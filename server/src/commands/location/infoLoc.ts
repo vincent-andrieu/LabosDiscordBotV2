@@ -5,11 +5,12 @@ import { CServer } from "@interfaces/server.class";
 import { CLocation } from "@interfaces/location.class";
 import { LocationSchema } from "@schemas/locations.schema";
 import DiscordBot, { EEmbedMsgColors } from "../../init/bot";
+import Sockets from "init/sockets";
 
 export default class LocationInfoLoc extends CCommand<LocationSchema> {
 
-    constructor(helpDesc = "", helpParams = "") {
-        super(new LocationSchema(), ECommand.LOC_INFO, helpDesc, helpParams);
+    constructor(socketService: Sockets, helpDesc = "", helpParams = "") {
+        super(new LocationSchema(socketService), ECommand.LOC_INFO, helpDesc, helpParams);
     }
 
     private getParamsTemplate(params: Array<string>): string | undefined {
