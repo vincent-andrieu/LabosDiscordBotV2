@@ -61,23 +61,19 @@ export class HomeComponent {
         this._updateProductions();
 
         _socket.on(`prod.add`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._productions.push(new CProductions(prod));
-            }
+            this._productions.push(new CProductions(prod));
         });
 
         _socket.on(`prod.del`, (prodObj: { prod: IProductions | IServer, doesPrintMsg: boolean}) => {
-            if ((prodObj.prod as IProductions)?.server._id === this._serverService.getCurrentServerId()) {
+            if ((prodObj.prod as IProductions)?.server) {
                 this._productions.remove((prodElem) => prodElem._id === prodObj.prod._id);
-            } else if (prodObj.prod._id === this._serverService.getCurrentServerId()) {
+            } else {
                 this._updateProductions();
             }
         });
 
-        _socket.on(`prod.finish`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._updateProductions();
-            }
+        _socket.on(`prod.finish`, () => {
+            this._updateProductions();
         });
     }
 

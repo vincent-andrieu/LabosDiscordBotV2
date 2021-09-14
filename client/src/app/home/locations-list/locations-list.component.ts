@@ -34,59 +34,49 @@ export class LocationsListComponent {
         this._updateLocations();
 
         _socket.on(`location.add`, (location: ILocation) => {
-            if (location._id && (location.server._id || location.server) === this._serverService.getCurrentServerId()) {
+            if (location._id) {
                 this.locations.push(new CLocation(location));
                 this.locationForms[location._id.toString()] = new FormControl();
             }
         });
 
         _socket.on(`location.del`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this.locations.remove((loc) => loc._id === location._id);
-            }
+            this.locations.remove((loc) => loc._id === location._id);
         });
 
         _socket.on(`location.edit`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                const foundLoc = this.locations.find((loc) => loc._id === location._id);
+            const foundLoc = this.locations.find((loc) => loc._id === location._id);
 
-                if (foundLoc) {
-                    foundLoc.name = location.name;
-                    foundLoc.date = location.date;
-                    foundLoc.reminders = location.reminders || [];
-                    foundLoc.screen = location.screen;
-                    foundLoc.tag = location.tag || "";
-                }
+            if (foundLoc) {
+                foundLoc.name = location.name;
+                foundLoc.date = location.date;
+                foundLoc.reminders = location.reminders || [];
+                foundLoc.screen = location.screen;
+                foundLoc.tag = location.tag || "";
             }
         });
 
         _socket.on(`location.reminder.add`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                const foundLoc = this.locations.find((loc) => loc._id === location._id);
+            const foundLoc = this.locations.find((loc) => loc._id === location._id);
 
-                if (foundLoc) {
-                    foundLoc.reminders = location.reminders || [];
-                }
+            if (foundLoc) {
+                foundLoc.reminders = location.reminders || [];
             }
         });
 
         _socket.on(`location.reminder.del`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                const foundLoc = this.locations.find((loc) => loc._id === location._id);
+            const foundLoc = this.locations.find((loc) => loc._id === location._id);
 
-                if (foundLoc) {
-                    foundLoc.reminders = location.reminders || [];
-                }
+            if (foundLoc) {
+                foundLoc.reminders = location.reminders || [];
             }
         });
 
         _socket.on(`location.tag`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                const foundLoc = this.locations.find((loc) => loc._id === location._id);
+            const foundLoc = this.locations.find((loc) => loc._id === location._id);
 
-                if (foundLoc) {
-                    foundLoc.tag = location.tag || "";
-                }
+            if (foundLoc) {
+                foundLoc.tag = location.tag || "";
             }
         });
     }

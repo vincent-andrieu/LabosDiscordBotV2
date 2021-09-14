@@ -15,45 +15,33 @@ export class LocationService extends MainService<CLocation, ILocation> {
     constructor(
         protected _injector: Injector,
         protected _http: HttpClient,
-        private _socket: Socket,
-        private _serverService: ServerService
+        private _serverService: ServerService,
+        _socket: Socket
     ) {
         super('location', CLocation, _injector);
 
         _socket.on(`location.add`, (location: ILocation) => {
-            if ((location.server._id || location.server) === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Location ${location.name} ajoutée`);
-            }
+            this._snackbarService.open(`Location ${location.name} ajoutée`);
         });
 
         _socket.on(`location.del`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Location ${location.name} supprimée`);
-            }
+            this._snackbarService.open(`Location ${location.name} supprimée`);
         });
 
         _socket.on(`location.edit`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Location ${location.name} modifiée`);
-            }
+            this._snackbarService.open(`Location ${location.name} modifiée`);
         });
 
         _socket.on(`location.reminder.add`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Rappel pour la location ${location.name} ajouté`);
-            }
+            this._snackbarService.open(`Rappel pour la location ${location.name} ajouté`);
         });
 
         _socket.on(`location.reminder.del`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Rappel pour la location ${location.name} supprimé`);
-            }
+            this._snackbarService.open(`Rappel pour la location ${location.name} supprimé`);
         });
 
         _socket.on(`location.tag`, (location: ILocation) => {
-            if (location.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Tag pour la location ${location.name} modifié`);
-            }
+            this._snackbarService.open(`Tag pour la location ${location.name} modifié`);
         });
     }
 

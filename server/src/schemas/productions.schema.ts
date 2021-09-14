@@ -495,6 +495,7 @@ export class ProductionSchema {
                                         embedMessage.setThumbnail(addedStock.screen);
                                     }
                                     (prodFinish.server as CServer).defaultChannel?.send(embedMessage);
+                                    this._socketService.emit('prod.stock', prodFinish.server._id, prodFinish);
                                     resolve(prodFinish);
                                 })
                                 .catch((error) => reject(error))

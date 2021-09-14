@@ -21,16 +21,12 @@ export class ServerService {
     constructor(private _http: HttpClient, private _discordService: DiscordService, private _snackbarService: SnackbarService, private _socket: Socket, private _router: Router) {
 
         _socket.on(`server.reminder`, (server: IServer) => {
-            if (server._id == this._serverId) {
-                this._snackbarService.open(`Rappel modifié`);
-            }
+            this._snackbarService.open(`Rappel modifié`);
         });
 
         _socket.on(`server.password`, (server: IServer) => {
-            if (server._id == this._serverId) {
-                this._snackbarService.open(`Mot de passe modifié`);
-                this._router.navigate([this._router.parseUrl(this._router.url).root.children.primary.segments[0].path]);
-            }
+            this._snackbarService.open(`Mot de passe modifié`);
+            this._router.navigate([this._router.parseUrl(this._router.url).root.children.primary.segments[0].path]);
         });
     }
 

@@ -50,23 +50,21 @@ export class LabosListComponent {
         });
 
         _socket.on('labo.add', (labo: ILaboratory) => {
-            if (labo._id && (labo.server._id || labo.server) === this._serverService.getCurrentServerId()) {
+            if (labo._id) {
                 this.laboratories.push(new CLaboratory(labo));
                 this.laboForms[labo._id.toString()] = new FormControl();
             }
         });
 
         _socket.on('prod.add', (prod: IProductions) => {
-            if (prod._id && (prod.server._id || prod.server) === this._serverService.getCurrentServerId()) {
+            if (prod._id) {
                 this.productions.push(new CProductions(prod));
                 this.prodForms[prod._id.toString()] = new FormControl();
             }
         });
 
         _socket.on(`labo.del`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this.laboratories.remove((laboElem) => labo._id === laboElem._id);
-            }
+            this.laboratories.remove((laboElem) => labo._id === laboElem._id);
         });
 
         _socket.on(`prod.del`, (prod: { prod: IProductions, doesPrintMsg: boolean }) => {
@@ -74,74 +72,60 @@ export class LabosListComponent {
         });
 
         _socket.on(`labo.edit`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+            const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
 
-                if (foundLabo) {
-                    foundLabo.server = new CServer(labo.server);
-                    foundLabo.name = labo.name;
-                    foundLabo.drug = labo.drug;
-                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                    foundLabo.quantity = labo.quantity || 0;
-                    foundLabo.screen = labo.screen;
-                }
+            if (foundLabo) {
+                foundLabo.server = new CServer(labo.server);
+                foundLabo.name = labo.name;
+                foundLabo.drug = labo.drug;
+                foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
+                foundLabo.quantity = labo.quantity || 0;
+                foundLabo.screen = labo.screen;
             }
         });
 
         _socket.on(`labo.addStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+            const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
 
-                if (foundLabo) {
-                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                }
+            if (foundLabo) {
+                foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
             }
         });
 
         _socket.on(`labo.delStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
+            const foundLabo = this.laboratories.find((laboElem) => laboElem._id === labo._id);
 
-                if (foundLabo) {
-                    foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
-                }
+            if (foundLabo) {
+                foundLabo.stocks = labo.stocks?.map((stock) => new CStock(stock)) || [];
             }
         });
 
         _socket.on(`labo.default`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this.defaultLabo = new CLaboratory(labo);
-                this.laboratories.forEach((laboElem) => laboElem.server.defaultLabo = labo);
-            }
+            this.defaultLabo = new CLaboratory(labo);
+            this.laboratories.forEach((laboElem) => laboElem.server.defaultLabo = labo);
         });
 
         _socket.on(`server.reminder`, (server: IServer) => {
-            if (server._id === this._serverService.getCurrentServerId()) {
-                this.laboratories.forEach((labo) => labo.server = new CServer(server));
-                this.productions.forEach((prod) => prod.server = new CServer(server));
-            }
+            this.laboratories.forEach((labo) => labo.server = new CServer(server));
+            this.productions.forEach((prod) => prod.server = new CServer(server));
         });
 
         _socket.on(`prod.edit`, (prod: CProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                const foundProd = this.productions.find((prodElem) => prodElem._id === prod._id);
+            const foundProd = this.productions.find((prodElem) => prodElem._id === prod._id);
 
-                if (foundProd) {
-                    foundProd.server = new CServer(prod.server);
-                    foundProd.labo = new CLaboratory(prod.labo);
-                    foundProd.description = prod.description;
-                    foundProd.quantity = prod.quantity || 0;
-                    foundProd.finishDate = prod.finishDate;
-                }
+            if (foundProd) {
+                foundProd.server = new CServer(prod.server);
+                foundProd.labo = new CLaboratory(prod.labo);
+                foundProd.description = prod.description;
+                foundProd.quantity = prod.quantity || 0;
+                foundProd.finishDate = prod.finishDate;
             }
         });
 
         _socket.on(`stock.del`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
-                this.laboratories.forEach((labo) =>
-                    labo.stocks.remove((stockElem) => stockElem._id?.toString() === stock._id?.toString())
-                );
-            }
+            this.laboratories.forEach((labo) =>
+                labo.stocks.remove((stockElem) => stockElem._id?.toString() === stock._id?.toString())
+            );
         });
     }
 

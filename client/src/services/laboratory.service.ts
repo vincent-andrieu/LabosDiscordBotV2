@@ -22,39 +22,27 @@ export class LaboratoryService extends MainService<CLaboratory, ILaboratory> {
         super('labo', CLaboratory, _injector);
 
         _socket.on(`labo.add`, (labo: ILaboratory) => {
-            if ((labo.server._id || labo.server) === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Laboratoire ${labo.name} ajouté`);
-            }
+            this._snackbarService.open(`Laboratoire ${labo.name} ajouté`);
         });
 
         _socket.on(`labo.del`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Laboratoire ${labo.name} supprimé`);
-            }
+            this._snackbarService.open(`Laboratoire ${labo.name} supprimé`);
         });
 
         _socket.on(`labo.edit`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Laboratoire ${labo.name} modifié`);
-            }
+            this._snackbarService.open(`Laboratoire ${labo.name} modifié`);
         });
 
         _socket.on(`labo.addStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Entrepôt ajouté au laboratoire ${labo.name}`);
-            }
+            this._snackbarService.open(`Entrepôt ajouté au laboratoire ${labo.name}`);
         });
 
         _socket.on(`labo.delStock`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Entrepôt supprimé du laboratoire ${labo.name}`);
-            }
+            this._snackbarService.open(`Entrepôt supprimé du laboratoire ${labo.name}`);
         });
 
         _socket.on(`labo.default`, (labo: ILaboratory) => {
-            if (labo.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Nouveau laboratoire par défaut : ${labo.name}`);
-            }
+            this._snackbarService.open(`Nouveau laboratoire par défaut : ${labo.name}`);
         });
     }
 

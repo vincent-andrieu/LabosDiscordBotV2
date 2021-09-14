@@ -17,11 +17,9 @@ export class OnlineUsersListComponent {
 
         this._serverService.getServerAvatar().then((avatar) => this.serverAvatar = avatar);
 
-        _socket.on('users.list', (onlineUsers: { serverId: string, list: Array<DiscordUser | null> }) => {
-            if (onlineUsers.serverId === this._serverService.getCurrentServerId()) {
-                this.userList = onlineUsers.list;
-                this._removeDuplicateMembers();
-            }
+        _socket.on('users.list', (onlineUsers: Array<DiscordUser | null>) => {
+            this.userList = onlineUsers;
+            this._removeDuplicateMembers();
         });
     }
 

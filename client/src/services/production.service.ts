@@ -18,15 +18,11 @@ export class ProductionService extends MainService<CProductions, IProductions> {
         super('prod', CProductions, _injector);
 
         _socket.on(`prod.add`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Production ajoutée au laboratoire ${prod.labo.name}`);
-            }
+            this._snackbarService.open(`Production ajoutée au laboratoire ${prod.labo.name}`);
         });
 
         _socket.on(`prod.edit`, (prod: CProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Production du laboratoire ${prod.labo.name} modifiée`);
-            }
+            this._snackbarService.open(`Production du laboratoire ${prod.labo.name} modifiée`);
         });
 
         _socket.on(`prod.del`, (prodObj: { prod: IProductions | IServer, doesPrintMsg: boolean }) => {
@@ -41,15 +37,15 @@ export class ProductionService extends MainService<CProductions, IProductions> {
         });
 
         _socket.on(`prod.reminder`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Production du laboratoire ${prod.labo.name} terminée dans ${prod.server.reminder} min`);
-            }
+            this._snackbarService.open(`Production du laboratoire ${prod.labo.name} terminée dans ${prod.server.reminder} min`);
         });
 
         _socket.on(`prod.finish`, (prod: IProductions) => {
-            if (prod.server._id === this._serverService.getCurrentServerId()) {
-                this._snackbarService.open(`Production du laboratoire ${prod.labo.name} terminée`);
-            }
+            this._snackbarService.open(`Production du laboratoire ${prod.labo.name} terminée`);
+        });
+
+        _socket.on(`prod.stock`, (prod: IProductions) => {
+            this._snackbarService.open(`Production du laboratoire ${prod.labo.name} stockée`);
         });
     }
 

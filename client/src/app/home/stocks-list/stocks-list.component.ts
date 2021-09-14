@@ -31,16 +31,14 @@ export class StocksListComponent {
         this._updateStocks();
 
         _socket.on(`stock.add`, (stock: IStock) => {
-            if (stock._id && (stock.server._id || stock.server) === this._serverService.getCurrentServerId()) {
+            if (stock._id) {
                 this.stocks.push(new CStock(stock));
                 this.stockForms[stock._id.toString()] = new FormControl();
             }
         });
 
         _socket.on(`stock.del`, (stock: IStock) => {
-            if (stock.server._id === this._serverService.getCurrentServerId()) {
-                this.stocks.remove((stockElem) => stock._id === stockElem._id);
-            }
+            this.stocks.remove((stockElem) => stock._id === stockElem._id);
         });
 
         _socket.on(`stock.edit`, (stockObj: { stock: IStock, doesPrintMsg: boolean }) => {

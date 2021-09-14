@@ -45,9 +45,7 @@ export class AdminService {
         }
 
         _socket.on(`server.delete`, (server: IServer) => {
-            if (server._id === this._serverService.getCurrentServerId()) {
-                this._router.navigate([server._id]);
-            }
+            this._router.navigate([server._id]);
         });
     }
 
