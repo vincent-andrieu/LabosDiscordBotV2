@@ -35,7 +35,7 @@ export function help(
     }
     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, "HELP", userId);
 
-    embedMessage.setDescription(`Chaque commande commence par **${serverConfig.commands.prefix}** et n'est pas sensible aux majuscules/minuscules.`);
+    embedMessage.setDescription(`Chaque commande commence par **${serverConfig.commands.prefix}** et n'est pas sensible aux majuscules/minuscules.\nLes arguments des commandes sont entre parenthèses, ceux en **gras** sont obligatoire, les autres optionnel.`);
     commandsList.forEach((cmd) => cmd.getHelp(embedMessage));
     return server.defaultChannel?.send(embedMessage);
 }
