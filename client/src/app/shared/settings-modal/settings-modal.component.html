@@ -5,8 +5,11 @@
 
         <mat-form-field color="accent" fxFlex>
             <mat-label>Rappel des productions</mat-label>
-            <input matInput placeholder="Rappel" [min]="0" [max]="59" type="number" autocomplete="off"
+            <input matInput placeholder="Rappel" [min]="0" [max]="productionTime" type="number" autocomplete="off"
                    formControlName="reminder">
+            <mat-hint>
+                Temps (en minutes) avant la fin d'une production
+            </mat-hint>
             <mat-error *ngIf="form.controls.reminder.hasError('required')">
                 Ce champ est obligatoire (0 pour le supprimer)
             </mat-error>

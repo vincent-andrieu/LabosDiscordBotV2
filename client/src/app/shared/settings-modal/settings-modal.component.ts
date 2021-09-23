@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 
+import { GlobalConfig } from '@global/config';
 import { DiscordRole, DiscordUser } from '@global/interfaces/discord.interface';
 import { DiscordService } from '@services/discord.service';
 import { ServerService } from '@services/server.service';
@@ -18,6 +19,7 @@ export class SettingsModalComponent {
     public discordUserId: string | undefined;
     public discordRoles: Array<DiscordRole> = [];
     public discordUsers: Array<DiscordUser> = [];
+    public productionTime = GlobalConfig.productions.timeoutMinutes;
 
     constructor(
         private _dialogRef: MatDialogRef<SettingsModalComponent, void>,
