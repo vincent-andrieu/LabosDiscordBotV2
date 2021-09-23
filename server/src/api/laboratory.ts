@@ -83,7 +83,7 @@ export class LaboratoryHttp {
 
         // Set default labo
         this._app.post(`${this._urlBase}/setDefault`, (request, response) => {
-            const userId: string = request.query.userId as string;
+            const userId: string = request.body.userId as string;
             const labo: CLaboratory = new CLaboratory(request.body.labo);
 
             new ServerSchema(this._socketService).forceSetDefaultLabo(labo, atob(userId)).then(() => {
