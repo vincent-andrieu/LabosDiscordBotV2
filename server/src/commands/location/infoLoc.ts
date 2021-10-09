@@ -17,7 +17,7 @@ export default class LocationInfoLoc extends CCommand<LocationSchema> {
         return params[0];
     }
 
-    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, _: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const name: string | undefined = this.getParamsTemplate(params);
             const getFunc = name ? this._schema.findByName(server, name, true) : this._schema.getByServer(server);
@@ -36,7 +36,7 @@ export default class LocationInfoLoc extends CCommand<LocationSchema> {
         return new Promise<void>((resolve, reject) => {
             if (locations.length == 0) {
                 const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.INFO, "Aucune location n'a été ajoutée", guildMember?.id);
-                return server.defaultChannel?.send(embedMessage)
+                return server.locationsChannel?.send(embedMessage)
                     .then(() => resolve())
                     .catch((err) => reject(err));
             }
@@ -47,10 +47,10 @@ export default class LocationInfoLoc extends CCommand<LocationSchema> {
             let infoMsg = "";
 
             locations.forEach((loc: CLocation) => infoMsg += loc.getInfo(embedMessage));
-            server.defaultChannel?.send(embedMessage)
+            server.locationsChannel?.send(embedMessage)
                 .then(() => resolve())
                 .catch(() =>
-                    server.defaultChannel?.send(infoMsg)
+                    server.locationsChannel?.send(infoMsg)
                         .then(() => resolve())
                         .catch((err) => reject(err))
                 );

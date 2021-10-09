@@ -64,7 +64,7 @@ export class LocationSchema {
                             if (location.screen) {
                                 embedMessage.setImage(location.screen);
                             }
-                            location.server.defaultChannel?.send(embedMessage);
+                            location.server.locationsChannel?.send(embedMessage);
 
                             resolve(location);
                         })
@@ -89,7 +89,7 @@ export class LocationSchema {
                         if (editedLoc.screen) {
                             embedMessage.setImage(editedLoc.screen);
                         }
-                        editedLoc.server.defaultChannel?.send(embedMessage);
+                        editedLoc.server.locationsChannel?.send(embedMessage);
                         resolve(editedLoc);
                     });
                 })
@@ -112,7 +112,7 @@ export class LocationSchema {
                         if (location.screen) {
                             embedMessage.setImage(location.screen);
                         }
-                        location.server.defaultChannel?.send(embedMessage);
+                        location.server.locationsChannel?.send(embedMessage);
                     }
                     this._socketService.emit('location.del', location.server._id, location);
 
@@ -239,7 +239,7 @@ export class LocationSchema {
                     if (location.screen) {
                         embedMessage.setThumbnail(location.screen);
                     }
-                    location.server.defaultChannel?.send(embedMessage);
+                    location.server.locationsChannel?.send(embedMessage);
 
                     this._socketService.emit('location.reminder.add', location.server._id, location);
                     resolve(location);
@@ -274,7 +274,7 @@ export class LocationSchema {
                         if (location.screen) {
                             embedMessage.setThumbnail(location.screen);
                         }
-                        location.server.defaultChannel?.send(embedMessage);
+                        location.server.locationsChannel?.send(embedMessage);
                     }
 
                     this._socketService.emit('location.reminder.del', location.server._id, location);
@@ -305,7 +305,7 @@ export class LocationSchema {
                     if (location.screen) {
                         embedMessage.setThumbnail(location.screen);
                     }
-                    location.server.defaultChannel?.send(embedMessage);
+                    location.server.locationsChannel?.send(embedMessage);
 
                     this._socketService.emit('location.tag', location.server._id, location);
                     resolve(location);
@@ -365,7 +365,7 @@ export class LocationSchema {
                 if (loc.screen) {
                     embedMessage.setImage(loc.screen);
                 }
-                loc.server.defaultChannel?.send({ embed: embedMessage, content: loc.tag });
+                loc.server.locationsChannel?.send({ embed: embedMessage, content: loc.tag });
             });
         }, moment.duration(moment(reminder).diff(moment(moment.now()))).asMilliseconds());
     }
