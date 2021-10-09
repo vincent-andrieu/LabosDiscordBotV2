@@ -11,6 +11,7 @@ export interface IServer {
     screen?: string;
     defaultLabo?: ILaboratory | string;
     defaultChannel: TextChannel | undefined | string;
+    locationsChannel?: TextChannel | undefined | string;
     reminder?: number;
     roleTag?: string;
 }

@@ -12,6 +12,7 @@ export class CServer implements IServer {
     screen?: string;
     defaultLabo?: ILaboratory | string;
     defaultChannel: string;
+    locationsChannel?: string;
     reminder?: number;
     roleTag?: string;
 
@@ -23,6 +24,7 @@ export class CServer implements IServer {
         this.screen = server.screen;
         this.defaultLabo = server.defaultLabo;
         this.defaultChannel = (server.defaultChannel as TextChannel | undefined)?.id || server.defaultChannel as string || "";
+        this.locationsChannel = (server.locationsChannel as TextChannel | undefined)?.id || server.locationsChannel as string || this.defaultChannel;
         this.reminder = server.reminder;
         this.roleTag = server.roleTag;
     }

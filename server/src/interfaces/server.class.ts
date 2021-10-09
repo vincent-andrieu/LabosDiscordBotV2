@@ -14,6 +14,7 @@ export class CServer implements IServer {
     screen?: string;
     defaultLabo?: ILaboratory;
     defaultChannel: TextChannel | undefined;
+    locationsChannel?: TextChannel | undefined;
     reminder?: number;
     roleTag?: string;
 
@@ -33,6 +34,11 @@ export class CServer implements IServer {
             this.defaultChannel = DiscordBot.getChannelFromId(server.defaultChannel);
         } else {
             this.defaultChannel = server.defaultChannel;
+        }
+        if (typeof server.locationsChannel === 'string') {
+            this.locationsChannel = DiscordBot.getChannelFromId(server.locationsChannel);
+        } else {
+            this.locationsChannel = server.locationsChannel || this.defaultChannel;
         }
         this.reminder = server.reminder;
         this.roleTag = server.roleTag;
