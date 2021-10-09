@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 import moment from "moment";
 
 import { CCommand, ECommand } from "@interfaces/command.class";
@@ -28,12 +28,12 @@ export default class LocationAddLoc extends CCommand<LocationSchema> {
         });
     }
 
-    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const location: CLocation | undefined = this.getParamsTemplate(params, server, guildMember);
 
             if (!location) {
-                help(server, this, undefined, guildMember?.id);
+                help(server, textChannel, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(location, guildMember?.id)

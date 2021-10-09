@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 
 import { CServer } from "@interfaces/server.class";
 import { CProductions } from "@interfaces/production.class";
@@ -17,7 +17,7 @@ export default class ProductionInfoProd extends CCommand<ProductionSchema> {
         return params[0];
     }
 
-    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const laboName: string | undefined = this.getParamsTemplate(params);
             const getFunc = laboName ? this._schema.findByName(server, laboName, true) : this._schema.getByServer(server);

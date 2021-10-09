@@ -11,7 +11,7 @@ export default class ServerSetLocationsChannel extends CCommand<ServerSchema> {
         super(new ServerSchema(socketService), ECommand.SERVER_SET_LOCATIONS_CHANNEL, helpDesc, helpParams);
     }
 
-    public doAction(server: CServer, _: Array<string>, guildMember: GuildMember | null, textChannel: TextChannel): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, _: Array<string>, guildMember: GuildMember | null): Promise<void> {
         return this._schema.setLocationsChannel(server, textChannel, guildMember?.id);
     }
 

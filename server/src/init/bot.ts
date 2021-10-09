@@ -92,8 +92,12 @@ export default class DiscordBot {
         return embedMessage;
     }
 
-    public static putError(channel: TextChannel, msg: string): Promise<Message> {
-        return channel.send("```diff\n- Erreur : " + msg + "\n```");
+    public static putError(channel: TextChannel, msg: string, userId?: string): Promise<Message> {
+        if (!channel) {
+            return Promise.reject(msg);
+        }
+
+        return channel.send((userId ? "<@" + userId + ">\n" : "") + "```diff\n- Erreur : " + msg + "\n```");
     }
 
     public static async leaveGuild(server: CServer): Promise<Guild> {

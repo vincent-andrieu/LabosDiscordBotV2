@@ -46,16 +46,17 @@ function startBot(client: Client, socketService: Sockets) {
             .then((server: CServer) => {
                 if (msgElems[0] === "help") {
                     message.delete();
-                    return help(server, msgElems[1], commandsList, message.member?.id || message.author.id);
+                    return help(server, message.channel as TextChannel, msgElems[1], commandsList, message.member?.id || message.author.id);
                 }
                 const cmdFunc = commandsList.find((cmd) => cmd.name.toLowerCase() === msgElems[0].toLowerCase());
                 if (cmdFunc) {
                     message.delete();
                     msgElems.splice(0, 1);
-                    cmdFunc.doAction(server, msgElems, message.member, message.channel as TextChannel).catch((err) => {
+                    cmdFunc.doAction(server, message.channel as TextChannel, msgElems, message.member).catch((err) => {
                         if (typeof err === 'string') {
-                            DiscordBot.putError(server.defaultChannel || message.channel as TextChannel, err)
-                                .catch(() => console.error(err));
+                            DiscordBot.putError(message.channel as TextChannel, err)
+                                .catch(() => DiscordBot.putError(server.defaultChannel as TextChannel, err, message.member?.id || message.author.id)
+                                    .catch(() => console.error(err)));
                         } else {
                             console.error(err);
                         }

@@ -11,7 +11,7 @@ export default class ServerSetDefaultChannel extends CCommand<ServerSchema> {
         super(new ServerSchema(socketService), ECommand.SERVER_SET_DEFAULT_CHANNEL, helpDesc, helpParams);
     }
 
-    public doAction(server: CServer, _: Array<string>, guildMember: GuildMember | null, textChannel: TextChannel): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, _: Array<string>, guildMember: GuildMember | null): Promise<void> {
         return this._schema.setDefaultChannel(server, textChannel, guildMember?.id);
     }
 

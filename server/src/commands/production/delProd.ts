@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from "@interfaces/laboratory.class";
@@ -17,7 +17,7 @@ export default class ProductionDelProd extends CCommand<ProductionSchema> {
         return { laboName: params[0], reason: this.concatLastParams(params, 1) };
     }
 
-    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const names: { laboName: string | undefined, reason: string | undefined } = this.getParamsTemplate(params);
 

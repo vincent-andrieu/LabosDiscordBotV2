@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 
 import { CCommand, ECommand } from "@interfaces/command.class";
 import { CServer } from "@interfaces/server.class";
@@ -22,7 +22,7 @@ export default class LocationDelLoc extends CCommand<LocationSchema> {
         };
     }
 
-    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const values: {
                 name: string,
@@ -30,7 +30,7 @@ export default class LocationDelLoc extends CCommand<LocationSchema> {
             } | undefined = this.getParamsTemplate(params);
 
             if (!values) {
-                help(server, this, undefined, guildMember?.id);
+                help(server, textChannel, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.deleteByName(server, values.name, values.reason, guildMember?.id)

@@ -52,7 +52,7 @@ export abstract class CCommand<T> {
         };
     }
 
-    public abstract doAction(server: CServer, params?: Array<string>, guildMember?: GuildMember | null, textChannel?: TextChannel): Promise<void>;
+    public abstract doAction(server: CServer, textChannel: TextChannel, params?: Array<string>, guildMember?: GuildMember | null): Promise<void>;
 
     public getHelp(embedMessage?: MessageEmbed): string {
         if (embedMessage) {
@@ -61,13 +61,18 @@ export abstract class CCommand<T> {
         return this._help.description.concat(" *(", this._help.params, ")*");
     }
 
-    public sendHelp(server: CServer, userId?: string): Promise<Message | undefined> | undefined {
+    public sendHelp(server: CServer, textChannel: TextChannel, userId?: string): Promise<Message | undefined> | undefined {
         const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.HELP, undefined, userId);
         const strMsg = this.getHelp(embedMessage);
 
-        return server.defaultChannel?.send(embedMessage).catch(() =>
-            server.defaultChannel?.send(strMsg)
-        );
+        return textChannel.send(embedMessage)
+            .catch(() =>
+                textChannel.send(strMsg)
+                    .catch(() =>
+                        server.defaultChannel?.send({ embed: embedMessage, content: `<@${userId}>` })
+                            .catch(() =>
+                                server.defaultChannel?.send({ embed: embedMessage, content: `<@${userId}>` })
+                            )));
     }
 
     protected concatLastParams(params: Array<string>, atIndex: number): string {

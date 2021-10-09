@@ -1,4 +1,4 @@
-import { GuildMember } from "discord.js";
+import { GuildMember, TextChannel } from "discord.js";
 
 import { CServer } from "@interfaces/server.class";
 import { CLaboratory } from "@interfaces/laboratory.class";
@@ -26,12 +26,12 @@ export default class LaboratoryAddLabo extends CCommand<LaboratorySchema> {
         });
     }
 
-    public doAction(server: CServer, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
+    public doAction(server: CServer, textChannel: TextChannel, params: Array<string>, guildMember?: GuildMember | null): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             const labo: CLaboratory | undefined = this.getParamsTemplate(params, server);
 
             if (!labo) {
-                help(server, this, undefined, guildMember?.id);
+                help(server, textChannel, this, undefined, guildMember?.id);
                 return reject("Paramètres de la commande invalide");
             }
             this._schema.add(labo, guildMember?.id)
