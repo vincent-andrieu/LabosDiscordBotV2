@@ -84,7 +84,7 @@ export default class DiscordBot {
             .setTimestamp();
 
         if (server.url) {
-            embedMessage.setURL(`${server.url}/${server._id}/${server.password}`);
+            embedMessage.setURL(`${server.url.endsWith("/") ? server.url.slice(0, -1) : server.url}/${server._id}/${server.password}`);
         }
         if (authorId) {
             embedMessage.setAuthor(this.getGuildUsernameFromId(server.guild, authorId), this.getUserAvatarFromId(authorId) || server.guild?.icon || '');
