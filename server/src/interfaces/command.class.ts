@@ -23,6 +23,7 @@ export enum ECommand {
     STOCK_INFO = 'infoStock',
 
     SERVER_SET_DEFAULT_CHANNEL = 'setDefaultChannel',
+    SERVER_SET_LOCATIONS_CHANNEL = 'setLocationsChannel',
     SERVER_SET_URL = 'setURL',
     SERVER_SET_PASSWORD = 'setPassword',
     SERVER_SET_REMINDER = 'setReminder',

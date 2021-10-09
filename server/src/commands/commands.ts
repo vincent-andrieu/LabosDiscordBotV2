@@ -22,6 +22,7 @@ import StockDelStock from "./stock/delStock";
 import StockSetStock from "./stock/setStock";
 import StockInfoStock from "./stock/infoStock";
 import ServerSetDefaultChannel from "./server/setDefaultChannel";
+import ServerSetLocationsChannel from "./server/setLocationsChannel";
 import ServerSetUrl from "./server/setUrl";
 import ServerSetPassword from "./server/setPassword";
 import ServerSetReminder from "./server/setReminder";
@@ -55,6 +56,7 @@ export default function getCommandsList(socketService: Sockets): Array<CCommand<
         new StockInfoStock(socketService, "Affiche la liste des entrepôts", "Nom"),
 
         new ServerSetDefaultChannel(socketService, "Modifier le channel par défaut"),
+        new ServerSetLocationsChannel(socketService, "Modifier le channel pour les locations"),
         new ServerSetUrl(socketService, "Modifier l'URL du site", "**URL**"),
         new ServerSetPassword(socketService, "Modifier le mot de passe", "**Mot de passe**"),
         new ServerSetReminder(socketService, "Modifier le rappel d'une production", "**Minutes**"),

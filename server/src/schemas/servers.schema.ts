@@ -15,6 +15,7 @@ const serverSchema = new mongoose.Schema({
     //activity: { type: String, required: true },
     defaultLabo: { type: mongoose.Schema.Types.ObjectId, ref: 'laboratories', required: false },
     defaultChannel: { type: String, required: true },
+    locationsChannel: { type: String, required: false },
     reminder: { type: Number, required: false, default: 0 },
     roleTag: { type: String, required: false }
 }, {
@@ -36,7 +37,7 @@ export class ServerSchema {
     }
 
     /**
-     * Auto convert defaultLabo & defaultChannel to their id
+     * Auto convert defaultLabo & defaultChannel & locationsChannel to their id
      * @param  {CServer} server
      * @returns Promise
      */
@@ -48,6 +49,9 @@ export class ServerSchema {
             }
             if (server.defaultChannel?.id) {
                 server.defaultChannel = server.defaultChannel.id as unknown as TextChannel;
+            }
+            if (server.locationsChannel?.id) {
+                server.locationsChannel = server.locationsChannel.id as unknown as TextChannel;
             }
             this._model.create(server)
                 .then((result) => {
@@ -64,7 +68,7 @@ export class ServerSchema {
     }
 
     /**
-     * Auto convert defaultLabo & defaultChannel to their id
+     * Auto convert defaultLabo & defaultChannel & locationsChannel to their id
      * @param  {CServer} server
      * @returns Promise
      */
@@ -76,6 +80,9 @@ export class ServerSchema {
             }
             if (server.defaultChannel?.id) {
                 server.defaultChannel = server.defaultChannel.id as unknown as TextChannel;
+            }
+            if (server.locationsChannel?.id) {
+                server.locationsChannel = server.locationsChannel.id as unknown as TextChannel;
             }
             this._model.findByIdAndUpdate(server._id, server)
                 .then(() => resolve())
@@ -203,6 +210,31 @@ export class ServerSchema {
                 .then(() => {
 
                     const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau channel par défaut", userId);
+                    const guildIcon = textChannel.guild?.iconURL();
+                    if (guildIcon) {
+                        embedMessage.setThumbnail(guildIcon);
+                    }
+                    embedMessage.setDescription("**" + textChannel.name?.toString() + "**");
+                    textChannel.send(embedMessage);
+
+                    resolve();
+                })
+                .catch((err) => reject(err));
+        });
+    }
+
+    public setLocationsChannel(server: CServer, textChannel: TextChannel, userId?: string): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+
+            if (server.locationsChannel?.id === textChannel.id) {
+                return reject(textChannel.name.toString() + " est déjà le channel pour les locations");
+            }
+
+            server.locationsChannel = textChannel;
+            this.edit(server)
+                .then(() => {
+
+                    const embedMessage = DiscordBot.getDefaultEmbedMsg(server, EEmbedMsgColors.EDIT, "Nouveau channel pour les locations", userId);
                     const guildIcon = textChannel.guild?.iconURL();
                     if (guildIcon) {
                         embedMessage.setThumbnail(guildIcon);
