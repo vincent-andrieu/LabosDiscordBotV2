@@ -4,10 +4,10 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "ng build --prod --delete-output-path --output-path ../production/client/app",
+        "build": "ng build --prod --delete-output-path --output-path ./app",
         "rebuild": "rm -rf node_modules && npm i",
         "lint": "ng lint",
-        "deploy": "npm run rebuild && ng build --prod --delete-output-path --output-path ../production/client/app"
+        "deploy": "npm run rebuild && ng build --prod --delete-output-path --output-path ./app"
     },
     "private": true,
     "author": "gassastsina",

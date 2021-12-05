@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: server-deployment
+
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+        role: rolling-update
+    spec:
+      # hostNetwork: true
+      restartPolicy: Always
+      containers:
+        - name: server-container
+          image: localhost:5000/labosdiscordbot-server
+          ports:
+            - containerPort: 8080
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              initialDelaySeconds: 5
+              periodSeconds: 5
+              successThreshold: 1
+            tcpSocket:
+              port: 3000
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 50%

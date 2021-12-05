@@ -1,0 +1,30 @@
+jenkins:
+  systemMessage: "Surprise, Surprise motherf*kers, the King is Back"
+
+  remotingSecurity:
+    enabled: true
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: admin
+          password: ${JENKINS_USER_PASSWORD}
+          name: Admin
+
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "adminRole"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin"
+
+jobs:
+  - file: /app/jenkins/jenkins.groovy
+
+security:
+  GlobalJobDslSecurityConfiguration:
+    useScriptSecurity: false

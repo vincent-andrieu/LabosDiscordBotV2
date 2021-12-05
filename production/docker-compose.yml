@@ -1,26 +1,23 @@
 version: '3'
 
 services:
-    client:
-        build: ./client
-        ports:
-            - "80:80"
-        restart: always
-
-    server:
-        build: ./server
+    jenkins:
+        build: .
         environment:
-            DISCORD_BOT_TOKEN: ''
-            MONGODB_USERNAME: mongodb
-            MONGODB_PASSWORD: mongodb_password
-        network_mode: "host"
+            JENKINS_USER_PASSWORD: admin
+            GIT_REPOSITORY_URL: vincent-andrieu/LabosDiscordBotV2
+        ports:
+            - "4242:4242"
+        networks:
+            - docker-registry
         depends_on:
             - db
+            - docker-registry
         restart: always
 
     db:
         image: mongo:4.4
-        command: [--auth]
+        command: [ --auth ]
         volumes:
             - mongodb-data:/data/db
         ports:
@@ -31,5 +28,16 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: root_password
         restart: always
 
+    docker-registry:
+        image: registry:2.7.1
+        expose:
+            - "5000:5000"
+        networks:
+            - docker-registry
+        restart: always
+
+networks:
+    docker-registry: null
+
 volumes:
-    mongodb-data:
+    mongodb-data: null

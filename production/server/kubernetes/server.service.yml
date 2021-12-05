@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: server-service
+  labels:
+    app: server
+    role: rolling-update
+
+spec:
+  selector:
+    app: server
+    role: rolling-update
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000

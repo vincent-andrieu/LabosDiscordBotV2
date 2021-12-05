@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: client-service
+  labels:
+    app: client
+    role: rolling-update
+
+spec:
+  selector:
+    app: client
+    role: rolling-update
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
