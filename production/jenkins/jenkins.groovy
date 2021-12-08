@@ -2,7 +2,7 @@ job("Project") {
     scm {
         git {
             remote {
-                github("$GIT_REPOSITORY_URL", 'ssh')
+                github("$GIT_REPOSITORY_URL")
                 branch("zero-down-time")
             }
         }
