@@ -9,10 +9,10 @@ check_exit_failure()
     fi
 }
 
-(cd client && docker build -t labosdiscordbot-client .)
+(cd production/client && docker build -t labosdiscordbot-client .)
 check_exit_failure "Fail to build client"
 
-(cd server && docker build -t labosdiscordbot-server .)
+(cd production/server && docker build -t labosdiscordbot-server .)
 check_exit_failure "Fail to build server"
 
 docker tag labosdiscordbot-client localhost:5000/labosdiscordbot-client
