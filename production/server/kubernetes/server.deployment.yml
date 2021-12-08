@@ -27,11 +27,11 @@ spec:
             httpGet:
               path: /
               port: 8080
-              initialDelaySeconds: 5
-              periodSeconds: 5
-              successThreshold: 1
             tcpSocket:
               port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
 
   strategy:
     type: RollingUpdate
