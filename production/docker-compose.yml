@@ -10,6 +10,8 @@ services:
             - "4242:4242"
         networks:
             - docker-registry
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
         depends_on:
             - db
             - docker-registry
@@ -31,7 +33,7 @@ services:
     docker-registry:
         image: registry:2.7.1
         expose:
-            - "5000:5000"
+            - 5000
         networks:
             - docker-registry
         restart: always

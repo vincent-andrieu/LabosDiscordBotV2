@@ -18,17 +18,6 @@ RUN echo \
 RUN apt-get update
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io
 
-# Setup jenkins
-ENV JENKINS_HOME /home
-ENV JENKINS_OPTS --httpPort=4242
-ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
-ENV CASC_JENKINS_CONFIG /var/jenkins_home/jenkins.yaml
-
-COPY jenkins/jenkins.yml ${JENKINS_HOME}/jenkins.yaml
-COPY jenkins/jenkins.groovy ${JENKINS_HOME}/job_dsl/jenkins.groovy
-
-RUN /usr/local/bin/install-plugins.sh cloudbees-folder configuration-as-code credentials github job-dsl script-security structs role-strategy ws-cleanup parameterized-trigger
-
 # Install kubernetes
 ## Install kubectl
 RUN apt-get install -y apt-transport-https
@@ -40,8 +29,15 @@ RUN apt-get install -y kubectl
 RUN curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64"
 RUN chmod +x ./kind
 
-## Create kubernetes cluster
-RUN /app/kind create cluster
+# Setup jenkins
+ENV JENKINS_HOME /home
+ENV JENKINS_OPTS --httpPort=4242
+ENV JAVA_OPTS -Djenkins.install.runSetupWizard=false
+ENV CASC_JENKINS_CONFIG ${JENKINS_HOME}/jenkins.yaml
+
+RUN /usr/local/bin/install-plugins.sh configuration-as-code github job-dsl script-security structs role-strategy parameterized-trigger
 
 # END
-COPY run.sh /app/
+COPY jenkins/jenkins.yml ${JENKINS_HOME}/jenkins.yaml
+COPY jenkins/jenkins.groovy ${JENKINS_HOME}/job_dsl/jenkins.groovy
+COPY jenkins/run.sh /app/

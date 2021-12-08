@@ -23,7 +23,7 @@ jenkins:
               - "admin"
 
 jobs:
-  - file: /app/jenkins/jenkins.groovy
+  - file: ${JENKINS_HOME}/job_dsl/jenkins.groovy
 
 security:
   GlobalJobDslSecurityConfiguration:
