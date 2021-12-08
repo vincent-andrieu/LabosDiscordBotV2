@@ -1,7 +1,7 @@
 FROM node:17.2-slim
 
 WORKDIR /app
-COPY ./* /app/
+COPY ./ /app/
 RUN mv ./labosdiscordbotv2-server server-bin
 RUN chmod +x server-bin
 
