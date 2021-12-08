@@ -29,6 +29,9 @@ RUN apt-get install -y kubectl
 RUN curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64"
 RUN chmod +x ./kind
 
+# Install npm
+RUN apt-get install -y npm
+
 # Setup jenkins
 ENV JENKINS_HOME /home
 ENV JENKINS_OPTS --httpPort=4242
