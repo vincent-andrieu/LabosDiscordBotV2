@@ -19,6 +19,7 @@ spec:
       containers:
         - name: client-container
           image: localhost:5000/labosdiscordbot-client
+          imagePullPolicy: Never
           ports:
             - containerPort: 80
           readinessProbe:
