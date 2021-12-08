@@ -44,3 +44,4 @@ RUN /usr/local/bin/install-plugins.sh configuration-as-code github job-dsl scrip
 COPY jenkins/jenkins.yml ${JENKINS_HOME}/jenkins.yaml
 COPY jenkins/jenkins.groovy ${JENKINS_HOME}/job_dsl/jenkins.groovy
 COPY jenkins/run.sh /app/
+COPY kubernetes/LabosDiscordBot.cluster.yml /app/

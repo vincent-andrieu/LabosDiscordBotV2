@@ -1,3 +1,9 @@
+job('Create cluster') {
+    steps {
+        shell('/app/kind create cluster --name labosdiscordbot --config=/app/LabosDiscordBot.cluster.yml')
+    }
+}
+
 job("Project") {
     scm {
         git {
