@@ -1,16 +1,16 @@
 {
     "name": "labosdiscordbotv2-server",
-    "version": "1.0.0",
-    "description": "",
+    "version": "0.0.0",
     "main": "./build/server/src/main.js",
+    "bin": "./build/server/src/main.js",
     "types": "build",
     "scripts": {
-        "run": "node ./build/server/src/main.js",
-        "start": "tsc -p . && node ./build/server/src/main.js",
-        "build": "rm -rf ./build/ && tsc -p .",
+        "start": "tsc -p . && ef-tspm && node ./build/server/src/main.js",
+        "build": "rm -rf ./build/ && tsc -p . && ef-tspm",
         "rebuild": "npm run clean && npm i && npm run build",
         "clean": "rm -rf node_modules/ ; rm -rf ./build/",
         "auto": "npx nodemon -x npm run start -w src/ -e .ts",
+        "deploy": "npm run rebuild && pkg . --targets node12-linux-x64 --out-path ../production/server",
         "lint": "eslint src/ --fix ; exit 0"
     },
     "private": true,
@@ -29,6 +29,7 @@
         "socket.io": "^2.4.1"
     },
     "devDependencies": {
+        "@ef-carbon/tspm": "^2.2.5",
         "@types/body-parser": "^1.19.0",
         "@types/cors": "^2.8.10",
         "@types/cron": "^1.7.2",
@@ -36,6 +37,11 @@
         "@types/mongoose": "^5.7.37",
         "@types/node": "^14.14.33",
         "@types/socket.io": "^2.1.13",
+        "pkg": "^5.3.1",
         "typescript": "^3.9.9"
+    },
+    "pkg": {
+        "scripts": "build/**/*.js",
+        "assets": "node_modules/**/*"
     }
 }
