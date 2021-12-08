@@ -10,6 +10,7 @@ check_exit_failure()
 }
 
 npm run deploy
+check_exit_failure "Fail to deploy app"
 
 docker build -t labosdiscordbot-client production/client
 check_exit_failure "Fail to build client"
