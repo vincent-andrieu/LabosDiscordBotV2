@@ -8,4 +8,6 @@ RUN chmod +x server-bin
 ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-CMD ./server-bin
+RUN apt-get update
+RUN apt-get install -y curl
+CMD curl localhost:27017 && ./server-bin
