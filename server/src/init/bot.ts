@@ -23,7 +23,9 @@ export default class DiscordBot {
 
             client.on('error', console.error);
             client.on('warn', console.warn);
-            client.login(this._getBotToken());
+            const token = this._getBotToken();
+            console.log("TOKEN:",token);
+            client.login(token);
 
             client.on('ready', () => {
                 console.info("Bot ready !");
