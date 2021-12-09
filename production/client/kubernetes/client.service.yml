@@ -13,6 +13,6 @@ spec:
     role: rolling-update
   type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: nginx
       port: 80
       targetPort: 80

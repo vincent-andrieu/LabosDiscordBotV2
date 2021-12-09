@@ -13,9 +13,9 @@ spec:
     role: rolling-update
   type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: http
       port: 8080
       targetPort: 8080
-    - protocol: TCP
+    - name: sockets
       port: 3000
       targetPort: 3000
