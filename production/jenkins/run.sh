@@ -35,6 +35,8 @@ kubectl apply -f production/client/kubernetes/client.deployment.yml
 check_exit_failure "Fail to apply client deployment"
 kubectl apply -f production/client/kubernetes/client.service.yml
 check_exit_failure "Fail to apply client service"
+kubectl apply -f production/client/kubernetes/client.ingress.yml
+check_exit_failure "Fail to apply client ingress"
 echo "
 DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
 DISCORD_BOT_CLIENT_ID=${DISCORD_BOT_CLIENT_ID}
