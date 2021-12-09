@@ -44,7 +44,8 @@ DISCORD_BOT_CLIENT_SECRET=${DISCORD_BOT_CLIENT_SECRET}
 MONGODB_USERNAME=${MONGODB_USERNAME}
 MONGODB_PASSWORD=${MONGODB_PASSWORD}
 " > /app/server.env
-kubectl create configmap server-configmap --from-env-file=/app/server.env
+kubectl delete configmap server-configmap
+kubectl create configmap server-configmap --from-env-file=/app/server.env | kubectl apply -f -
 check_exit_failure "Fail to apply server ConfigMap"
 kubectl apply -f production/server/kubernetes/server.deployment.yml
 check_exit_failure "Fail to apply server deployment"
