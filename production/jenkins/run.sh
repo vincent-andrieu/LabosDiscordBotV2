@@ -44,6 +44,7 @@ DISCORD_BOT_CLIENT_SECRET=${DISCORD_BOT_CLIENT_SECRET}
 MONGODB_USERNAME=${MONGODB_USERNAME}
 MONGODB_PASSWORD=${MONGODB_PASSWORD}
 " > /app/server.env
+echo "Delete old ConfigMap"
 kubectl delete configmap server-configmap
 kubectl create configmap server-configmap --from-env-file=/app/server.env
 check_exit_failure "Fail to apply server ConfigMap"
