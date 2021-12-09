@@ -21,9 +21,22 @@ spec:
         - name: server-container
           image: localhost:5000/labosdiscordbot-server
           imagePullPolicy: Never
-          envFrom:
-            - configMapRef:
-                name: server-configmap
+          env:
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                configMapKeyRef:
+                  name: server-configmap
+                  key: DISCORD_BOT_TOKEN
+            - name: DISCORD_BOT_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: server-configmap
+                  key: DISCORD_BOT_CLIENT_ID
+            - name: DISCORD_BOT_CLIENT_SECRET
+              valueFrom:
+                configMapKeyRef:
+                  name: server-configmap
+                  key: DISCORD_BOT_CLIENT_SECRET
           ports:
             - containerPort: 8080
             - containerPort: 3000
