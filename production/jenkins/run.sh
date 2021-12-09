@@ -35,5 +35,7 @@ kubectl apply -f production/client/kubernetes/client.deployment.yml
 check_exit_failure "Fail to apply client deployment"
 kubectl apply -f production/client/kubernetes/client.service.yml
 check_exit_failure "Fail to apply client service"
+kubectl apply -f production/server/kubernetes/server.configmap.yml
+check_exit_failure "Fail to apply server ConfigMap"
 kubectl apply -f production/server/kubernetes/server.deployment.yml
 check_exit_failure "Fail to apply server deployment"
