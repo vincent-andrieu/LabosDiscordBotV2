@@ -39,6 +39,8 @@ echo "
 DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
 DISCORD_BOT_CLIENT_ID=${DISCORD_BOT_CLIENT_ID}
 DISCORD_BOT_CLIENT_SECRET=${DISCORD_BOT_CLIENT_SECRET}
+MONGODB_USERNAME=${MONGODB_USERNAME}
+MONGODB_PASSWORD=${MONGODB_PASSWORD}
 " > /app/server.env
 kubectl create configmap server-configmap --from-env-file=/app/server.env
 check_exit_failure "Fail to apply server ConfigMap"
