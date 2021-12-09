@@ -21,6 +21,9 @@ spec:
         - name: server-container
           image: localhost:5000/labosdiscordbot-server
           imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: server-configmap
           ports:
             - containerPort: 8080
             - containerPort: 3000
