@@ -45,7 +45,7 @@ MONGODB_USERNAME=${MONGODB_USERNAME}
 MONGODB_PASSWORD=${MONGODB_PASSWORD}
 " > /app/server.env
 kubectl delete configmap server-configmap
-kubectl create configmap server-configmap --from-env-file=/app/server.env | kubectl apply -f -
+kubectl create configmap server-configmap --from-env-file=/app/server.env
 check_exit_failure "Fail to apply server ConfigMap"
 kubectl apply -f production/server/kubernetes/server.deployment.yml
 check_exit_failure "Fail to apply server deployment"
