@@ -5,7 +5,7 @@ metadata:
   name: server-ingress
 
 spec:
-  database:
+  defaultBackend:
     service:
       name: server-service
       port:
