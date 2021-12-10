@@ -7,6 +7,6 @@ metadata:
 spec:
   database:
     service:
-      name: db
+      name: server-service
       port:
         number: 27017
