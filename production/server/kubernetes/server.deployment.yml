@@ -16,6 +16,7 @@ spec:
         role: rolling-update
     spec:
       # hostNetwork: true
+      dnsPolicy: Default
       restartPolicy: Always
       containers:
         - name: server-container

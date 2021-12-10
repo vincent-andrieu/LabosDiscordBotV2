@@ -50,5 +50,3 @@ kubectl create configmap server-configmap --from-env-file=/app/server.env
 check_exit_failure "Fail to apply server ConfigMap"
 kubectl apply -f production/server/kubernetes/server.deployment.yml
 check_exit_failure "Fail to apply server deployment"
-kubectl apply -f production/server/kubernetes/server.ingress.yml
-check_exit_failure "Fail to apply server ingress"
