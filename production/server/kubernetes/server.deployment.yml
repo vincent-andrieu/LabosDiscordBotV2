@@ -48,12 +48,11 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
-          # livenessProbe:
-          #   httpGet:
-          #     host: localhost
-          #     port: 30808
-          #     path: /
-          #   periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 30
 
   strategy:
     type: RollingUpdate
