@@ -40,6 +40,7 @@ echo "
 DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
 DISCORD_BOT_CLIENT_ID=${DISCORD_BOT_CLIENT_ID}
 DISCORD_BOT_CLIENT_SECRET=${DISCORD_BOT_CLIENT_SECRET}
+MONGODB_HOST=${MONGODB_HOST}
 " > /app/server.env
 echo "Delete old ConfigMap"
 kubectl delete configmap server
