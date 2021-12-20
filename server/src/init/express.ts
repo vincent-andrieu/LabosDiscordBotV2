@@ -2,7 +2,6 @@ import { Client } from 'discord.js';
 import { Express } from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
-import { Server } from 'socket.io';
 
 import { serverConfig } from '../server.config';
 import Sockets from '../init/sockets';
@@ -24,7 +23,7 @@ export default class ExpressServer {
             this._app.use(urlencoded({ extended: true }));
 
             this._app.use(cors());
-            this._app.use(function (request, result, next) {
+            this._app.use(function (_, result, next) {
                 result.setHeader('Access-Control-Allow-Origin', '*');
                 next();
             });
@@ -49,6 +48,14 @@ export default class ExpressServer {
         new ProductionHttp(this._app, socketService);
         new ServerHttp(this._app, socketService, this._client);
         new LocationHttp(this._app, socketService);
+
+        this._initRootRoute();
+    }
+
+    private _initRootRoute(): void {
+        this._app.get('/', (_, response) =>
+            response.status(204).send()
+        );
     }
 
 }
