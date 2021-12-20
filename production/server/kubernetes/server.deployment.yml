@@ -2,42 +2,58 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: server-deployment
+  name: server
 
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: server
+      app: labos-discord-bot
+      tier: server
   template:
     metadata:
       labels:
-        app: server
+        app: labos-discord-bot
+        tier: server
         role: rolling-update
     spec:
-      # hostNetwork: true
-      dnsPolicy: Default
-      restartPolicy: Always
+      # restartPolicy: Always
       containers:
         - name: server-container
-          image: localhost:5000/labosdiscordbot-server
+          image: localhost:5000/labosdiscordbot:server
           imagePullPolicy: Never
           envFrom:
             - configMapRef:
-                name: server-configmap
+                name: server
+          env:
+            - name: MONGODB_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: database
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: database
+                  key: MONGO_INITDB_ROOT_PASSWORD
           ports:
             - containerPort: 8080
             - containerPort: 3000
-            - containerPort: 27017
           readinessProbe:
             httpGet:
               path: /
-              port: 8080
+              port: 30808
             # tcpSocket:
             #   port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
+          # livenessProbe:
+          #   httpGet:
+          #     host: localhost
+          #     port: 30808
+          #     path: /
+          #   periodSeconds: 30
 
   strategy:
     type: RollingUpdate

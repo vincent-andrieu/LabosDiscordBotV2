@@ -2,18 +2,19 @@ kind: Service
 apiVersion: v1
 
 metadata:
-  name: client-service
+  name: client
   labels:
-    app: client
+    app: labos-discord-bot
+    tier: client
     role: rolling-update
 
 spec:
   selector:
-    app: client
+    app: labos-discord-bot
+    tier: client
     role: rolling-update
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: nginx
       port: 80
-      targetPort: 80
-      nodePort: 30950
+      nodePort: 30008

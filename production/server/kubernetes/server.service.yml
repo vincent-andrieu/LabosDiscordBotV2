@@ -2,23 +2,22 @@ kind: Service
 apiVersion: v1
 
 metadata:
-  name: server-service
+  name: server
   labels:
-    app: server
+    app: labos-discord-bot
+    tier: server
     role: rolling-update
 
 spec:
   selector:
-    app: server
+    app: labos-discord-bot
+    tier: server
     role: rolling-update
-  type: LoadBalancer
+  type: NodePort
   ports:
     - name: http
       port: 8080
-      targetPort: 8080
+      nodePort: 30808
     - name: sockets
       port: 3000
-      targetPort: 3000
-    - name: db
-      port: 27017
-      targetPort: 27017
+      nodePort: 30300

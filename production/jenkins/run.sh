@@ -9,44 +9,41 @@ check_exit_failure()
     fi
 }
 
+# Build project
 npm run deploy
-check_exit_failure "Fail to deploy app"
+check_exit_failure "Fail to build app"
 
-docker build -t labosdiscordbot-client production/client
+# Build docker images
+docker build -t localhost:5000/labosdiscordbot:client production/client
 check_exit_failure "Fail to build client"
-
-docker build -t labosdiscordbot-server production/server
+docker build -t localhost:5000/labosdiscordbot:server production/server
 check_exit_failure "Fail to build server"
 
-docker tag labosdiscordbot-client localhost:5000/labosdiscordbot-client
-docker push localhost:5000/labosdiscordbot-client
+# Push docker images in the docker registry
+docker push localhost:5000/labosdiscordbot:client
 check_exit_failure "Fail to push client"
-
-docker tag labosdiscordbot-server localhost:5000/labosdiscordbot-server
-docker push localhost:5000/labosdiscordbot-server
+docker push localhost:5000/labosdiscordbot:server
 check_exit_failure "Fail to push server"
 
-/app/kind load docker-image --name labosdiscordbot "localhost:5000/labosdiscordbot-client"
+# Pull docker images in the cluster
+kind load docker-image --name labosdiscordbot "localhost:5000/labosdiscordbot:client"
 check_exit_failure "Fail to pull client docker image in the cluster"
-/app/kind load docker-image --name labosdiscordbot "localhost:5000/labosdiscordbot-server"
+kind load docker-image --name labosdiscordbot "localhost:5000/labosdiscordbot:server"
 check_exit_failure "Fail to pull server docker image in the cluster"
 
-kubectl apply -f production/client/kubernetes/client.deployment.yml
-check_exit_failure "Fail to apply client deployment"
-kubectl apply -f production/client/kubernetes/client.service.yml
-check_exit_failure "Fail to apply client service"
-kubectl apply -f production/client/kubernetes/client.ingress.yml
-check_exit_failure "Fail to apply client ingress"
+# Deploy kubernetes
+## Apply client
+kubectl apply -f production/client/kubernetes/
+check_exit_failure "Fail to apply client"
+## Apply server
 echo "
 DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
 DISCORD_BOT_CLIENT_ID=${DISCORD_BOT_CLIENT_ID}
 DISCORD_BOT_CLIENT_SECRET=${DISCORD_BOT_CLIENT_SECRET}
-MONGODB_USERNAME=${MONGODB_USERNAME}
-MONGODB_PASSWORD=${MONGODB_PASSWORD}
 " > /app/server.env
 echo "Delete old ConfigMap"
-kubectl delete configmap server-configmap
-kubectl create configmap server-configmap --from-env-file=/app/server.env
-check_exit_failure "Fail to apply server ConfigMap"
-kubectl apply -f production/server/kubernetes/server.deployment.yml
-check_exit_failure "Fail to apply server deployment"
+kubectl delete configmap server
+kubectl create configmap server --from-env-file=/app/server.env
+check_exit_failure "Fail to create server ConfigMap"
+kubectl apply -f production/server/kubernetes/
+check_exit_failure "Fail to apply server"
