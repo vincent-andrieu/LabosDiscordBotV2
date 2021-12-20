@@ -5,7 +5,7 @@ metadata:
   name: server
 
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: labos-discord-bot
