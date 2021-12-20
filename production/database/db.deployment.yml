@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: database
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: labos-discord-bot
+      tier: database
+  template:
+    metadata:
+      labels:
+        app: labos-discord-bot
+        tier: database
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: database-container
+          image: mongo:4.4
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - configMapRef:
+                name: database
+          ports:
+            - containerPort: 27017
+          readinessProbe:
+            httpGet:
+              port: 27017
+            periodSeconds: 10
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet:
+              port: 27017
+            periodSeconds: 20
+            initialDelaySeconds: 3

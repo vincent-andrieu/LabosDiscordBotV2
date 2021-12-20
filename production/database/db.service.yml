@@ -1,0 +1,18 @@
+kind: Service
+apiVersion: v1
+
+metadata:
+  name: database
+  labels:
+    app: labos-discord-bot
+    tier: database
+
+spec:
+  selector:
+    app: labos-discord-bot
+    tier: database
+  type: ClusterIP
+  clusterIP: 10.96.0.7
+  ports:
+    - port: 27017
+      targetPort: 27017

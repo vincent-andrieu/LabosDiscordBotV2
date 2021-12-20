@@ -1,6 +1,9 @@
 job('Create cluster') {
     steps {
-        shell('/app/kind create cluster --name labosdiscordbot --config=/app/LabosDiscordBot.cluster.yml')
+        shell('kind create cluster --name labosdiscordbot --config=/app/LabosDiscordBot.cluster.yml')
+    }
+    steps {
+        shell('/app/database/create_database.sh')
     }
 }
 
