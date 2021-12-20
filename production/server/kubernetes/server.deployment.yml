@@ -42,7 +42,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 30808
+              port: 8080
             # tcpSocket:
             #   port: 3000
             initialDelaySeconds: 5
