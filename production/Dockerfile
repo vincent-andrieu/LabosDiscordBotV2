@@ -28,6 +28,7 @@ RUN apt-get install -y kubectl
 ## Install kind
 RUN curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64"
 RUN chmod +x ./kind
+RUN mv ./kind /usr/local/bin/kind
 
 # Install npm
 RUN apt-get install -y npm
