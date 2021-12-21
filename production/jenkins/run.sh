@@ -33,6 +33,7 @@ check_exit_failure "Fail to pull server docker image in the cluster"
 
 # Deploy kubernetes
 ## Apply client
+sed -ie "s/THIS_STRING_IS_REPLACED_DURING_BUILD/$(date)/g" production/client/kubernetes/client.deployment.yml
 kubectl apply -f production/client/kubernetes/
 check_exit_failure "Fail to apply client"
 ## Apply server
@@ -46,5 +47,6 @@ echo "Delete old ConfigMap"
 kubectl delete configmap server
 kubectl create configmap server --from-env-file=/app/server.env
 check_exit_failure "Fail to create server ConfigMap"
+sed -ie "s/THIS_STRING_IS_REPLACED_DURING_BUILD/$(date)/g" production/server/kubernetes/server.deployment.yml
 kubectl apply -f production/server/kubernetes/
 check_exit_failure "Fail to apply server"
