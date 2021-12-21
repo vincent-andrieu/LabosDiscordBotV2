@@ -43,5 +43,5 @@ spec:
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxSurge: 50%
-      maxUnavailable: 25%
+      maxSurge: 25%
+      maxUnavailable: 2
