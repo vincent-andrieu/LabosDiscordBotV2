@@ -17,7 +17,7 @@ spec:
         tier: client
         role: rolling-update
     spec:
-      # restartPolicy: Always
+      restartPolicy: Always
       containers:
         - name: client-container
           image: localhost:5000/labosdiscordbot:client

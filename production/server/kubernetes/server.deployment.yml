@@ -17,7 +17,7 @@ spec:
         tier: server
         role: rolling-update
     spec:
-      # restartPolicy: Always
+      restartPolicy: Always
       containers:
         - name: server-container
           image: localhost:5000/labosdiscordbot:server
@@ -43,8 +43,6 @@ spec:
             httpGet:
               path: /
               port: 8080
-            # tcpSocket:
-            #   port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
             successThreshold: 1
