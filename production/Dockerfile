@@ -46,3 +46,4 @@ COPY jenkins/jenkins.yml ${JENKINS_HOME}/jenkins.yaml
 COPY jenkins/jenkins.groovy ${JENKINS_HOME}/job_dsl/jenkins.groovy
 COPY jenkins/run.sh /app/
 COPY kubernetes/LabosDiscordBot.cluster.yml /app/
+COPY database/ /app/database/
