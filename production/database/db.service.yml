@@ -11,8 +11,9 @@ spec:
   selector:
     app: labos-discord-bot
     tier: database
-  type: ClusterIP
+  type: NodePort
   clusterIP: 10.96.0.7
   ports:
     - port: 27017
       targetPort: 27017
+      nodePort: 32701

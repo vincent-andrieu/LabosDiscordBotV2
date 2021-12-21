@@ -7,5 +7,15 @@ networking:
 nodes:
   - role: control-plane
     extraPortMappings:
-      - containerPort: 30950
+      # NGINX
+      - containerPort: 30008
         hostPort: 80
+      # HTTP
+      - containerPort: 30808
+        hostPort: 8080
+      # SOCKETS
+      - containerPort: 30300
+        hostPort: 3000
+      # DATABASE
+      - containerPort: 32701
+        hostPort: 27017
