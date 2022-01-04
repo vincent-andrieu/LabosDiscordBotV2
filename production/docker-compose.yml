@@ -3,11 +3,10 @@ version: '3'
 services:
     jenkins:
         build: .
+        network_mode: "host"
         environment:
             JENKINS_USER_PASSWORD: admin
             GIT_REPOSITORY_URL: vincent-andrieu/LabosDiscordBotV2
-        ports:
-            - "4242:4242"
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock"
         depends_on:
@@ -16,6 +15,6 @@ services:
 
     docker-registry:
         image: registry:2.7.1
-        expose:
-            - 5000
+        ports:
+            - "5000:5000"
         restart: always
