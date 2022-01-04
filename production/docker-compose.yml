@@ -17,19 +17,6 @@ services:
             - docker-registry
         restart: always
 
-    db:
-        image: mongo:4.4
-        command: [ --auth ]
-        volumes:
-            - mongodb-data:/data/db
-        ports:
-            - "27017:27017"
-        environment:
-            MONGO_INITDB_DATABASE: DiscordLaboBotV2
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: root_password
-        restart: always
-
     docker-registry:
         image: registry:2.7.1
         expose:
