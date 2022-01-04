@@ -8,8 +8,6 @@ services:
             GIT_REPOSITORY_URL: vincent-andrieu/LabosDiscordBotV2
         ports:
             - "4242:4242"
-        networks:
-            - docker-registry
         volumes:
             - "/var/run/docker.sock:/var/run/docker.sock"
         depends_on:
@@ -23,6 +21,3 @@ services:
         networks:
             - docker-registry
         restart: always
-
-networks:
-    docker-registry: null
