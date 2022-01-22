@@ -2,7 +2,6 @@ import { Client } from 'discord.js';
 import { Express } from 'express';
 import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
-import { Server } from 'socket.io';
 
 import { serverConfig } from '../server.config';
 import Sockets from '../init/sockets';
